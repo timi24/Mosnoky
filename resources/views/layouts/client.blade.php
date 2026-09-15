@@ -207,7 +207,7 @@
                     </div>
                     <div>
                         <h4>Nous trouver</h4>
-                        <a href="https://www.google.com/maps/search/?api=1&query=Pouytenga+Burkina+Faso+Caisse+populaire" target="_blank" rel="noopener"><svg class="icon" viewBox="0 0 24 24"><path d="M12 2C7.6 2 4 5.6 4 10c0 5.5 7 11.5 7.3 11.7.2.2.4.3.7.3s.5-.1.7-.3C13 21.5 20 15.5 20 10c0-4.4-3.6-8-8-8zm0 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/></svg> Pouytenga, en face de la Caisse populaire</a>
+                        <a href="https://maps.app.goo.gl/RAqEjHLaet6msWpQ8?g_st=aw" target="_blank" rel="noopene"><svg class="icon" viewBox="0 0 24 24"><path d="M12 2C7.6 2 4 5.6 4 10c0 5.5 7 11.5 7.3 11.7.2.2.4.3.7.3s.5-.1.7-.3C13 21.5 20 15.5 20 10c0-4.4-3.6-8-8-8zm0 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/></svg> Pouytenga, en face de la Caisse populaire</a>
                         <span class="footer-muted">🇧🇫 Burkina Faso</span>
                     </div>
                 </div>

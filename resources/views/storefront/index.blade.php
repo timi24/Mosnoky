@@ -325,7 +325,7 @@
                     </div>
                     <div>
                         <h3>Nous trouver</h3>
-                        <div class="contact-line"><svg class="icon" viewBox="0 0 24 24"><path d="M12 2C7.6 2 4 5.6 4 10c0 5.5 7 11.5 7.3 11.7.2.2.4.3.7.3s.5-.1.7-.3C13 21.5 20 15.5 20 10c0-4.4-3.6-8-8-8zm0 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/></svg><a href="https://www.google.com/maps/search/?api=1&query=Pouytenga+Burkina+Faso+Caisse+populaire" target="_blank" rel="noopener">Pouytenga, en face de la Caisse populaire</a></div>
+                        <div class="contact-line"><svg class="icon" viewBox="0 0 24 24"><path d="M12 2C7.6 2 4 5.6 4 10c0 5.5 7 11.5 7.3 11.7.2.2.4.3.7.3s.5-.1.7-.3C13 21.5 20 15.5 20 10c0-4.4-3.6-8-8-8zm0 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/></svg><a href="https://maps.app.goo.gl/RAqEjHLaet6msWpQ8?g_st=aw" target="_blank" rel="noopener">Pouytenga, en face de la Caisse populaire</a></div>
                         <div class="contact-line">🇧🇫 Burkina Faso</div>
                     </div>
                     <div>
