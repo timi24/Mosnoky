@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 260" role="img" aria-labelledby="title desc">
+  <title id="title">Mosnoky</title>
+  <desc id="desc">Logo Mosnoky rouge et gris</desc>
+  <rect width="620" height="260" fill="#fffdfb"/>
+  <path fill="#b52d39" d="M110 48h58l92 101V48h55v120h-56l-94-101v101h-55z"/>
+  <path fill="#3e3e3e" d="M255 48h64l76 78 76-78h60l-106 120h-59z"/>
+  <path fill="#b52d39" d="M322 88l52-40h62l-82 80z"/>
+  <text x="310" y="226" fill="#3e3e3e" font-family="Arial, Helvetica, sans-serif" font-size="48" font-weight="700" letter-spacing="9" text-anchor="middle">MOSNOKY</text>
+</svg>

@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class ProductImage extends Model
+{
+
+
+
+    public $timestamps = false;
+
+    protected $fillable = ['product_id', 'image_url', 'alternative_text', 'color', 'is_primary'];
+
+    protected $casts = [
+        'is_primary' => 'boolean',
+        'created_at' => 'datetime',
+    ];
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
+}
