@@ -24,7 +24,7 @@ RUN npm run build
 FROM php:8.3-apache
 
 RUN apt-get update && apt-get install -y \
-    libpq-dev libzip-dev libpng-dev libjpeg62-turbo-dev libfreetype6-dev unzip git \
+    libpq-dev libzip-dev libpng-dev libjpeg62-turbo-dev libfreetype6-dev libonig-dev unzip git \
     && docker-php-ext-configure gd --with-jpeg --with-freetype \
     && docker-php-ext-install pdo pdo_pgsql pgsql zip gd exif mbstring \
     && a2enmod rewrite \
