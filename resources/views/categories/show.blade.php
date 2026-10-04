@@ -14,37 +14,36 @@
     @if ($products->isEmpty())
         <div class="empty">Aucun produit disponible dans cette catégorie pour le moment.</div>
     @else
-        <div class="products">
+        <div class="shop-grid">
             @foreach ($products as $product)
-                <article class="product">
+                <article class="shop-card">
                     <a href="{{ route('products.show', $product) }}">
-                        <div class="product-image">
+                        <div class="shop-card-image">
                             @php $primaryImage = $product->images->firstWhere('is_primary', true) ?? $product->images->first(); @endphp
                             @if ($primaryImage)
                                 <img src="{{ $primaryImage->image_url }}" alt="{{ $primaryImage->alternative_text ?: $product->name }}">
                             @else
-                                <span>Image bientôt disponible</span>
+                                <span class="shop-no-image">Photo à venir</span>
                             @endif
                         </div>
                     </a>
-                    <div class="product-content">
-                        <a href="{{ route('products.show', $product) }}" style="color:inherit;"><h3>{{ $product->name }}</h3></a>
-                        <div style="font-size:.82rem; color:var(--muted);">
+                    <div class="shop-card-body">
+                        <a href="{{ route('products.show', $product) }}" class="shop-card-title-link">
+                            <h3 class="shop-card-title">{{ $product->name }}</h3>
+                        </a>
+                        <div class="shop-card-meta">
                             @if ($product->approved_reviews_count > 0)
-                                {{ str_repeat('⭐', round($product->approved_reviews_avg_rating)) }}
-                                <span>{{ number_format($product->approved_reviews_avg_rating, 1) }} ({{ $product->approved_reviews_count }} avis)</span>
+                                <span class="shop-stars">{{ str_repeat('★', round($product->approved_reviews_avg_rating)) }}{{ str_repeat('☆', 5 - round($product->approved_reviews_avg_rating)) }}</span>
+                                <span>{{ number_format($product->approved_reviews_avg_rating, 1) }}</span>
                             @else
-                                <span>Aucun avis pour le moment</span>
+                                <span class="shop-muted">Aucun avis</span>
                             @endif
+                            <span class="shop-sep">·</span>
+                            <span class="shop-muted">{{ $product->sold_count ?? 0 }} vendu(s)</span>
                         </div>
-                        <p class="description">{{ Str::limit($product->description, 90) }}</p>
-                        <div class="product-footer">
-                            <span class="price">{{ number_format($product->price, 0, ',', ' ') }} FCFA</span>
-                            <form method="POST" action="{{ route('cart.store', $product) }}">
-                                @csrf
-                                @include('partials.variant-picker', ['product' => $product])
-                                <button type="submit" class="button primary small">Ajouter au panier</button>
-                            </form>
+                        <div class="shop-card-footer">
+                            <span class="shop-price">{{ number_format($product->price, 0, ',', ' ') }} FCFA</span>
+                            <a href="{{ route('products.show', $product) }}" class="button primary small">Choisir le modèle</a>
                         </div>
                     </div>
                 </article>

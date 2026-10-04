@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\BusinessReportController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ClientController;
 use App\Http\Controllers\Admin\DeliveryController;
@@ -50,4 +51,7 @@ Route::prefix('admin')
         Route::post('messages/{client}', [MessageController::class, 'store'])->name('messages.store');
 
         Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
+
+        Route::get('rapport-mensuel', [BusinessReportController::class, 'form'])->name('business-report.form');
+        Route::get('rapport-mensuel/telecharger', [BusinessReportController::class, 'download'])->name('business-report.download');
     });

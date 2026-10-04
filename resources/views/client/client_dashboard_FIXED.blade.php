@@ -68,10 +68,7 @@
                             <p class="description">{{ Str::limit($product->description, 90) }}</p>
                             <div class="product-footer">
                                 <span class="price">{{ number_format($product->price, 0, ',', ' ') }} FCFA</span>
-                                <form method="POST" action="{{ route('cart.store', $product->id) }}">
-                                    @csrf
-                                    <button type="submit" class="button primary small">Ajouter</button>
-                                </form>
+                                <a href="{{ route('products.show', $product) }}" class="button primary small">Choisir le modèle</a>
                             </div>
                         </div>
                     </article>

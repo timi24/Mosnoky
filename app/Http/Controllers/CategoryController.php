@@ -30,6 +30,7 @@ class CategoryController extends Controller
             ->withAvg(['reviews as approved_reviews_avg_rating' => function ($q) {
                 $q->where('moderation_status', 'APPROUVE');
             }], 'rating')
+            ->withSum('orderItems as sold_count', 'quantity')
             ->orderByDesc('created_at')
             ->paginate(12);
 

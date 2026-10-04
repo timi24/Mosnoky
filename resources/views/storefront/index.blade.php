@@ -63,6 +63,7 @@
             .product-card .body { padding: 18px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
             .product-card h3 { margin: 0; font-size: 1.05rem; }
             .rating-line { font-size: .8rem; color: var(--muted); }
+            .gold-stars { color: #e8a33d; letter-spacing: 1px; }
             .price-row { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 8px; }
             .price { font-weight: 800; font-size: 1.05rem; }
 
@@ -133,13 +134,13 @@
 
             <!-- HERO VIDÉO -->
             <section class="hero">
-                <video autoplay muted loop playsinline poster="{{ asset('images/a.jpeg') }}">
+                <video autoplay muted loop playsinline poster="{{ asset('a.jpeg') }}">
                     <source src="{{ asset('videos/hero.mp4') }}" type="video/mp4">
                 </video>
                 <div class="hero-content">
                     <div class="hero-eyebrow">Made in Burkina Faso</div>
-                    <h1>Votre Style, Notre savoir faire.</h1>
-                    <p>Chaussures de luxe et articles de maroquinerie fabriqués à la main, alliant savoir-faire artisanal et élégance moderne.</p>
+                    <h1>Votre style notre savoir faire.</h1>
+                    <p>Fabrication artisanale et moderne de chaussures et articles en cuir.</p>
                     <div class="hero-actions">
                         <a class="button primary" href="#produits">Découvrir nos créations</a>
                         @guest
@@ -163,7 +164,7 @@
                             <span class="about-badge">📦 Livraison disponible</span>
                         </div>
                     </div>
-                    <div>
+                     <div>
                         <img src="{{ asset('images/products/oxford-noir.jpg') }}" alt="Chaussures Oxford Mosnoky" style="border-radius:14px; width:100%; object-fit:cover; aspect-ratio:4/3;">
                     </div>
                 </div>
@@ -186,8 +187,8 @@
                     </div>
                     <div class="service-card">
                         <div class="num">3</div>
-                        <h3>Entretien & restauration</h3>
-                        <p>Nous redonnons vie à vos chaussures et articles en cuir avec le même soin artisanal.</p>
+                        <h3>Vente en Gros et Detaille</h3>
+                        <p>Nous redonnons vie à vos chaussures et articles en cuir avec .</p>
                     </div>
                 </div>
             </section>
@@ -297,11 +298,13 @@
                                     <h3>{{ $product->name }}</h3>
                                     <div class="rating-line">
                                         @if ($product->approved_reviews_count > 0)
-                                            {{ str_repeat('⭐', round($product->approved_reviews_avg_rating)) }}
-                                            {{ number_format($product->approved_reviews_avg_rating, 1) }} ({{ $product->approved_reviews_count }} avis)
+                                            <span class="gold-stars">{{ str_repeat('★', round($product->approved_reviews_avg_rating)) }}{{ str_repeat('☆', 5 - round($product->approved_reviews_avg_rating)) }}</span>
+                                            {{ number_format($product->approved_reviews_avg_rating, 1) }}
                                         @else
-                                            Soyez le premier à donner votre avis
+                                            Aucun avis
                                         @endif
+                                        <span style="opacity:.5;">·</span>
+                                        {{ $product->sold_count ?? 0 }} vendu(s)
                                     </div>
                                     <div class="price-row">
                                         <span class="price">{{ number_format($product->price, 0, ',', ' ') }} FCFA</span>

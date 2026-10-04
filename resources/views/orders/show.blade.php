@@ -105,8 +105,8 @@
                             @endif
                         </td>
                         <td>{{ $item->quantity }}</td>
-                        <td>{{ number_format($item->unit_price, 2, ',', ' ') }} €</td>
-                        <td>{{ number_format($item->subtotal, 2, ',', ' ') }} €</td>
+                        <td>{{ number_format($item->unit_price, 2, ',', ' ') }} FCFA</td>
+                        <td>{{ number_format($item->subtotal, 2, ',', ' ') }} FCFA</td>
                         @if ($order->status === 'LIVREE' && $item->product)
                             <td>
                                 @php
@@ -148,9 +148,9 @@
 
     <div style="display:flex; justify-content:flex-end; margin-top:20px;">
         <div class="form-panel" style="width:320px;">
-            <p style="display:flex; justify-content:space-between; margin:4px 0;"><span>Sous-total</span><span>{{ number_format($order->subtotal, 2, ',', ' ') }} €</span></p>
-            <p style="display:flex; justify-content:space-between; margin:4px 0;"><span>Livraison</span><span>{{ number_format($order->shipping_fee, 2, ',', ' ') }} €</span></p>
-            <p style="display:flex; justify-content:space-between; margin:10px 0 0; font-weight:800; border-top:1px solid var(--line); padding-top:10px;"><span>Total</span><span>{{ number_format($order->total, 2, ',', ' ') }} €</span></p>
+            <p style="display:flex; justify-content:space-between; margin:4px 0;"><span>Sous-total</span><span>{{ number_format($order->subtotal, 2, ',', ' ') }} FCFA</span></p>
+            <p style="display:flex; justify-content:space-between; margin:4px 0;"><span>Livraison</span><span>{{ number_format($order->shipping_fee, 2, ',', ' ') }} FCFA</span></p>
+            <p style="display:flex; justify-content:space-between; margin:10px 0 0; font-weight:800; border-top:1px solid var(--line); padding-top:10px;"><span>Total</span><span>{{ number_format($order->total, 2, ',', ' ') }} FCFA</span></p>
         </div>
     </div>
 @endsection

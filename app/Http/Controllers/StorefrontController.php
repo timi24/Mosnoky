@@ -17,6 +17,7 @@ class StorefrontController extends Controller
             ->withAvg(['reviews as approved_reviews_avg_rating' => function ($q) {
                 $q->where('moderation_status', 'APPROUVE');
             }], 'rating')
+            ->withSum('orderItems as sold_count', 'quantity')
             ->orderByDesc('created_at')
             ->limit(6)
             ->get();
@@ -28,7 +29,6 @@ class StorefrontController extends Controller
 
     public function purchase(Product $product)
     {
-        // Redirige vers la connexion si non authentifié, sinon vers l'ajout au panier
         if (! auth()->check()) {
             return redirect()->route('login');
         }

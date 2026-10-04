@@ -93,6 +93,25 @@
 
             .footer-grid a { display: flex; align-items: center; gap: 9px; }
             .footer-grid .icon { width: 17px; height: 17px; flex-shrink: 0; fill: currentColor; }
+
+            /* Carte produit unifiée style boutique en ligne - utilisée sur tableau de bord, catégories, recherche */
+            .shop-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+            .shop-card { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--card); transition: .2s ease; }
+            .shop-card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,.06); }
+            .shop-card-image { aspect-ratio: 4/3; background: #eee7dc; overflow: hidden; }
+            .shop-card-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+            .shop-no-image { display: flex; align-items: center; justify-content: center; height: 100%; color: var(--muted); font-size: .85rem; }
+            .shop-card-body { padding: 16px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+            .shop-card-title-link { color: inherit; }
+            .shop-card-title { margin: 0; font-size: 1rem; line-height: 1.3; }
+            .shop-card-meta { display: flex; align-items: center; gap: 5px; font-size: .8rem; color: var(--muted); flex-wrap: wrap; }
+            .shop-stars { color: #e8a33d; letter-spacing: 1px; }
+            .shop-sep { opacity: .5; }
+            .shop-muted { color: var(--muted); }
+            .shop-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: auto; padding-top: 8px; }
+            .shop-price { font-weight: 800; font-size: 1.05rem; color: var(--accent); }
+            @media (max-width: 900px) { .shop-grid { grid-template-columns: repeat(2, 1fr); } }
+            @media (max-width: 600px) { .shop-grid { grid-template-columns: 1fr; } }
         </style>
     </head>
     <body>
@@ -112,6 +131,8 @@
                     <a href="{{ route('categories.index') }}" class="{{ request()->routeIs('categories.*') ? 'active' : '' }}">Catégories</a>
                     <a href="{{ route('cart.index') }}" class="{{ request()->routeIs('cart.*') ? 'active' : '' }}">Panier</a>
                     <a href="{{ route('orders.index') }}" class="{{ request()->routeIs('orders.*') ? 'active' : '' }}">Mes commandes</a>
+            
+                    <a href="{{ route('payments.index') }}" class="{{ request()->routeIs('payments.*') ? 'active' : '' }}">Paiements</a>
                     <a href="{{ route('reports.index') }}" class="{{ request()->routeIs('reports.*') ? 'active' : '' }}">Signalements</a>
                     <a href="{{ route('messages.index') }}" class="{{ request()->routeIs('messages.*') ? 'active' : '' }}">Messages</a>
                     <a href="{{ route('notifications.index') }}" class="{{ request()->routeIs('notifications.*') ? 'active' : '' }}">
@@ -127,9 +148,7 @@
                         <span>{{ auth()->user()->first_name ?? auth()->user()->name }}</span>
                     </button>
                     <div class="dropdown-menu">
-                        @if (Route::has('profile.edit'))
-                            <a href="{{ route('profile.edit') }}" class="dropdown-item">Mon profil</a>
-                        @endif
+                        
                         <div class="dropdown-divider"></div>
                         @if (Route::has('logout'))
                             <form method="POST" action="{{ route('logout') }}">
@@ -201,13 +220,13 @@
                     </div>
                     <div>
                         <h4>Nous suivre</h4>
-                        <a href="https://www.facebook.com/profile.php?id=61572926362409" target="_blank" rel="noopener"><svg class="icon" viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg> Mosnoky</a>
+                        <a href="https://www.facebook.com/Mosnoky" target="_blank" rel="noopener"><svg class="icon" viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg> Mosnoky</a>
                         <a href="https://www.instagram.com/mosnoky" target="_blank" rel="noopener"><svg class="icon" viewBox="0 0 24 24"><path d="M12 2c2.7 0 3.1 0 4.1.1 1.1.1 1.8.2 2.5.5.7.3 1.2.6 1.8 1.2.6.6.9 1.1 1.2 1.8.3.7.4 1.4.5 2.5.1 1 .1 1.4.1 4.1s0 3.1-.1 4.1c-.1 1.1-.2 1.8-.5 2.5-.3.7-.6 1.2-1.2 1.8-.6.6-1.1.9-1.8 1.2-.7.3-1.4.4-2.5.5-1 .1-1.4.1-4.1.1s-3.1 0-4.1-.1c-1.1-.1-1.8-.2-2.5-.5-.7-.3-1.2-.6-1.8-1.2-.6-.6-.9-1.1-1.2-1.8-.3-.7-.4-1.4-.5-2.5C2 15.1 2 14.7 2 12s0-3.1.1-4.1c.1-1.1.2-1.8.5-2.5.3-.7.6-1.2 1.2-1.8.6-.6 1.1-.9 1.8-1.2.7-.3 1.4-.4 2.5-.5C8.9 2 9.3 2 12 2zm0 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8.2a3.2 3.2 0 1 1 0-6.4 3.2 3.2 0 0 1 0 6.4zm5.2-8.4a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z"/></svg> mosnoky</a>
                         <a href="https://www.tiktok.com/@mosnoky" target="_blank" rel="noopener"><svg class="icon" viewBox="0 0 24 24"><path d="M16.6 5.8c-1-1-1.4-2-1.5-3.3h-3.2v13.3c0 1.8-1.5 3.2-3.2 3.2-1.8 0-3.2-1.5-3.2-3.2 0-1.8 1.5-3.2 3.2-3.2.4 0 .7.1 1 .2v-3.3c-.3 0-.7-.1-1-.1-3.5 0-6.4 2.9-6.4 6.4S5.2 22.2 8.7 22.2c3.5 0 6.4-2.9 6.4-6.4V9.2c1.3.9 2.9 1.5 4.7 1.5V7.4c-1.2 0-2.3-.4-3.2-1.6z"/></svg> @mosnoky</a>
                     </div>
                     <div>
                         <h4>Nous trouver</h4>
-                        <a href="https://maps.app.goo.gl/RAqEjHLaet6msWpQ8?g_st=aw" target="_blank" rel="noopene"><svg class="icon" viewBox="0 0 24 24"><path d="M12 2C7.6 2 4 5.6 4 10c0 5.5 7 11.5 7.3 11.7.2.2.4.3.7.3s.5-.1.7-.3C13 21.5 20 15.5 20 10c0-4.4-3.6-8-8-8zm0 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/></svg> Pouytenga, en face de la Caisse populaire</a>
+                        <a href="https://www.google.com/maps/search/?api=1&query=Pouytenga+Burkina+Faso+Caisse+populaire" target="_blank" rel="noopener"><svg class="icon" viewBox="0 0 24 24"><path d="M12 2C7.6 2 4 5.6 4 10c0 5.5 7 11.5 7.3 11.7.2.2.4.3.7.3s.5-.1.7-.3C13 21.5 20 15.5 20 10c0-4.4-3.6-8-8-8zm0 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/></svg> Pouytenga, en face de la Caisse populaire</a>
                         <span class="footer-muted">🇧🇫 Burkina Faso</span>
                     </div>
                 </div>

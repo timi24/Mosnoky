@@ -25,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Schema::defaultStringLength(191);
+
         $this->configureDefaults();
     }
 
@@ -39,14 +40,13 @@ class AppServiceProvider extends ServiceProvider
             app()->isProduction(),
         );
 
-        Password::defaults(fn (): ?Password => app()->isProduction()
-            ? Password::min(12)
-                ->mixedCase()
-                ->letters()
-                ->numbers()
-                ->symbols()
-                ->uncompromised()
-            : null,
+        // Règles de mot de passe strictes, appliquées dans TOUS les environnements
+        Password::defaults(fn (): Password => Password::min(10)
+            ->mixedCase()      // au moins une majuscule et une minuscule
+            ->letters()        // au moins une lettre
+            ->numbers()        // au moins un chiffre
+            ->symbols()        // au moins un symbole (!@#$...)
+            ->uncompromised()  // refuse les mots de passe déjà fuités publiquement
         );
     }
 }

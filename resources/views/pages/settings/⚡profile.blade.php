@@ -9,24 +9,18 @@ use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
-new #[Title('Profile settings')] class extends Component {
+new #[Title('Mon profil')] class extends Component {
     use ProfileValidationRules;
 
     public string $name = '';
     public string $email = '';
 
-    /**
-     * Mount the component.
-     */
     public function mount(): void
     {
         $this->name = Auth::user()->name;
         $this->email = Auth::user()->email;
     }
 
-    /**
-     * Update the profile information for the currently authenticated user.
-     */
     public function updateProfileInformation(): void
     {
         $user = Auth::user();
@@ -41,12 +35,9 @@ new #[Title('Profile settings')] class extends Component {
 
         $user->save();
 
-        Flux::toast(variant: 'success', text: __('Profile updated.'));
+        Flux::toast(variant: 'success', text: __('Profil mis à jour.'));
     }
 
-    /**
-     * Send an email verification notification to the current user.
-     */
     public function resendVerificationNotification(): void
     {
         $user = Auth::user();
@@ -76,49 +67,43 @@ new #[Title('Profile settings')] class extends Component {
     }
 }; ?>
 
-<section class="w-full">
-    @include('partials.settings-heading')
+<section class="w-full max-w-xl mx-auto py-10 px-4">
+    <flux:heading size="xl" class="mb-1">{{ __('Mon profil') }}</flux:heading>
+    <flux:text class="mb-8">{{ __('Modifiez votre nom et votre adresse email.') }}</flux:text>
 
-    <flux:heading class="sr-only">{{ __('Profile settings') }}</flux:heading>
+    <form wire:submit="updateProfileInformation" class="space-y-6">
+        <flux:input wire:model="name" :label="__('Nom')" type="text" required autofocus autocomplete="name" />
 
-    <x-pages::settings.layout :heading="__('Profile')" :subheading="__('Update your name and email address')">
-        <form wire:submit="updateProfileInformation" class="my-6 w-full space-y-6">
-            <flux:input wire:model="name" :label="__('Name')" type="text" required autofocus autocomplete="name" />
+        <div>
+            <flux:input wire:model="email" :label="__('Email')" type="email" required autocomplete="email" />
 
-            <div>
-                <flux:input wire:model="email" :label="__('Email')" type="email" required autocomplete="email" />
+            @if ($this->hasUnverifiedEmail)
+                <div>
+                    <flux:text class="mt-4">
+                        {{ __("Votre adresse email n'est pas vérifiée.") }}
 
-                @if ($this->hasUnverifiedEmail)
-                    <div>
-                        <flux:text class="mt-4">
-                            {{ __('Your email address is unverified.') }}
+                        <flux:link class="text-sm cursor-pointer" wire:click.prevent="resendVerificationNotification">
+                            {{ __('Cliquez ici pour renvoyer le lien de vérification.') }}
+                        </flux:link>
+                    </flux:text>
 
-                            <flux:link class="text-sm cursor-pointer" wire:click.prevent="resendVerificationNotification">
-                                {{ __('Click here to re-send the verification email.') }}
-                            </flux:link>
+                    @if (session('status') === 'verification-link-sent')
+                        <flux:text class="mt-2 font-medium !text-green-600">
+                            {{ __('Un nouveau lien de vérification a été envoyé.') }}
                         </flux:text>
-
-                        @if (session('status') === 'verification-link-sent')
-                            <flux:text class="mt-2 font-medium !dark:text-green-400 !text-green-600">
-                                {{ __('A new verification link has been sent to your email address.') }}
-                            </flux:text>
-                        @endif
-                    </div>
-                @endif
-            </div>
-
-            <div class="flex items-center gap-4">
-                <div class="flex items-center justify-end">
-                    <flux:button variant="primary" type="submit" class="w-full" data-test="update-profile-button">
-                        {{ __('Save') }}
-                    </flux:button>
+                    @endif
                 </div>
+            @endif
+        </div>
 
-            </div>
-        </form>
+        <flux:button variant="primary" type="submit" class="w-full" data-test="update-profile-button">
+            {{ __('Enregistrer') }}
+        </flux:button>
+    </form>
 
-        @if ($this->showDeleteUser)
+    @if ($this->showDeleteUser)
+        <div class="mt-10 pt-8 border-t">
             <livewire:pages::settings.delete-user-form />
-        @endif
-    </x-pages::settings.layout>
+        </div>
+    @endif
 </section>
