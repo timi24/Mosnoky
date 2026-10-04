@@ -21,7 +21,8 @@ RUN npm install
 RUN npm run build
 
 # --- Etape 3 : image finale qui fait tourner le site ---
-FROM php:8.3-apache
+# PHP 8.4 (et non 8.3) car tes dépendances Composer exigent PHP >= 8.4.1
+FROM php:8.4-apache
 
 RUN apt-get update && apt-get install -y \
     libpq-dev libzip-dev libpng-dev libjpeg62-turbo-dev libfreetype6-dev libonig-dev unzip git \
