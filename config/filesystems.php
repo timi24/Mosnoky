@@ -38,13 +38,30 @@ return [
             'report' => false,
         ],
 
+        // Le disque "public" (utilisé partout dans l'app pour les photos
+        // produits) bascule automatiquement entre stockage local et Supabase
+        // Storage selon la variable d'environnement PUBLIC_DISK_DRIVER.
+        // - En local (ton PC) : PUBLIC_DISK_DRIVER absent -> reste en "local"
+        // - Sur Render : PUBLIC_DISK_DRIVER=s3 -> utilise Supabase Storage,
+        //   qui est permanent (ne disparaît jamais au redéploiement).
         'public' => [
-            'driver' => 'local',
+            'driver' => env('PUBLIC_DISK_DRIVER', 'local'),
             'root' => storage_path('app/public'),
-            'url' => rtrim((string) env('APP_URL', 'http://localhost'), '/').'/storage',
+            'url' => env('PUBLIC_DISK_DRIVER', 'local') === 's3'
+                ? null
+                : rtrim((string) env('APP_URL', 'http://localhost'), '/').'/storage',
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
+
+            // Ces 5 lignes ne servent que si PUBLIC_DISK_DRIVER=s3
+            // (connexion S3-compatible vers Supabase Storage)
+            'key' => env('SUPABASE_S3_KEY'),
+            'secret' => env('SUPABASE_S3_SECRET'),
+            'region' => env('SUPABASE_S3_REGION', 'us-east-1'),
+            'bucket' => env('SUPABASE_S3_BUCKET'),
+            'endpoint' => env('SUPABASE_S3_ENDPOINT'),
+            'use_path_style_endpoint' => true,
         ],
 
         's3' => [
