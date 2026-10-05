@@ -13,6 +13,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+    // Dit à Laravel de faire confiance au proxy de Render (toutes les IP, "*"),
+    // pour qu'il détecte correctement que la connexion d'origine est en HTTPS.
+    $middleware->trustProxies(at: '*');
+
     $middleware->web(append: [
         SetTeamUrlDefaults::class,
     ]);
@@ -20,7 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
         'paiement/cinetpay/notify',   // ← c'est exactement ça
     ]);
 })
-    
+
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
