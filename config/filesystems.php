@@ -47,8 +47,11 @@ return [
         'public' => [
             'driver' => env('PUBLIC_DISK_DRIVER', 'local'),
             'root' => storage_path('app/public'),
+            // Important : l'adresse pour ENVOYER les fichiers (endpoint S3 ci-dessous)
+            // est différente de l'adresse pour les AFFICHER publiquement.
+            // Supabase affiche les fichiers via /storage/v1/object/public/<bucket>/...
             'url' => env('PUBLIC_DISK_DRIVER', 'local') === 's3'
-                ? null
+                ? rtrim((string) env('SUPABASE_PROJECT_URL'), '/').'/storage/v1/object/public/'.env('SUPABASE_S3_BUCKET')
                 : rtrim((string) env('APP_URL', 'http://localhost'), '/').'/storage',
             'visibility' => 'public',
             'throw' => false,
