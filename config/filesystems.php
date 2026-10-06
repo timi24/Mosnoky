@@ -46,7 +46,11 @@ return [
         //   qui est permanent (ne disparaît jamais au redéploiement).
         'public' => [
             'driver' => env('PUBLIC_DISK_DRIVER', 'local'),
-            'root' => storage_path('app/public'),
+            // Important : "root" ne doit servir qu'en local. Avec le pilote S3,
+            // ce chemin serveur s'ajoutait à tort dans l'adresse des photos.
+            'root' => env('PUBLIC_DISK_DRIVER', 'local') === 's3'
+                ? ''
+                : storage_path('app/public'),
             // Important : l'adresse pour ENVOYER les fichiers (endpoint S3 ci-dessous)
             // est différente de l'adresse pour les AFFICHER publiquement.
             // Supabase affiche les fichiers via /storage/v1/object/public/<bucket>/...
