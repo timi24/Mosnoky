@@ -182,7 +182,10 @@ class ProductController extends Controller
             $path = $file->store('products', 'public');
 
             $product->images()->create([
-                'image_url' => Storage::url($path),
+                // IMPORTANT : on précise bien le disque "public" (celui qui bascule
+                // automatiquement vers Supabase Storage sur Render), sinon Laravel
+                // utilise le disque par défaut et génère une adresse fausse.
+                'image_url' => Storage::disk('public')->url($path),
                 'alternative_text' => $product->name,
                 'color' => $photoColor,
                 'is_primary' => ! $hasExistingImages && $index === 0,
