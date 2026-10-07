@@ -58,8 +58,10 @@ return [
                 ? rtrim((string) env('SUPABASE_PROJECT_URL'), '/').'/storage/v1/object/public/'.env('SUPABASE_S3_BUCKET')
                 : rtrim((string) env('APP_URL', 'http://localhost'), '/').'/storage',
             'visibility' => 'public',
-            'throw' => false,
-            'report' => false,
+            // Temporairement "true" pour voir la vraie erreur si l'envoi
+            // vers Supabase échoue, au lieu qu'elle soit cachée en silence.
+            'throw' => true,
+            'report' => true,
 
             // Ces 5 lignes ne servent que si PUBLIC_DISK_DRIVER=s3
             // (connexion S3-compatible vers Supabase Storage)
