@@ -86,6 +86,14 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
             'verification_code_expires_at' => now()->addMinutes(15),
         ])->save();
 
-        $this->notify(new VerifyEmailWithCode($code));
+        // Important : si l'envoi de l'email échoue (ex: problème temporaire
+        // avec Gmail SMTP), on ne doit PAS faire planter toute l'inscription.
+        // On enregistre l'erreur dans les logs et l'utilisateur pourra
+        // cliquer sur "Renvoyer le code" une fois le souci réglé.
+        try {
+            $this->notify(new VerifyEmailWithCode($code));
+        } catch (\Throwable $e) {
+            report($e);
+        }
     }
 }
