@@ -17,6 +17,12 @@ Route::get('/auth/{provider}', [SocialiteController::class, 'redirect'])
     ->where('provider', 'google|facebook')
     ->name('socialite.redirect');
 
+// Route de retour : c'est ici que Google/Facebook renvoient l'utilisateur
+// une fois la connexion validée. Sans cette route, on tombe sur une 404.
+Route::get('/auth/{provider}/callback', [SocialiteController::class, 'callback'])
+    ->where('provider', 'google|facebook')
+    ->name('socialite.callback');
+
 require __DIR__.'/admin.php';
 require __DIR__.'/client.php';
 Route::get('/client/dashboard', ClientDashboardController::class)
@@ -34,4 +40,4 @@ Route::get('/dashboard', function () {
 
 require __DIR__.'/settings.php';
 
-require __DIR__.'/payments.php';  
+require __DIR__.'/payments.php';
