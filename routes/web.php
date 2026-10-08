@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\Auth\SocialiteController;
+use App\Http\Controllers\Auth\VerifyEmailCodeController;
 use App\Http\Controllers\ClientDashboardController;
 use App\Http\Controllers\StorefrontController;
 use App\Http\Middleware\EnsureUserIsAdmin;
@@ -22,6 +23,11 @@ Route::get('/auth/{provider}', [SocialiteController::class, 'redirect'])
 Route::get('/auth/{provider}/callback', [SocialiteController::class, 'callback'])
     ->where('provider', 'google|facebook')
     ->name('socialite.callback');
+
+// Page de vérification du compte par code à 6 chiffres reçu par email.
+Route::post('/email/verify/code', [VerifyEmailCodeController::class, 'store'])
+    ->middleware('auth')
+    ->name('verification.verify.code');
 
 require __DIR__.'/admin.php';
 require __DIR__.'/client.php';
