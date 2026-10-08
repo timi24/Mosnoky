@@ -63,7 +63,11 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::loginView(fn (Request $request) => view('pages::auth.login', [
             'teamInvitation' => $this->teamInvitation($request),
         ]));
-        Fortify::verifyEmailView(fn () => view('pages::auth.verify-email'));
+        // Important : on pointe directement vers NOTRE page (avec le code à 6
+        // chiffres) plutôt que vers "pages::auth.verify-email" (la page
+        // anglaise du package, dont le remplacement via
+        // resources/views/vendor/pages/ ne fonctionnait pas).
+        Fortify::verifyEmailView(fn () => view('auth.verify-email-code'));
         Fortify::twoFactorChallengeView(fn () => view('pages::auth.two-factor-challenge'));
         Fortify::confirmPasswordView(fn () => view('pages::auth.confirm-password'));
         Fortify::registerView(fn (Request $request) => view('pages::auth.register', [

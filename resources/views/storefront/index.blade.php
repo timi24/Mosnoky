@@ -4,7 +4,7 @@
         <meta name="google-site-verification" content="I7rp9O-NEDvrppuhalUy4LkpvlV41xe8mXRJFURNt04" />
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{{ config('app.name', 'Mosnoky') }} — Chaussures de luxe & maroquinerie, Made in Burkina Faso</title>
+        <title>{{ config('app.name', 'Mosnoky') }} — Chaussures de luxe & maroquinerie</title>
         <meta name="description" content="Mosnoky, atelier spécialisé dans la fabrication artisanale de chaussures de luxe et d'articles de maroquinerie au Burkina Faso.">
         @fonts
         <style>
