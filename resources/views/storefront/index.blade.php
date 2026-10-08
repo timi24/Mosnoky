@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
     <head>
+        <meta name="google-site-verification" content="I7rp9O-NEDvrppuhalUy4LkpvlV41xe8mXRJFURNt04" />
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>{{ config('app.name', 'Mosnoky') }} — Chaussures de luxe & maroquinerie, Made in Burkina Faso</title>
