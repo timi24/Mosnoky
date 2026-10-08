@@ -7,6 +7,8 @@ use App\Http\Controllers\ClientDashboardController;
 use App\Http\Controllers\StorefrontController;
 use App\Http\Middleware\EnsureUserIsAdmin;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
 
 Route::get('/', [StorefrontController::class, 'index'])->name('home');
 
@@ -35,6 +37,11 @@ Route::get('/client/dashboard', ClientDashboardController::class)
     ->middleware(['auth', 'verified'])
     ->name('client.dashboard');
 
+
+
+Route::get('/email/verify', function () {
+    return view('pages::auth.verify-email');
+})->middleware('auth')->name('verification.notice');
 // Route générique utilisée par le menu de navigation, redirige selon le rôle
 Route::get('/dashboard', function () {
     $user = request()->user();
@@ -47,3 +54,4 @@ Route::get('/dashboard', function () {
 require __DIR__.'/settings.php';
 
 require __DIR__.'/payments.php';
+
