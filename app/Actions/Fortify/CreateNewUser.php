@@ -26,6 +26,19 @@ class CreateNewUser implements CreatesNewUsers
      */
     public function create(array $input): User
     {
+        if (isset($input['email'])) {
+            $input['email'] = strtolower(trim($input['email']));
+        }
+
+        // Important : si un compte existe déjà avec cet email mais n'a
+        // JAMAIS été vérifié, on considère qu'il a été abandonné (la
+        // personne n'a pas terminé son inscription). On le supprime pour
+        // qu'elle puisse recréer son compte normalement, au lieu de se voir
+        // bloquée par un message "email déjà utilisé".
+        User::where('email', $input['email'] ?? null)
+            ->whereNull('email_verified_at')
+            ->delete();
+
         Validator::make($input, [
             ...$this->profileRules(),
             'password' => $this->passwordRules(),
