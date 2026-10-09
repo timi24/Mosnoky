@@ -220,13 +220,13 @@
                     </div>
                     <div>
                         <h4>Nous suivre</h4>
-                        <a href="https://www.facebook.com/Mosnoky" target="_blank" rel="noopener"><svg class="icon" viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg> Mosnoky</a>
+                        <a href="https://www.facebook.com/profile.php?id=61572926362409" target="_blank" rel="noopener"><svg class="icon" viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg> Mosnoky</a>
                         <a href="https://www.instagram.com/mosnoky" target="_blank" rel="noopener"><svg class="icon" viewBox="0 0 24 24"><path d="M12 2c2.7 0 3.1 0 4.1.1 1.1.1 1.8.2 2.5.5.7.3 1.2.6 1.8 1.2.6.6.9 1.1 1.2 1.8.3.7.4 1.4.5 2.5.1 1 .1 1.4.1 4.1s0 3.1-.1 4.1c-.1 1.1-.2 1.8-.5 2.5-.3.7-.6 1.2-1.2 1.8-.6.6-1.1.9-1.8 1.2-.7.3-1.4.4-2.5.5-1 .1-1.4.1-4.1.1s-3.1 0-4.1-.1c-1.1-.1-1.8-.2-2.5-.5-.7-.3-1.2-.6-1.8-1.2-.6-.6-.9-1.1-1.2-1.8-.3-.7-.4-1.4-.5-2.5C2 15.1 2 14.7 2 12s0-3.1.1-4.1c.1-1.1.2-1.8.5-2.5.3-.7.6-1.2 1.2-1.8.6-.6 1.1-.9 1.8-1.2.7-.3 1.4-.4 2.5-.5C8.9 2 9.3 2 12 2zm0 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8.2a3.2 3.2 0 1 1 0-6.4 3.2 3.2 0 0 1 0 6.4zm5.2-8.4a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z"/></svg> mosnoky</a>
                         <a href="https://www.tiktok.com/@mosnoky" target="_blank" rel="noopener"><svg class="icon" viewBox="0 0 24 24"><path d="M16.6 5.8c-1-1-1.4-2-1.5-3.3h-3.2v13.3c0 1.8-1.5 3.2-3.2 3.2-1.8 0-3.2-1.5-3.2-3.2 0-1.8 1.5-3.2 3.2-3.2.4 0 .7.1 1 .2v-3.3c-.3 0-.7-.1-1-.1-3.5 0-6.4 2.9-6.4 6.4S5.2 22.2 8.7 22.2c3.5 0 6.4-2.9 6.4-6.4V9.2c1.3.9 2.9 1.5 4.7 1.5V7.4c-1.2 0-2.3-.4-3.2-1.6z"/></svg> @mosnoky</a>
                     </div>
                     <div>
                         <h4>Nous trouver</h4>
-                        <a href="https://www.google.com/maps/search/?api=1&query=Pouytenga+Burkina+Faso+Caisse+populaire" target="_blank" rel="noopener"><svg class="icon" viewBox="0 0 24 24"><path d="M12 2C7.6 2 4 5.6 4 10c0 5.5 7 11.5 7.3 11.7.2.2.4.3.7.3s.5-.1.7-.3C13 21.5 20 15.5 20 10c0-4.4-3.6-8-8-8zm0 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/></svg> Pouytenga, en face de la Caisse populaire</a>
+                        <a href="https://maps.app.goo.gl/RAqEjHLaet6msWpQ8?g_st=aw" target="_blank" rel="noopener"><svg class="icon" viewBox="0 0 24 24"><path d="M12 2C7.6 2 4 5.6 4 10c0 5.5 7 11.5 7.3 11.7.2.2.4.3.7.3s.5-.1.7-.3C13 21.5 20 15.5 20 10c0-4.4-3.6-8-8-8zm0 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/></svg> Pouytenga, en face de la Caisse populaire</a>
                         <span class="footer-muted">🇧🇫 Burkina Faso</span>
                     </div>
                 </div>
