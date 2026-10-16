@@ -23,16 +23,15 @@ class StorefrontController extends Controller
             ->limit(6)
             ->get();
 
-        // Photo de fond du hero : une image de produit choisie au hasard
-        // dans la base de données, parmi les produits actifs. Change à
-        // chaque chargement de page.
-        $heroImage = ProductImage::whereHas('product', function ($q) {
+        // Diaporama du hero : plusieurs photos de produits choisies au
+        // hasard, qui défilent côté client toutes les 5 secondes.
+        $heroImages = ProductImage::whereHas('product', function ($q) {
             $q->where('status', 'ACTIF');
-        })->inRandomOrder()->first();
+        })->inRandomOrder()->limit(8)->get();
 
         return view('storefront.index', [
             'featuredProducts' => $featuredProducts,
-            'heroImage' => $heroImage,
+            'heroImages' => $heroImages,
         ]);
     }
 

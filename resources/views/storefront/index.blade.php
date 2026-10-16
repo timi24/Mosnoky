@@ -29,6 +29,8 @@
             .hero { position: relative; margin-top: 6px; border-radius: 18px; overflow: hidden; min-height: 560px; display: flex; align-items: center; background: var(--dark); }
             .hero video, .hero .hero-fallback { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .55; }
             .hero-fallback { background: linear-gradient(135deg, #221f1d, #3a332c); }
+            .hero-slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1.2s ease; }
+.hero-slide.active { opacity: .55; }
             .hero-content { position: relative; z-index: 2; padding: 60px; color: #fff; max-width: 640px; }
             .hero-eyebrow { color: #f0b8ac; font-size: .8rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
             .hero h1 { font-family: Georgia, serif; font-size: clamp(2.4rem, 5vw, 3.6rem); font-weight: 400; line-height: 1.05; margin: 16px 0 20px; }
@@ -135,12 +137,13 @@
 
             <!-- HERO VIDÉO -->
             <!-- HERO -->
+<!-- HERO -->
 <section class="hero">
-    @if ($heroImage)
-        <img src="{{ $heroImage->image_url }}" alt="Mosnoky" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:.55;">
-    @else
+    @forelse ($heroImages as $index => $img)
+        <img src="{{ $img->image_url }}" alt="Mosnoky" class="hero-slide @if ($index === 0) active @endif">
+    @empty
         <div class="hero-fallback"></div>
-    @endif
+    @endforelse
     <div class="hero-content">
                     <div class="hero-eyebrow">Made in Burkina Faso</div>
                     <h1>Votre style notre savoir faire.</h1>
@@ -349,5 +352,17 @@
                 © {{ date('Y') }} Mosnoky · Chaussures de luxe & maroquinerie, Made in Burkina Faso.
             </footer>
         </div>
+        <script>
+(function () {
+    const slides = document.querySelectorAll('.hero-slide');
+    if (slides.length <= 1) return;
+    let current = 0;
+    setInterval(function () {
+        slides[current].classList.remove('active');
+        current = (current + 1) % slides.length;
+        slides[current].classList.add('active');
+    }, 5000);
+})();
+</script>
     </body>
 </html>
