@@ -61,7 +61,9 @@
             .products-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
             .product-card { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--card); transition: .2s ease; }
             .product-card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,.06); }
-            .product-card .thumb { aspect-ratio: 4/3; background: #eee7dc; overflow: hidden; }
+            .product-card .thumb { position: relative; aspect-ratio: 4/3; background: #eee7dc; overflow: hidden; }
+.product-slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1.2s ease; }
+.product-slide.active { opacity: 1; }
             .product-card .thumb img { width: 100%; height: 100%; object-fit: cover; }
             .product-card .body { padding: 18px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
             .product-card h3 { margin: 0; font-size: 1.05rem; }
@@ -295,12 +297,14 @@
                             @endphp
                             <a class="product-card" href="{{ $productLink }}">
                                 <div class="thumb">
-                                    @if ($primaryImage)
-                                        <img src="{{ $primaryImage->image_url }}" alt="{{ $product->name }}">
-                                    @else
-                                        <div style="display:flex; align-items:center; justify-content:center; height:100%; color:var(--muted); font-size:.85rem;">Photo à venir</div>
-                                    @endif
-                                </div>
+    @if ($product->images->isNotEmpty())
+        @foreach ($product->images as $i => $image)
+            <img src="{{ $image->image_url }}" alt="{{ $product->name }}" class="product-slide @if ($i === 0) active @endif">
+        @endforeach
+    @else
+        <div style="display:flex; align-items:center; justify-content:center; height:100%; color:var(--muted); font-size:.85rem;">Photo à venir</div>
+    @endif
+</div>
                                 <div class="body">
                                     <h3>{{ $product->name }}</h3>
                                     <div class="rating-line">
@@ -362,6 +366,32 @@
         current = (current + 1) % slides.length;
         slides[current].classList.add('active');
     }, 5000);
+})();
+</script>
+<script>
+(function () {
+    // Diaporama du hero
+    const heroSlides = document.querySelectorAll('.hero-slide');
+    if (heroSlides.length > 1) {
+        let current = 0;
+        setInterval(function () {
+            heroSlides[current].classList.remove('active');
+            current = (current + 1) % heroSlides.length;
+            heroSlides[current].classList.add('active');
+        }, 5000);
+    }
+
+    // Diaporama de chaque carte produit
+    document.querySelectorAll('.product-card .thumb').forEach(function (thumb) {
+        const slides = thumb.querySelectorAll('.product-slide');
+        if (slides.length <= 1) return;
+        let current = 0;
+        setInterval(function () {
+            slides[current].classList.remove('active');
+            current = (current + 1) % slides.length;
+            slides[current].classList.add('active');
+        }, 5000);
+    });
 })();
 </script>
     </body>
