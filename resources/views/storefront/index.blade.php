@@ -62,8 +62,12 @@
             .product-card { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--card); transition: .2s ease; }
             .product-card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,.06); }
             .product-card .thumb { position: relative; aspect-ratio: 4/3; background: #eee7dc; overflow: hidden; }
-.product-slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1.2s ease; }
-.product-slide.active { opacity: 1; }
+.product-slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.04); transition: opacity 1.2s ease; }
+.product-slide.active { opacity: 1; animation: kenburns 6s ease-in-out forwards; }
+@keyframes kenburns { from { transform: scale(1.08); } to { transform: scale(1); } }
+.thumb-dots { position: absolute; bottom: 10px; left: 0; right: 0; display: flex; justify-content: center; gap: 6px; z-index: 2; }
+.thumb-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.55); transition: .25s ease; }
+.thumb-dot.active { background: #fff; width: 16px; border-radius: 4px; }
             .product-card .thumb img { width: 100%; height: 100%; object-fit: cover; }
             .product-card .body { padding: 18px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
             .product-card h3 { margin: 0; font-size: 1.05rem; }
@@ -296,11 +300,18 @@
                                 $productLink = auth()->check() ? route('products.show', $product) : route('login');
                             @endphp
                             <a class="product-card" href="{{ $productLink }}">
-                                <div class="thumb">
+<div class="thumb">
     @if ($product->images->isNotEmpty())
         @foreach ($product->images as $i => $image)
             <img src="{{ $image->image_url }}" alt="{{ $product->name }}" class="product-slide @if ($i === 0) active @endif">
         @endforeach
+        @if ($product->images->count() > 1)
+            <div class="thumb-dots">
+                @foreach ($product->images as $i => $image)
+                    <span class="thumb-dot @if ($i === 0) active @endif"></span>
+                @endforeach
+            </div>
+        @endif
     @else
         <div style="display:flex; align-items:center; justify-content:center; height:100%; color:var(--muted); font-size:.85rem;">Photo à venir</div>
     @endif
@@ -384,13 +395,29 @@
     // Diaporama de chaque carte produit
     document.querySelectorAll('.product-card .thumb').forEach(function (thumb) {
         const slides = thumb.querySelectorAll('.product-slide');
+        const dots = thumb.querySelectorAll('.thumb-dot');
         if (slides.length <= 1) return;
+
         let current = 0;
-        setInterval(function () {
+        let timer = null;
+
+        function next() {
             slides[current].classList.remove('active');
+            dots[current] && dots[current].classList.remove('active');
             current = (current + 1) % slides.length;
             slides[current].classList.add('active');
-        }, 5000);
+            dots[current] && dots[current].classList.add('active');
+        }
+
+        function start() {
+            timer = setInterval(next, 5000);
+        }
+
+        start();
+
+        // Pause le défilement quand on survole la carte avec la souris
+        thumb.addEventListener('mouseenter', function () { clearInterval(timer); });
+        thumb.addEventListener('mouseleave', start);
     });
 })();
 </script>
