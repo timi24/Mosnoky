@@ -325,8 +325,7 @@
                                         @else
                                             Aucun avis
                                         @endif
-                                        <span style="opacity:.5;">·</span>
-                                        {{ $product->sold_count ?? 0 }} vendu(s)
+                                        
                                     </div>
                                     <div class="price-row">
                                         <span class="price">{{ number_format($product->price, 0, ',', ' ') }} FCFA</span>
