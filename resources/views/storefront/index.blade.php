@@ -134,11 +134,14 @@
             </header>
 
             <!-- HERO VIDÉO -->
-            <section class="hero">
-                <video autoplay muted loop playsinline poster="{{ asset('a.jpeg') }}">
-                    <source src="{{ asset('videos/hero.mp4') }}" type="video/mp4">
-                </video>
-                <div class="hero-content">
+            <!-- HERO -->
+<section class="hero">
+    @if ($heroImage)
+        <img src="{{ $heroImage->image_url }}" alt="Mosnoky" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:.55;">
+    @else
+        <div class="hero-fallback"></div>
+    @endif
+    <div class="hero-content">
                     <div class="hero-eyebrow">Made in Burkina Faso</div>
                     <h1>Votre style notre savoir faire.</h1>
                     <p>Fabrication artisanale et moderne de chaussures et articles en cuir.</p>
