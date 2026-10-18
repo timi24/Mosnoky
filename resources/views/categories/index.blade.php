@@ -22,9 +22,11 @@
                                 <img src="{{ $image->image_url }}" alt="{{ $category->name }}" class="cat-slide @if ($i === 0) active @endif">
                             @endforeach
                             @if ($category->preview_images->count() > 1)
+                                <button type="button" class="cat-arrow cat-arrow-prev" aria-label="Photo précédente">‹</button>
+                                <button type="button" class="cat-arrow cat-arrow-next" aria-label="Photo suivante">›</button>
                                 <div class="cat-thumb-dots">
                                     @foreach ($category->preview_images as $i => $image)
-                                        <span class="cat-thumb-dot @if ($i === 0) active @endif"></span>
+                                        <button type="button" class="cat-thumb-dot @if ($i === 0) active @endif" data-index="{{ $i }}" aria-label="Photo {{ $i + 1 }}"></button>
                                     @endforeach
                                 </div>
                             @endif
@@ -98,6 +100,30 @@
             width: 16px;
             border-radius: 4px;
         }
+        .cat-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 30px;
+            height: 30px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(0,0,0,.35);
+            color: #fff;
+            font-size: 1.2rem;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 2;
+            opacity: 0;
+            transition: opacity .2s ease, background .2s ease;
+        }
+        .cat-card-image:hover .cat-arrow { opacity: 1; }
+        .cat-arrow:hover { background: rgba(0,0,0,.6); }
+        .cat-arrow-prev { left: 8px; }
+        .cat-arrow-next { right: 8px; }
         .cat-card-body { padding: 16px; }
     </style>
 
@@ -106,24 +132,58 @@
         document.querySelectorAll('.cat-card-image').forEach(function (thumb) {
             const slides = thumb.querySelectorAll('.cat-slide');
             const dots = thumb.querySelectorAll('.cat-thumb-dot');
+            const prevBtn = thumb.querySelector('.cat-arrow-prev');
+            const nextBtn = thumb.querySelector('.cat-arrow-next');
             if (slides.length <= 1) return;
 
             let current = 0;
             let timer = null;
 
-            function next() {
+            function show(index) {
                 slides[current].classList.remove('active');
                 dots[current] && dots[current].classList.remove('active');
-                current = (current + 1) % slides.length;
+                current = (index + slides.length) % slides.length;
                 slides[current].classList.add('active');
                 dots[current] && dots[current].classList.add('active');
             }
 
+            function next() { show(current + 1); }
+            function prev() { show(current - 1); }
+
             function start() { timer = setInterval(next, 5000); }
+            function stop() { clearInterval(timer); }
+            function restart() { stop(); start(); }
             start();
 
-            thumb.addEventListener('mouseenter', function () { clearInterval(timer); });
+            thumb.addEventListener('mouseenter', stop);
             thumb.addEventListener('mouseleave', start);
+
+            // Le client peut cliquer pour voir chaque photo lui-même, sans
+            // que ça ouvre la page de la catégorie.
+            if (prevBtn) {
+                prevBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    prev();
+                    restart();
+                });
+            }
+            if (nextBtn) {
+                nextBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    next();
+                    restart();
+                });
+            }
+            dots.forEach(function (dot) {
+                dot.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    show(parseInt(dot.dataset.index, 10));
+                    restart();
+                });
+            });
         });
     })();
     </script>

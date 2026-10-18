@@ -56,9 +56,11 @@
                                         <img src="{{ $image->image_url }}" alt="{{ $image->alternative_text ?: $product->name }}" class="product-slide @if ($i === 0) active @endif">
                                     @endforeach
                                     @if ($product->images->count() > 1)
+                                        <button type="button" class="thumb-arrow thumb-arrow-prev" aria-label="Photo précédente">‹</button>
+                                        <button type="button" class="thumb-arrow thumb-arrow-next" aria-label="Photo suivante">›</button>
                                         <div class="thumb-dots">
                                             @foreach ($product->images as $i => $image)
-                                                <span class="thumb-dot @if ($i === 0) active @endif"></span>
+                                                <button type="button" class="thumb-dot @if ($i === 0) active @endif" data-index="{{ $i }}" aria-label="Photo {{ $i + 1 }}"></button>
                                             @endforeach
                                         </div>
                                     @endif
@@ -79,7 +81,7 @@
                                     <span class="shop-muted">Aucun avis</span>
                                 @endif
                                 <span class="shop-sep">·</span>
-                            
+                                <span class="shop-muted">{{ $product->sold_count ?? 0 }} vendu(s)</span>
                             </div>
                             <div class="shop-card-footer">
                                 <span class="shop-price">{{ number_format($product->price, 0, ',', ' ') }} FCFA</span>
@@ -98,7 +100,6 @@
             margin-top: 6px;
             border-radius: 18px;
             overflow: hidden;
-            
             min-height: 300px;
             display: flex;
             align-items: center;
@@ -149,6 +150,30 @@
         .thumb-dots { position: absolute; bottom: 10px; left: 0; right: 0; display: flex; justify-content: center; gap: 6px; z-index: 2; }
         .thumb-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.55); transition: .25s ease; }
         .thumb-dot.active { background: #fff; width: 16px; border-radius: 4px; }
+        .thumb-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 30px;
+            height: 30px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(0,0,0,.35);
+            color: #fff;
+            font-size: 1.2rem;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 2;
+            opacity: 0;
+            transition: opacity .2s ease, background .2s ease;
+        }
+        .shop-card-image:hover .thumb-arrow { opacity: 1; }
+        .thumb-arrow:hover { background: rgba(0,0,0,.6); }
+        .thumb-arrow-prev { left: 8px; }
+        .thumb-arrow-next { right: 8px; }
 
         @media (max-width: 900px) {
             .dash-stats { grid-template-columns: repeat(2, 1fr); }
@@ -165,24 +190,58 @@
         document.querySelectorAll('.shop-card-image').forEach(function (thumb) {
             const slides = thumb.querySelectorAll('.product-slide');
             const dots = thumb.querySelectorAll('.thumb-dot');
+            const prevBtn = thumb.querySelector('.thumb-arrow-prev');
+            const nextBtn = thumb.querySelector('.thumb-arrow-next');
             if (slides.length <= 1) return;
 
             let current = 0;
             let timer = null;
 
-            function next() {
+            function show(index) {
                 slides[current].classList.remove('active');
                 dots[current] && dots[current].classList.remove('active');
-                current = (current + 1) % slides.length;
+                current = (index + slides.length) % slides.length;
                 slides[current].classList.add('active');
                 dots[current] && dots[current].classList.add('active');
             }
 
+            function next() { show(current + 1); }
+            function prev() { show(current - 1); }
+
             function start() { timer = setInterval(next, 5000); }
+            function stop() { clearInterval(timer); }
+            function restart() { stop(); start(); }
             start();
 
-            thumb.addEventListener('mouseenter', function () { clearInterval(timer); });
+            thumb.addEventListener('mouseenter', stop);
             thumb.addEventListener('mouseleave', start);
+
+            // Le client peut cliquer pour voir chaque photo lui-même, sans
+            // que ça ouvre la page du produit.
+            if (prevBtn) {
+                prevBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    prev();
+                    restart();
+                });
+            }
+            if (nextBtn) {
+                nextBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    next();
+                    restart();
+                });
+            }
+            dots.forEach(function (dot) {
+                dot.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    show(parseInt(dot.dataset.index, 10));
+                    restart();
+                });
+            });
         });
     })();
     </script>

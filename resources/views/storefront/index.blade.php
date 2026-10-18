@@ -30,7 +30,7 @@
             .hero video, .hero .hero-fallback { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .55; }
             .hero-fallback { background: linear-gradient(135deg, #221f1d, #3a332c); }
             .hero-slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1.2s ease; }
-.hero-slide.active { opacity: .55; }
+            .hero-slide.active { opacity: .55; }
             .hero-content { position: relative; z-index: 2; padding: 60px; color: #fff; max-width: 640px; }
             .hero-eyebrow { color: #f0b8ac; font-size: .8rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
             .hero h1 { font-family: Georgia, serif; font-size: clamp(2.4rem, 5vw, 3.6rem); font-weight: 400; line-height: 1.05; margin: 16px 0 20px; }
@@ -38,6 +38,33 @@
             .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
             .button.on-dark { border-color: rgba(255,255,255,.4); color: #fff; }
             .button.on-dark:hover { border-color: #fff; }
+            .hero-arrow {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 44px;
+                height: 44px;
+                border: none;
+                border-radius: 50%;
+                background: rgba(0,0,0,.35);
+                color: #fff;
+                font-size: 1.6rem;
+                line-height: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                z-index: 3;
+                opacity: 0;
+                transition: opacity .2s ease, background .2s ease;
+            }
+            .hero:hover .hero-arrow { opacity: 1; }
+            .hero-arrow:hover { background: rgba(0,0,0,.6); }
+            .hero-arrow-prev { left: 16px; }
+            .hero-arrow-next { right: 16px; }
+            .hero-dots { position: absolute; bottom: 18px; left: 0; right: 0; display: flex; justify-content: center; gap: 8px; z-index: 3; }
+            .hero-dot { width: 8px; height: 8px; border-radius: 50%; border: none; background: rgba(255,255,255,.55); cursor: pointer; transition: .25s ease; padding: 0; }
+            .hero-dot.active { background: #fff; width: 22px; border-radius: 4px; }
 
             /* Sections génériques */
             section.block { padding: 70px 0; }
@@ -62,12 +89,36 @@
             .product-card { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--card); transition: .2s ease; }
             .product-card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,.06); }
             .product-card .thumb { position: relative; aspect-ratio: 4/3; background: #eee7dc; overflow: hidden; }
-.product-slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.04); transition: opacity 1.2s ease; }
-.product-slide.active { opacity: 1; animation: kenburns 6s ease-in-out forwards; }
-@keyframes kenburns { from { transform: scale(1.08); } to { transform: scale(1); } }
-.thumb-dots { position: absolute; bottom: 10px; left: 0; right: 0; display: flex; justify-content: center; gap: 6px; z-index: 2; }
-.thumb-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.55); transition: .25s ease; }
-.thumb-dot.active { background: #fff; width: 16px; border-radius: 4px; }
+            .product-slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.04); transition: opacity 1.2s ease; }
+            .product-slide.active { opacity: 1; animation: kenburns 6s ease-in-out forwards; }
+            @keyframes kenburns { from { transform: scale(1.08); } to { transform: scale(1); } }
+            .thumb-dots { position: absolute; bottom: 10px; left: 0; right: 0; display: flex; justify-content: center; gap: 6px; z-index: 2; }
+            .thumb-dot { width: 6px; height: 6px; border-radius: 50%; border: none; background: rgba(255,255,255,.55); cursor: pointer; padding: 0; transition: .25s ease; }
+            .thumb-dot.active { background: #fff; width: 16px; border-radius: 4px; }
+            .thumb-arrow {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 30px;
+                height: 30px;
+                border: none;
+                border-radius: 50%;
+                background: rgba(0,0,0,.35);
+                color: #fff;
+                font-size: 1.2rem;
+                line-height: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                z-index: 2;
+                opacity: 0;
+                transition: opacity .2s ease, background .2s ease;
+            }
+            .product-card .thumb:hover .thumb-arrow { opacity: 1; }
+            .thumb-arrow:hover { background: rgba(0,0,0,.6); }
+            .thumb-arrow-prev { left: 8px; }
+            .thumb-arrow-next { right: 8px; }
             .product-card .thumb img { width: 100%; height: 100%; object-fit: cover; }
             .product-card .body { padding: 18px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
             .product-card h3 { margin: 0; font-size: 1.05rem; }
@@ -141,16 +192,23 @@
                 @endauth
             </header>
 
-            <!-- HERO VIDÉO -->
             <!-- HERO -->
-<!-- HERO -->
-<section class="hero">
-    @forelse ($heroImages as $index => $img)
-        <img src="{{ $img->image_url }}" alt="Mosnoky" class="hero-slide @if ($index === 0) active @endif">
-    @empty
-        <div class="hero-fallback"></div>
-    @endforelse
-    <div class="hero-content">
+            <section class="hero">
+                @forelse ($heroImages as $index => $img)
+                    <img src="{{ $img->image_url }}" alt="Mosnoky" class="hero-slide @if ($index === 0) active @endif">
+                @empty
+                    <div class="hero-fallback"></div>
+                @endforelse
+                @if ($heroImages->count() > 1)
+                    <button type="button" class="hero-arrow hero-arrow-prev" aria-label="Photo précédente">‹</button>
+                    <button type="button" class="hero-arrow hero-arrow-next" aria-label="Photo suivante">›</button>
+                    <div class="hero-dots">
+                        @foreach ($heroImages as $index => $img)
+                            <button type="button" class="hero-dot @if ($index === 0) active @endif" data-index="{{ $index }}" aria-label="Photo {{ $index + 1 }}"></button>
+                        @endforeach
+                    </div>
+                @endif
+                <div class="hero-content">
                     <div class="hero-eyebrow">Made in Burkina Faso</div>
                     <h1>Votre style notre savoir faire.</h1>
                     <p>Fabrication artisanale et moderne de chaussures et articles en cuir.</p>
@@ -300,22 +358,24 @@
                                 $productLink = auth()->check() ? route('products.show', $product) : route('login');
                             @endphp
                             <a class="product-card" href="{{ $productLink }}">
-<div class="thumb">
-    @if ($product->images->isNotEmpty())
-        @foreach ($product->images as $i => $image)
-            <img src="{{ $image->image_url }}" alt="{{ $product->name }}" class="product-slide @if ($i === 0) active @endif">
-        @endforeach
-        @if ($product->images->count() > 1)
-            <div class="thumb-dots">
-                @foreach ($product->images as $i => $image)
-                    <span class="thumb-dot @if ($i === 0) active @endif"></span>
-                @endforeach
-            </div>
-        @endif
-    @else
-        <div style="display:flex; align-items:center; justify-content:center; height:100%; color:var(--muted); font-size:.85rem;">Photo à venir</div>
-    @endif
-</div>
+                                <div class="thumb">
+                                    @if ($product->images->isNotEmpty())
+                                        @foreach ($product->images as $i => $image)
+                                            <img src="{{ $image->image_url }}" alt="{{ $product->name }}" class="product-slide @if ($i === 0) active @endif">
+                                        @endforeach
+                                        @if ($product->images->count() > 1)
+                                            <button type="button" class="thumb-arrow thumb-arrow-prev" aria-label="Photo précédente">‹</button>
+                                            <button type="button" class="thumb-arrow thumb-arrow-next" aria-label="Photo suivante">›</button>
+                                            <div class="thumb-dots">
+                                                @foreach ($product->images as $i => $image)
+                                                    <button type="button" class="thumb-dot @if ($i === 0) active @endif" data-index="{{ $i }}" aria-label="Photo {{ $i + 1 }}"></button>
+                                                @endforeach
+                                            </div>
+                                        @endif
+                                    @else
+                                        <div style="display:flex; align-items:center; justify-content:center; height:100%; color:var(--muted); font-size:.85rem;">Photo à venir</div>
+                                    @endif
+                                </div>
                                 <div class="body">
                                     <h3>{{ $product->name }}</h3>
                                     <div class="rating-line">
@@ -325,7 +385,7 @@
                                         @else
                                             Aucun avis
                                         @endif
-                                        
+
                                     </div>
                                     <div class="price-row">
                                         <span class="price">{{ number_format($product->price, 0, ',', ' ') }} FCFA</span>
@@ -368,55 +428,72 @@
         </div>
         <script>
 (function () {
-    const slides = document.querySelectorAll('.hero-slide');
-    if (slides.length <= 1) return;
-    let current = 0;
-    setInterval(function () {
-        slides[current].classList.remove('active');
-        current = (current + 1) % slides.length;
-        slides[current].classList.add('active');
-    }, 5000);
-})();
-</script>
-<script>
-(function () {
-    // Diaporama du hero
-    const heroSlides = document.querySelectorAll('.hero-slide');
-    if (heroSlides.length > 1) {
-        let current = 0;
-        setInterval(function () {
-            heroSlides[current].classList.remove('active');
-            current = (current + 1) % heroSlides.length;
-            heroSlides[current].classList.add('active');
-        }, 5000);
-    }
-
-    // Diaporama de chaque carte produit
-    document.querySelectorAll('.product-card .thumb').forEach(function (thumb) {
-        const slides = thumb.querySelectorAll('.product-slide');
-        const dots = thumb.querySelectorAll('.thumb-dot');
+    function setupSlideshow(container, slideSelector, dotSelector, prevSelector, nextSelector) {
+        const slides = container.querySelectorAll(slideSelector);
+        const dots = dotSelector ? container.querySelectorAll(dotSelector) : [];
+        const prevBtn = prevSelector ? container.querySelector(prevSelector) : null;
+        const nextBtn = nextSelector ? container.querySelector(nextSelector) : null;
         if (slides.length <= 1) return;
 
         let current = 0;
         let timer = null;
 
-        function next() {
+        function show(index) {
             slides[current].classList.remove('active');
             dots[current] && dots[current].classList.remove('active');
-            current = (current + 1) % slides.length;
+            current = (index + slides.length) % slides.length;
             slides[current].classList.add('active');
             dots[current] && dots[current].classList.add('active');
         }
 
-        function start() {
-            timer = setInterval(next, 5000);
-        }
+        function next() { show(current + 1); }
+        function prev() { show(current - 1); }
 
+        function start() { timer = setInterval(next, 5000); }
+        function stop() { clearInterval(timer); }
+        function restart() { stop(); start(); }
         start();
 
-        // Pause le défilement quand on survole la carte avec la souris
-        thumb.addEventListener('mouseenter', function () { clearInterval(timer); });
-        thumb.addEventListener('mouseleave', start);
+        container.addEventListener('mouseenter', stop);
+        container.addEventListener('mouseleave', start);
+
+        // Le client peut cliquer pour voir chaque photo lui-même, sans que
+        // ça déclenche le lien de la carte en dessous.
+        if (prevBtn) {
+            prevBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                prev();
+                restart();
+            });
+        }
+        if (nextBtn) {
+            nextBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                next();
+                restart();
+            });
+        }
+        dots.forEach(function (dot) {
+            dot.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                show(parseInt(dot.dataset.index, 10));
+                restart();
+            });
+        });
+    }
+
+    // Diaporama du hero
+    const hero = document.querySelector('.hero');
+    if (hero) {
+        setupSlideshow(hero, '.hero-slide', '.hero-dot', '.hero-arrow-prev', '.hero-arrow-next');
+    }
+
+    // Diaporama de chaque carte produit
+    document.querySelectorAll('.product-card .thumb').forEach(function (thumb) {
+        setupSlideshow(thumb, '.product-slide', '.thumb-dot', '.thumb-arrow-prev', '.thumb-arrow-next');
     });
 })();
 </script>
