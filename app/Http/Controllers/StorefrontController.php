@@ -24,7 +24,7 @@ class StorefrontController extends Controller
             ->get();
 
         // Diaporama du hero : plusieurs photos de produits choisies au
-        // hasard, qui défilent côté client toutes les 5 secondes.
+        // hasard, qui défilent côté client toutes les 3 secondes.
         $heroImages = ProductImage::whereHas('product', function ($q) {
             $q->where('status', 'ACTIF');
         })->inRandomOrder()->limit(8)->get();

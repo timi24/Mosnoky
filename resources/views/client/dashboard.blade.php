@@ -51,8 +51,17 @@
                     <article class="shop-card">
                         <a href="{{ route('products.show', $product) }}">
                             <div class="shop-card-image">
-                                @if ($product->image_url)
-                                    <img src="{{ $product->image_url }}" alt="{{ $product->alternative_text ?: $product->name }}">
+                                @if ($product->images->isNotEmpty())
+                                    @foreach ($product->images as $i => $image)
+                                        <img src="{{ $image->image_url }}" alt="{{ $image->alternative_text ?: $product->name }}" class="product-slide @if ($i === 0) active @endif">
+                                    @endforeach
+                                    @if ($product->images->count() > 1)
+                                        <div class="thumb-dots">
+                                            @foreach ($product->images as $i => $image)
+                                                <span class="thumb-dot @if ($i === 0) active @endif"></span>
+                                            @endforeach
+                                        </div>
+                                    @endif
                                 @else
                                     <span class="shop-no-image">Photo à venir</span>
                                 @endif
@@ -73,7 +82,7 @@
                                 <span class="shop-muted">{{ $product->sold_count ?? 0 }} vendu(s)</span>
                             </div>
                             <div class="shop-card-footer">
-
+                                <span class="shop-price">{{ number_format($product->price, 0, ',', ' ') }} FCFA</span>
                                 <a href="{{ route('products.show', $product) }}" class="button primary small">Choisir le modèle</a>
                             </div>
                         </div>
@@ -119,7 +128,7 @@
         .shop-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
         .shop-card { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--card); transition: .2s ease; }
         .shop-card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,.06); }
-        .shop-card-image { aspect-ratio: 4/3; background: #eee7dc; overflow: hidden; }
+        .shop-card-image { position: relative; aspect-ratio: 4/3; background: #eee7dc; overflow: hidden; }
         .shop-card-image img { width: 100%; height: 100%; object-fit: cover; }
         .shop-no-image { display: flex; align-items: center; justify-content: center; height: 100%; color: var(--muted); font-size: .85rem; }
         .shop-card-body { padding: 16px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
@@ -132,6 +141,14 @@
         .shop-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: auto; padding-top: 8px; }
         .shop-price { font-weight: 800; font-size: 1.05rem; color: var(--accent); }
 
+        /* Diaporama des photos produit (même principe que la page d'accueil) */
+        .product-slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.04); transition: opacity 1.2s ease; }
+        .product-slide.active { opacity: 1; animation: kenburns 6s ease-in-out forwards; }
+        @keyframes kenburns { from { transform: scale(1.08); } to { transform: scale(1); } }
+        .thumb-dots { position: absolute; bottom: 10px; left: 0; right: 0; display: flex; justify-content: center; gap: 6px; z-index: 2; }
+        .thumb-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.55); transition: .25s ease; }
+        .thumb-dot.active { background: #fff; width: 16px; border-radius: 4px; }
+
         @media (max-width: 900px) {
             .dash-stats { grid-template-columns: repeat(2, 1fr); }
             .shop-grid { grid-template-columns: repeat(2, 1fr); }
@@ -141,4 +158,31 @@
             .shop-grid { grid-template-columns: 1fr; }
         }
     </style>
+
+    <script>
+    (function () {
+        document.querySelectorAll('.shop-card-image').forEach(function (thumb) {
+            const slides = thumb.querySelectorAll('.product-slide');
+            const dots = thumb.querySelectorAll('.thumb-dot');
+            if (slides.length <= 1) return;
+
+            let current = 0;
+            let timer = null;
+
+            function next() {
+                slides[current].classList.remove('active');
+                dots[current] && dots[current].classList.remove('active');
+                current = (current + 1) % slides.length;
+                slides[current].classList.add('active');
+                dots[current] && dots[current].classList.add('active');
+            }
+
+            function start() { timer = setInterval(next, 5000); }
+            start();
+
+            thumb.addEventListener('mouseenter', function () { clearInterval(timer); });
+            thumb.addEventListener('mouseleave', start);
+        });
+    })();
+    </script>
 @endsection
