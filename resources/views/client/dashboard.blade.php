@@ -79,10 +79,10 @@
                                     <span class="shop-muted">Aucun avis</span>
                                 @endif
                                 <span class="shop-sep">·</span>
-                                <span class="shop-muted">{{ $product->sold_count ?? 0 }} vendu(s)</span>
+                            
                             </div>
                             <div class="shop-card-footer">
-                                
+                                <span class="shop-price">{{ number_format($product->price, 0, ',', ' ') }} FCFA</span>
                                 <a href="{{ route('products.show', $product) }}" class="button primary small">Choisir le modèle</a>
                             </div>
                         </div>
