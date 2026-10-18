@@ -98,6 +98,7 @@
             margin-top: 6px;
             border-radius: 18px;
             overflow: hidden;
+            
             min-height: 300px;
             display: flex;
             align-items: center;

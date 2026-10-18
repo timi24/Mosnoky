@@ -11,8 +11,19 @@ class CategoryController extends Controller
     {
         $categories = Category::where('is_active', true)
             ->withCount('products')
+            ->with(['products' => function ($q) {
+                $q->where('status', 'ACTIF')->with('images')->latest()->limit(6);
+            }])
             ->orderBy('name')
-            ->get();
+            ->get()
+            ->each(function ($category) {
+                // Photos à faire défiler dans la carte catégorie : on prend les
+                // photos des produits de la catégorie, toutes marques confondues.
+                $category->preview_images = $category->products
+                    ->flatMap->images
+                    ->take(8)
+                    ->values();
+            });
 
         return view('categories.index', [
             'categories' => $categories,
