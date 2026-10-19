@@ -54,6 +54,48 @@
             </p>
         </div>
 
+        @php
+            $orangeShot = file_exists(public_path('images/paiement/orange-sms.jpg')) ? asset('images/paiement/orange-sms.jpg') : null;
+            $moovShot = file_exists(public_path('images/paiement/moov-sms.jpg')) ? asset('images/paiement/moov-sms.jpg') : null;
+        @endphp
+        <div class="panel pay-box">
+            <h3 style="margin:0 0 6px;">Exemple : où trouver ma référence ?</h3>
+            <p class="pay-muted" style="margin:0 0 14px; font-size:.85rem;">
+                Après votre transfert, vous recevez un SMS de confirmation. Copiez-y la référence (« ID Trans ») et reportez-la plus bas, avec le point et les lettres.
+            </p>
+            <div class="pay-examples">
+                <div class="pay-example">
+                    <span class="pill">Orange Money</span>
+                    @if ($orangeShot)
+                        <img src="{{ $orangeShot }}" alt="Exemple de SMS Orange Money" class="pay-shot">
+                    @else
+                        <div class="sms-mock">
+                            @php $orangeDigits = $orangeNumber ? substr(preg_replace('/\D/', '', $orangeNumber), -8) : '••••••••'; @endphp
+                            <div class="sms-from">OrangeMoney</div>
+                            <p>Cher client, vous avez transfere <b>{{ number_format($payment->amount, 2, '.', '') }} FCFA</b>, Frais: 0.0 FCFA, Taxe: FCFA au numero <b>{{ $orangeDigits }},{{ strtoupper($accountName) }}</b>. Votre solde est de ••• FCFA. ID Trans: <mark>PP261018.2238.45373385</mark>. Pour toute reclamation contactez par appel le 127 ou whatsapp 07000121. Orange Money BF</p>
+                        </div>
+                    @endif
+                </div>
+                <div class="pay-example">
+                    <span class="pill muted">Moov Money</span>
+                    @if ($moovShot)
+                        <img src="{{ $moovShot }}" alt="Exemple de SMS Moov Money" class="pay-shot">
+                    @else
+                        <div class="sms-mock">
+                            <div class="sms-from">Moov Money</div>
+                            <p>Après votre transfert vers <b>{{ $accountName }}</b> ({{ $moovNumber ?: '•• •• •• ••' }}), Moov Money vous envoie un SMS de confirmation.</p>
+                            <p>Repérez dans ce SMS le numéro de <mark>référence / ID de transaction</mark> et recopiez-le tel quel.</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
+            @if (! $orangeShot || ! $moovShot)
+                <p class="pay-muted" style="margin:12px 0 0; font-size:.78rem;">
+                    La référence à copier est la partie surlignée. Le texte exact du SMS peut varier légèrement selon l'opérateur.
+                </p>
+            @endif
+        </div>
+
         <div class="panel pay-box">
             <h3 style="margin:0 0 14px;">2. Déclarez votre paiement</h3>
 
@@ -82,8 +124,8 @@
                 </div>
 
                 <div class="field">
-                    <label for="customer_reference">Référence de la transaction (reçue par SMS)</label>
-                    <input type="text" id="customer_reference" name="customer_reference" value="{{ old('customer_reference') }}" placeholder="Ex. MP240101.1234.A12345" autocomplete="off" required>
+                    <label for="customer_reference">Référence de la transaction (« ID Trans » dans le SMS)</label>
+                    <input type="text" id="customer_reference" name="customer_reference" value="{{ old('customer_reference') }}" placeholder="Ex. PP261018.2238.45373385" autocomplete="off" required>
                     @error('customer_reference') <div class="error">{{ $message }}</div> @enderror
                 </div>
 
@@ -105,6 +147,13 @@
         .pay-choice { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border: 1px solid var(--line); border-radius: 999px; cursor: pointer; font-weight: 700; font-size: .9rem; }
         .pay-choice:has(input:checked) { border-color: var(--accent); color: var(--accent); }
         .field input[type=text] { max-width: 420px; }
-        @media (max-width: 600px) { .pay-numbers { grid-template-columns: 1fr; } }
+        .pay-examples { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+        .pay-example { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+        .pay-shot { width: 100%; max-width: 260px; border: 1px solid var(--line); border-radius: 12px; }
+        .sms-mock { width: 100%; max-width: 300px; padding: 12px 14px; border-radius: 14px 14px 14px 4px; background: var(--paper); border: 1px solid var(--line); font-size: .85rem; line-height: 1.5; }
+        .sms-mock p { margin: 0 0 6px; }
+        .sms-mock .sms-from { font-size: .72rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+        .sms-mock mark { background: #fff1b8; color: var(--ink); padding: 1px 5px; border-radius: 4px; font-weight: 800; }
+        @media (max-width: 600px) { .pay-numbers, .pay-examples { grid-template-columns: 1fr; } }
     </style>
 @endsection
