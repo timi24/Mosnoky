@@ -81,7 +81,7 @@
                                     <span class="shop-muted">Aucun avis</span>
                                 @endif
                                 <span class="shop-sep">·</span>
-                               
+                                <span class="shop-muted">{{ $product->sold_count ?? 0 }} vendu(s)</span>
                             </div>
                             <div class="shop-card-footer">
                                 <span class="shop-price">{{ number_format($product->price, 0, ',', ' ') }} FCFA</span>
@@ -148,17 +148,23 @@
         .product-slide.active { opacity: 1; animation: kenburns 6s ease-in-out forwards; }
         @keyframes kenburns { from { transform: scale(1.08); } to { transform: scale(1); } }
         .thumb-dots { position: absolute; bottom: 10px; left: 0; right: 0; display: flex; justify-content: center; gap: 6px; z-index: 2; }
-        .thumb-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.55); transition: .25s ease; }
-        .thumb-dot.active { background: #fff; width: 16px; border-radius: 4px; }
+        .thumb-dot { position: relative; overflow: hidden; width: 6px; height: 6px; border-radius: 999px; border: none; background: rgba(255,255,255,.55); cursor: pointer; padding: 0; transition: width .3s ease, background .3s ease; }
+        .thumb-dot.active { background: rgba(255,255,255,.45); width: 22px; }
+        /* La barre se remplit pendant les 5 secondes de la photo */
+        .thumb-dot.active::after { content: ""; position: absolute; inset: 0; background: #fff; transform-origin: left; animation: slide-progress 5s linear forwards; }
+        .shop-card-image:hover .thumb-dot.active::after { animation-play-state: paused; }
+        @keyframes slide-progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
         .thumb-arrow {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            width: 30px;
-            height: 30px;
-            border: none;
+            width: 34px;
+            height: 34px;
+            border: 1px solid rgba(255,255,255,.35);
             border-radius: 50%;
-            background: rgba(0,0,0,.35);
+            background: rgba(255,255,255,.16);
+            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
             color: #fff;
             font-size: 1.2rem;
             line-height: 1;
@@ -168,10 +174,19 @@
             cursor: pointer;
             z-index: 2;
             opacity: 0;
-            transition: opacity .2s ease, background .2s ease;
+            transition: opacity .25s ease, background .2s ease;
         }
-        .shop-card-image:hover .thumb-arrow { opacity: 1; }
-        .thumb-arrow:hover { background: rgba(0,0,0,.6); }
+        .shop-card-image:hover .thumb-arrow, .thumb-arrow:focus-visible { opacity: 1; }
+        .thumb-arrow:hover { background: rgba(255,255,255,.3); }
+        /* Sur téléphone/tablette il n'y a pas de survol : les flèches restent visibles */
+        @media (hover: none) { .thumb-arrow { opacity: 1; } }
+        .product-slide { will-change: opacity, transform; }
+        .shop-card-image { touch-action: pan-y; }
+        @media (prefers-reduced-motion: reduce) {
+            .product-slide.active { animation: none; transform: none; }
+            .product-slide { transition-duration: .01s; }
+            .thumb-dot.active::after { animation: none; transform: scaleX(1); }
+        }
         .thumb-arrow-prev { left: 8px; }
         .thumb-arrow-next { right: 8px; }
 
@@ -208,13 +223,41 @@
             function next() { show(current + 1); }
             function prev() { show(current - 1); }
 
-            function start() { timer = setInterval(next, 5000); }
+            function start() { stop(); timer = setInterval(next, 5000); }
             function stop() { clearInterval(timer); }
             function restart() { stop(); start(); }
             start();
 
-            thumb.addEventListener('mouseenter', stop);
-            thumb.addEventListener('mouseleave', start);
+            // Pause au survol de la souris seulement (sur téléphone, le "survol"
+            // resterait bloqué après un toucher et arrêterait le défilement).
+            thumb.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') stop(); });
+            thumb.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') start(); });
+
+            // On économise la batterie quand l'onglet n'est pas visible
+            document.addEventListener('visibilitychange', function () {
+                if (document.hidden) { stop(); } else { start(); }
+            });
+
+            // Glisser du doigt (gauche/droite) pour changer de photo
+            let startX = 0, startY = 0, swiped = false;
+            thumb.addEventListener('touchstart', function (e) {
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+                swiped = false;
+            }, { passive: true });
+            thumb.addEventListener('touchend', function (e) {
+                const dx = e.changedTouches[0].clientX - startX;
+                const dy = e.changedTouches[0].clientY - startY;
+                if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+                    swiped = true;
+                    dx < 0 ? next() : prev();
+                    restart();
+                }
+            }, { passive: true });
+            // Un glissement ne doit pas ouvrir la page du produit
+            thumb.addEventListener('click', function (e) {
+                if (swiped) { e.preventDefault(); e.stopPropagation(); swiped = false; }
+            }, true);
 
             // Le client peut cliquer pour voir chaque photo lui-même, sans
             // que ça ouvre la page du produit.

@@ -38,17 +38,20 @@
             .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
             .button.on-dark { border-color: rgba(255,255,255,.4); color: #fff; }
             .button.on-dark:hover { border-color: #fff; }
+            /* Flèches style "verre dépoli" */
             .hero-arrow {
                 position: absolute;
                 top: 50%;
                 transform: translateY(-50%);
-                width: 44px;
-                height: 44px;
-                border: none;
+                width: 48px;
+                height: 48px;
+                border: 1px solid rgba(255,255,255,.35);
                 border-radius: 50%;
-                background: rgba(0,0,0,.35);
+                background: rgba(255,255,255,.14);
+                -webkit-backdrop-filter: blur(10px);
+                backdrop-filter: blur(10px);
                 color: #fff;
-                font-size: 1.6rem;
+                font-size: 1.5rem;
                 line-height: 1;
                 display: flex;
                 align-items: center;
@@ -56,15 +59,19 @@
                 cursor: pointer;
                 z-index: 3;
                 opacity: 0;
-                transition: opacity .2s ease, background .2s ease;
+                transition: opacity .25s ease, background .2s ease, transform .2s ease;
             }
-            .hero:hover .hero-arrow { opacity: 1; }
-            .hero-arrow:hover { background: rgba(0,0,0,.6); }
+            .hero:hover .hero-arrow, .hero-arrow:focus-visible { opacity: 1; }
+            .hero-arrow:hover { background: rgba(255,255,255,.28); transform: translateY(-50%) scale(1.06); }
             .hero-arrow-prev { left: 16px; }
             .hero-arrow-next { right: 16px; }
-            .hero-dots { position: absolute; bottom: 18px; left: 0; right: 0; display: flex; justify-content: center; gap: 8px; z-index: 3; }
-            .hero-dot { width: 8px; height: 8px; border-radius: 50%; border: none; background: rgba(255,255,255,.55); cursor: pointer; transition: .25s ease; padding: 0; }
-            .hero-dot.active { background: #fff; width: 22px; border-radius: 4px; }
+            .hero-dots { position: absolute; bottom: 20px; left: 0; right: 0; display: flex; justify-content: center; gap: 8px; z-index: 3; }
+            .hero-dot { position: relative; overflow: hidden; width: 8px; height: 8px; border-radius: 999px; border: none; background: rgba(255,255,255,.5); cursor: pointer; transition: width .3s ease, background .3s ease; padding: 0; }
+            .hero-dot.active { background: rgba(255,255,255,.45); width: 34px; }
+            /* La barre se remplit pendant les 5 secondes de la photo */
+            .hero-dot.active::after { content: ""; position: absolute; inset: 0; background: #fff; transform-origin: left; animation: slide-progress 5s linear forwards; }
+            .hero:hover .hero-dot.active::after { animation-play-state: paused; }
+            @keyframes slide-progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 
             /* Sections génériques */
             section.block { padding: 70px 0; }
@@ -93,17 +100,21 @@
             .product-slide.active { opacity: 1; animation: kenburns 6s ease-in-out forwards; }
             @keyframes kenburns { from { transform: scale(1.08); } to { transform: scale(1); } }
             .thumb-dots { position: absolute; bottom: 10px; left: 0; right: 0; display: flex; justify-content: center; gap: 6px; z-index: 2; }
-            .thumb-dot { width: 6px; height: 6px; border-radius: 50%; border: none; background: rgba(255,255,255,.55); cursor: pointer; padding: 0; transition: .25s ease; }
-            .thumb-dot.active { background: #fff; width: 16px; border-radius: 4px; }
+            .thumb-dot { position: relative; overflow: hidden; width: 6px; height: 6px; border-radius: 999px; border: none; background: rgba(255,255,255,.55); cursor: pointer; padding: 0; transition: width .3s ease, background .3s ease; }
+            .thumb-dot.active { background: rgba(255,255,255,.45); width: 22px; }
+            .thumb-dot.active::after { content: ""; position: absolute; inset: 0; background: #fff; transform-origin: left; animation: slide-progress 5s linear forwards; }
+            .product-card .thumb:hover .thumb-dot.active::after { animation-play-state: paused; }
             .thumb-arrow {
                 position: absolute;
                 top: 50%;
                 transform: translateY(-50%);
-                width: 30px;
-                height: 30px;
-                border: none;
+                width: 34px;
+                height: 34px;
+                border: 1px solid rgba(255,255,255,.35);
                 border-radius: 50%;
-                background: rgba(0,0,0,.35);
+                background: rgba(255,255,255,.16);
+                -webkit-backdrop-filter: blur(8px);
+                backdrop-filter: blur(8px);
                 color: #fff;
                 font-size: 1.2rem;
                 line-height: 1;
@@ -113,10 +124,10 @@
                 cursor: pointer;
                 z-index: 2;
                 opacity: 0;
-                transition: opacity .2s ease, background .2s ease;
+                transition: opacity .25s ease, background .2s ease;
             }
-            .product-card .thumb:hover .thumb-arrow { opacity: 1; }
-            .thumb-arrow:hover { background: rgba(0,0,0,.6); }
+            .product-card .thumb:hover .thumb-arrow, .thumb-arrow:focus-visible { opacity: 1; }
+            .thumb-arrow:hover { background: rgba(255,255,255,.3); }
             .thumb-arrow-prev { left: 8px; }
             .thumb-arrow-next { right: 8px; }
             .product-card .thumb img { width: 100%; height: 100%; object-fit: cover; }
@@ -135,6 +146,20 @@
             .contact-line .icon { width: 18px; height: 18px; fill: currentColor; flex-shrink: 0; opacity: .85; }
             .contact-line a:hover { color: #f0b8ac; }
             footer.site-footer { padding: 24px 0 50px; color: var(--muted); font-size: .85rem; text-align: center; }
+
+            /* Sur téléphone/tablette il n'y a pas de survol : les flèches restent visibles */
+            @media (hover: none) {
+                .hero-arrow, .thumb-arrow { opacity: 1; }
+                .hero-arrow { width: 40px; height: 40px; }
+            }
+            .hero-slide, .product-slide { will-change: opacity, transform; }
+            .hero, .product-card .thumb { touch-action: pan-y; }
+            /* Respect des personnes qui désactivent les animations sur leur appareil */
+            @media (prefers-reduced-motion: reduce) {
+                .product-slide.active { animation: none; transform: none; }
+                .hero-slide, .product-slide { transition-duration: .01s; }
+                .hero-dot.active::after, .thumb-dot.active::after { animation: none; transform: scaleX(1); }
+            }
 
             @media (max-width: 900px) {
                 .about-grid, .services-grid, .products-grid, .contact-grid { grid-template-columns: 1fr; }
@@ -449,13 +474,47 @@
         function next() { show(current + 1); }
         function prev() { show(current - 1); }
 
-        function start() { timer = setInterval(next, 5000); }
+        function start() { stop(); timer = setInterval(next, 5000); }
         function stop() { clearInterval(timer); }
         function restart() { stop(); start(); }
         start();
 
-        container.addEventListener('mouseenter', stop);
-        container.addEventListener('mouseleave', start);
+        // Pause au survol de la souris seulement (sur téléphone, le "survol"
+        // resterait bloqué après un toucher et arrêterait le défilement).
+        container.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') stop(); });
+        container.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') start(); });
+
+        // On économise la batterie quand l'onglet n'est pas visible
+        document.addEventListener('visibilitychange', function () {
+            if (document.hidden) { stop(); } else { start(); }
+        });
+
+        // Glisser du doigt (gauche/droite) pour changer de photo
+        let startX = 0, startY = 0, swiped = false;
+        container.addEventListener('touchstart', function (e) {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            swiped = false;
+        }, { passive: true });
+        container.addEventListener('touchend', function (e) {
+            const dx = e.changedTouches[0].clientX - startX;
+            const dy = e.changedTouches[0].clientY - startY;
+            if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+                swiped = true;
+                dx < 0 ? next() : prev();
+                restart();
+            }
+        }, { passive: true });
+        // Un glissement ne doit pas ouvrir la page du produit
+        container.addEventListener('click', function (e) {
+            if (swiped) { e.preventDefault(); e.stopPropagation(); swiped = false; }
+        }, true);
+
+        // Flèches du clavier quand une flèche/un point a le focus
+        container.addEventListener('keydown', function (e) {
+            if (e.key === 'ArrowRight') { next(); restart(); }
+            if (e.key === 'ArrowLeft') { prev(); restart(); }
+        });
 
         // Le client peut cliquer pour voir chaque photo lui-même, sans que
         // ça déclenche le lien de la carte en dessous.

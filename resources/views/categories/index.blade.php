@@ -89,26 +89,33 @@
             z-index: 2;
         }
         .cat-thumb-dot {
+            position: relative;
+            overflow: hidden;
             width: 6px;
             height: 6px;
-            border-radius: 50%;
+            border-radius: 999px;
+            border: none;
+            padding: 0;
             background: rgba(255,255,255,.55);
-            transition: .25s ease;
+            cursor: pointer;
+            transition: width .3s ease, background .3s ease;
         }
-        .cat-thumb-dot.active {
-            background: #fff;
-            width: 16px;
-            border-radius: 4px;
-        }
+        .cat-thumb-dot.active { background: rgba(255,255,255,.45); width: 22px; }
+        /* La barre se remplit pendant les 5 secondes de la photo */
+        .cat-thumb-dot.active::after { content: ""; position: absolute; inset: 0; background: #fff; transform-origin: left; animation: cat-progress 5s linear forwards; }
+        .cat-card-image:hover .cat-thumb-dot.active::after { animation-play-state: paused; }
+        @keyframes cat-progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
         .cat-arrow {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            width: 30px;
-            height: 30px;
-            border: none;
+            width: 34px;
+            height: 34px;
+            border: 1px solid rgba(255,255,255,.35);
             border-radius: 50%;
-            background: rgba(0,0,0,.35);
+            background: rgba(255,255,255,.16);
+            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
             color: #fff;
             font-size: 1.2rem;
             line-height: 1;
@@ -118,10 +125,19 @@
             cursor: pointer;
             z-index: 2;
             opacity: 0;
-            transition: opacity .2s ease, background .2s ease;
+            transition: opacity .25s ease, background .2s ease;
         }
-        .cat-card-image:hover .cat-arrow { opacity: 1; }
-        .cat-arrow:hover { background: rgba(0,0,0,.6); }
+        .cat-card-image:hover .cat-arrow, .cat-arrow:focus-visible { opacity: 1; }
+        .cat-arrow:hover { background: rgba(255,255,255,.3); }
+        /* Sur téléphone/tablette il n'y a pas de survol : les flèches restent visibles */
+        @media (hover: none) { .cat-arrow { opacity: 1; } }
+        .cat-slide { will-change: opacity, transform; }
+        .cat-card-image { touch-action: pan-y; }
+        @media (prefers-reduced-motion: reduce) {
+            .cat-slide.active { animation: none; transform: none; }
+            .cat-slide { transition-duration: .01s; }
+            .cat-thumb-dot.active::after { animation: none; transform: scaleX(1); }
+        }
         .cat-arrow-prev { left: 8px; }
         .cat-arrow-next { right: 8px; }
         .cat-card-body { padding: 16px; }
@@ -150,13 +166,41 @@
             function next() { show(current + 1); }
             function prev() { show(current - 1); }
 
-            function start() { timer = setInterval(next, 5000); }
+            function start() { stop(); timer = setInterval(next, 5000); }
             function stop() { clearInterval(timer); }
             function restart() { stop(); start(); }
             start();
 
-            thumb.addEventListener('mouseenter', stop);
-            thumb.addEventListener('mouseleave', start);
+            // Pause au survol de la souris seulement (sur téléphone, le "survol"
+            // resterait bloqué après un toucher et arrêterait le défilement).
+            thumb.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') stop(); });
+            thumb.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') start(); });
+
+            // On économise la batterie quand l'onglet n'est pas visible
+            document.addEventListener('visibilitychange', function () {
+                if (document.hidden) { stop(); } else { start(); }
+            });
+
+            // Glisser du doigt (gauche/droite) pour changer de photo
+            let startX = 0, startY = 0, swiped = false;
+            thumb.addEventListener('touchstart', function (e) {
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+                swiped = false;
+            }, { passive: true });
+            thumb.addEventListener('touchend', function (e) {
+                const dx = e.changedTouches[0].clientX - startX;
+                const dy = e.changedTouches[0].clientY - startY;
+                if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+                    swiped = true;
+                    dx < 0 ? next() : prev();
+                    restart();
+                }
+            }, { passive: true });
+            // Un glissement ne doit pas ouvrir la page de la catégorie
+            thumb.addEventListener('click', function (e) {
+                if (swiped) { e.preventDefault(); e.stopPropagation(); swiped = false; }
+            }, true);
 
             // Le client peut cliquer pour voir chaque photo lui-même, sans
             // que ça ouvre la page de la catégorie.
