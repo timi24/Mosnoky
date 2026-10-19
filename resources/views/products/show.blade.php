@@ -44,8 +44,6 @@
                     <span class="pdp-rating pdp-muted">Aucun avis pour le moment</span>
                 @endif
                 <span class="pdp-sep">|</span>
-            
-                <span class="pdp-sep">|</span>
                 <span class="pdp-muted">{{ $product->category->name ?? '' }}</span>
             </div>
 
