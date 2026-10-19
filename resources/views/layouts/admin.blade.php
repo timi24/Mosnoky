@@ -91,7 +91,12 @@
                     <a href="{{ route('admin.deliveries.index') }}" class="{{ request()->routeIs('admin.deliveries.*') ? 'active' : '' }}">Livraisons</a>
                     <a href="{{ route('admin.reviews.index') }}" class="{{ request()->routeIs('admin.reviews.*') ? 'active' : '' }}">Avis</a>
                     <a href="{{ route('admin.reports.index') }}" class="{{ request()->routeIs('admin.reports.*') ? 'active' : '' }}">Signalements</a>
-                    <a href="{{ route('admin.messages.index') }}" class="{{ request()->routeIs('admin.messages.*') ? 'active' : '' }}">Messages</a>
+                    <a href="{{ route('admin.messages.index') }}" class="{{ request()->routeIs('admin.messages.*') ? 'active' : '' }}">
+                        Messages
+                        @if (($adminUnreadMessageCount ?? 0) > 0)
+                            <span class="badge">{{ $adminUnreadMessageCount }}</span>
+                        @endif
+                    </a>
                     <a href="{{ route('admin.business-report.form') }}" class="{{ request()->routeIs('admin.business-report.*') ? 'active' : '' }}">Rapport</a>
                     <a href="{{ route('admin.notifications.index') }}" class="{{ request()->routeIs('admin.notifications.*') ? 'active' : '' }}">
                         Notifications
@@ -106,7 +111,7 @@
                         <span>{{ auth()->user()->first_name ?? auth()->user()->name }}</span>
                     </button>
                     <div class="dropdown-menu">
-                       // @if (Route::has('profile.edit'))
+                        @if (Route::has('profile.edit'))
                             <a href="{{ route('profile.edit') }}" class="dropdown-item">Mon profil</a>
                         @endif
                         <div class="dropdown-divider"></div>
@@ -139,7 +144,12 @@
                 <a href="{{ route('admin.deliveries.index') }}" class="{{ request()->routeIs('admin.deliveries.*') ? 'active' : '' }}">Livraisons</a>
                 <a href="{{ route('admin.reviews.index') }}" class="{{ request()->routeIs('admin.reviews.*') ? 'active' : '' }}">Avis</a>
                 <a href="{{ route('admin.reports.index') }}" class="{{ request()->routeIs('admin.reports.*') ? 'active' : '' }}">Signalements</a>
-                <a href="{{ route('admin.messages.index') }}" class="{{ request()->routeIs('admin.messages.*') ? 'active' : '' }}">Messages</a>
+                <a href="{{ route('admin.messages.index') }}" class="{{ request()->routeIs('admin.messages.*') ? 'active' : '' }}">
+                    Messages
+                    @if (($adminUnreadMessageCount ?? 0) > 0)
+                        <span class="badge">{{ $adminUnreadMessageCount }}</span>
+                    @endif
+                </a>
                 <a href="{{ route('admin.business-report.form') }}" class="{{ request()->routeIs('admin.business-report.*') ? 'active' : '' }}">Rapport mensuel</a>
                 <a href="{{ route('admin.notifications.index') }}" class="{{ request()->routeIs('admin.notifications.*') ? 'active' : '' }}">
                     Notifications

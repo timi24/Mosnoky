@@ -134,7 +134,12 @@
             
                     <a href="{{ route('payments.index') }}" class="{{ request()->routeIs('payments.*') ? 'active' : '' }}">Paiements</a>
                     <a href="{{ route('reports.index') }}" class="{{ request()->routeIs('reports.*') ? 'active' : '' }}">Signalements</a>
-                    <a href="{{ route('messages.index') }}" class="{{ request()->routeIs('messages.*') ? 'active' : '' }}">Messages</a>
+                    <a href="{{ route('messages.index') }}" class="{{ request()->routeIs('messages.*') ? 'active' : '' }}">
+                        Messages
+                        @if (($unreadMessageCount ?? 0) > 0)
+                            <span class="badge">{{ $unreadMessageCount }}</span>
+                        @endif
+                    </a>
                     <a href="{{ route('notifications.index') }}" class="{{ request()->routeIs('notifications.*') ? 'active' : '' }}">
                         Notifications
                         @if (($unreadNotificationCount ?? 0) > 0)
@@ -180,7 +185,12 @@
                 <a href="{{ route('cart.index') }}" class="{{ request()->routeIs('cart.*') ? 'active' : '' }}">Panier</a>
                 <a href="{{ route('orders.index') }}" class="{{ request()->routeIs('orders.*') ? 'active' : '' }}">Mes commandes</a>
                 <a href="{{ route('reports.index') }}" class="{{ request()->routeIs('reports.*') ? 'active' : '' }}">Signalements</a>
-                <a href="{{ route('messages.index') }}" class="{{ request()->routeIs('messages.*') ? 'active' : '' }}">Messages</a>
+                <a href="{{ route('messages.index') }}" class="{{ request()->routeIs('messages.*') ? 'active' : '' }}">
+                    Messages
+                    @if (($unreadMessageCount ?? 0) > 0)
+                        <span class="badge">{{ $unreadMessageCount }}</span>
+                    @endif
+                </a>
                 <a href="{{ route('notifications.index') }}" class="{{ request()->routeIs('notifications.*') ? 'active' : '' }}">
                     Notifications
                     @if (($unreadNotificationCount ?? 0) > 0)
