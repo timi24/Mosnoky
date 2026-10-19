@@ -29,14 +29,16 @@
                     @foreach ($payments as $payment)
                         <tr>
                             <td>{{ $payment->order->order_number ?? '—' }}</td>
-                            <td style="font-size:.8rem; color:var(--muted);">{{ $payment->reference }}</td>
+                            <td style="font-size:.8rem; color:var(--muted);">{{ $payment->customer_reference ?? $payment->reference }}</td>
                             <td>{{ number_format($payment->amount, 0, ',', ' ') }} FCFA</td>
                             <td>{{ str_replace('_', ' ', $payment->payment_method) }}</td>
                             <td>
                                 @if ($payment->status === 'ACCEPTE')
                                     <span class="pill">Payé</span>
                                 @elseif ($payment->status === 'REFUSE')
-                                    <span class="pill" style="background:#fbe9e6; color:#b1372f;">Échoué</span>
+                                    <span class="pill" style="background:#fbe9e6; color:#b1372f;">Non retrouvé</span>
+                                @elseif ($payment->submitted_at)
+                                    <span class="pill muted">En vérification</span>
                                 @else
                                     <span class="pill muted">En attente</span>
                                 @endif
@@ -45,6 +47,8 @@
                             <td>
                                 @if ($payment->status === 'ACCEPTE')
                                     <a class="button small" href="{{ route('receipts.download', $payment->order) }}">Reçu PDF</a>
+                                @elseif ($payment->order && $payment->order->status === 'EN_ATTENTE' && ($payment->status === 'REFUSE' || ! $payment->submitted_at))
+                                    <a class="button primary small" href="{{ route('payments.manual.show', $payment->order) }}">Payer</a>
                                 @endif
                             </td>
                         </tr>
