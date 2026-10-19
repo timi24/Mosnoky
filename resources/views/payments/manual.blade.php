@@ -61,7 +61,7 @@
         <div class="panel pay-box">
             <h3 style="margin:0 0 6px;">Exemple : où trouver ma référence ?</h3>
             <p class="pay-muted" style="margin:0 0 14px; font-size:.85rem;">
-                Après votre transfert, vous recevez un SMS de confirmation. Copiez-y la référence (« ID Trans ») et reportez-la plus bas, avec le point et les lettres.
+                Après votre transfert, vous recevez un SMS de confirmation. Copiez-y la référence (« ID Trans » chez Orange, « TID » chez Moov) et reportez-la plus bas, exactement comme écrite.
             </p>
             <div class="pay-examples">
                 <div class="pay-example">
@@ -81,10 +81,17 @@
                     @if ($moovShot)
                         <img src="{{ $moovShot }}" alt="Exemple de SMS Moov Money" class="pay-shot">
                     @else
+                        @php $moovDigits = $moovNumber ? '226'.substr(preg_replace('/\D/', '', $moovNumber), -8) : '226••••••••'; @endphp
                         <div class="sms-mock">
-                            <div class="sms-from">Moov Money</div>
-                            <p>Après votre transfert vers <b>{{ $accountName }}</b> ({{ $moovNumber ?: '•• •• •• ••' }}), Moov Money vous envoie un SMS de confirmation.</p>
-                            <p>Repérez dans ce SMS le numéro de <mark>référence / ID de transaction</mark> et recopiez-le tel quel.</p>
+                            <div class="sms-from">MOOV MONEY</div>
+                            <p>Transfert National reussi pour {{ $accountName }}.<br>
+                            Numéro de mobile: <b>{{ $moovDigits }}</b><br>
+                            Montant: <b>{{ number_format($payment->amount, 2, ',', ' ') }} FCFA</b><br>
+                            Frais: 0,00 FCFA<br>
+                            Total: {{ number_format($payment->amount, 2, ',', ' ') }} FCFA<br>
+                            Date: 24/09/2026 19:43:57<br>
+                            TID: <mark>DIO7KPCUAP</mark><br>
+                            Solde: ••• FCFA</p>
                         </div>
                     @endif
                 </div>
@@ -124,7 +131,7 @@
                 </div>
 
                 <div class="field">
-                    <label for="customer_reference">Référence de la transaction (« ID Trans » dans le SMS)</label>
+                    <label for="customer_reference">Référence de la transaction (« ID Trans » pour Orange, « TID » pour Moov)</label>
                     <input type="text" id="customer_reference" name="customer_reference" value="{{ old('customer_reference') }}" placeholder="Ex. PP261018.2238.45373385" autocomplete="off" required>
                     @error('customer_reference') <div class="error">{{ $message }}</div> @enderror
                 </div>
