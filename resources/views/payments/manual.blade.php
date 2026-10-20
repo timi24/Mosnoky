@@ -35,7 +35,7 @@
                 <div class="pay-number">
                     <span class="pill">Orange Money</span>
                     @if ($orangeNumber)
-                        <strong>{{ $orangeNumber }}</strong>
+                       <div>*144*2*1*<strong>{{ $orangeNumber }}</strong>*montant#</div>
                     @else
                         <em class="pay-muted">Numéro bientôt disponible</em>
                     @endif
