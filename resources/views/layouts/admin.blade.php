@@ -199,5 +199,7 @@
                 </span>
             </footer>
         </div>
+
+        @include('admin.payments._alarm')
     </body>
 </html>

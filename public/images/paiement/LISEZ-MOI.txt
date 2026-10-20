@@ -1,0 +1,6 @@
+Pour remplacer les exemples dessinés par de VRAIES captures de SMS :
+1) Prenez une capture d'écran d'un vrai SMS de confirmation Orange Money et Moov Money
+   (cachez les numéros personnels et les soldes avant de l'enregistrer).
+2) Nommez-les EXACTEMENT :  orange-sms.jpg   et   moov-sms.jpg
+3) Mettez-les dans ce dossier (public/images/paiement/), commit, push.
+La page de paiement les affichera automatiquement à la place des exemples.

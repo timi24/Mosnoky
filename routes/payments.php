@@ -31,6 +31,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 // Espace administrateur : vérifier et confirmer les paiements déclarés
 Route::middleware(['auth', EnsureUserIsAdmin::class])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/paiements', [AdminPaymentController::class, 'index'])->name('payments.index');
+    Route::get('/paiements/alerte', [AdminPaymentController::class, 'alert'])->name('payments.alert');
     Route::post('/paiements/{payment}/confirmer', [AdminPaymentController::class, 'confirm'])->name('payments.confirm');
     Route::post('/paiements/{payment}/rejeter', [AdminPaymentController::class, 'reject'])->name('payments.reject');
 });

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AppNotification;
 use App\Models\Payment;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -32,6 +33,22 @@ class AdminPaymentController extends Controller
             'pending' => $pending,
             'recent' => $recent,
         ]);
+    }
+
+    /**
+     * Interrogé toutes les quelques secondes par la page admin pour savoir
+     * s'il y a un nouveau paiement à vérifier (déclenche l'alarme sonore).
+     */
+    public function alert(): JsonResponse
+    {
+        $pending = Payment::where('status', 'EN_ATTENTE')->whereNotNull('submitted_at');
+
+        return response()
+            ->json([
+                'pending' => (clone $pending)->count(),
+                'signature' => (clone $pending)->max('submitted_at'),
+            ])
+            ->header('Cache-Control', 'no-store');
     }
 
     public function confirm(Payment $payment): RedirectResponse
