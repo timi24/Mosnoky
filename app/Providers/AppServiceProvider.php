@@ -7,6 +7,7 @@ use App\Models\AppNotification;
 use App\Models\Message;
 use App\Models\Payment;
 use Carbon\CarbonImmutable;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -36,6 +37,11 @@ class AppServiceProvider extends ServiceProvider
         if ($this->app->environment('production')) {
     \Illuminate\Support\Facades\URL::forceScheme('https');
 }
+
+        // Pagination aux couleurs du site sur TOUTES les pages (la version par
+        // défaut de Laravel affichait d'énormes flèches faute de Tailwind).
+        Paginator::defaultView('vendor.pagination.mosnoky');
+        Paginator::defaultSimpleView('vendor.pagination.mosnoky-simple');
 
         $this->shareUnreadCounters();
     }
