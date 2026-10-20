@@ -43,7 +43,7 @@
                 <div class="pay-number">
                     <span class="pill muted">Moov Money</span>
                     @if ($moovNumber)
-                        <div>*144*2*1*<strong>{{ $moovNumber }}</strong>*montant#</div>
+                        <div>*555*2*1*<strong>{{ $moovNumber }}</strong>*montant#</div>
                     @else
                         <em class="pay-muted">Numéro bientôt disponible</em>
                     @endif
