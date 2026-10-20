@@ -29,7 +29,7 @@
             <h3 style="margin:0 0 14px;">1. Envoyez l'argent</h3>
             <p class="pay-muted" style="margin:0 0 14px;">
                 Depuis votre téléphone, envoyez <strong>exactement {{ number_format($payment->amount, 0, ',', ' ') }} FCFA</strong>
-                à l'un de ces numéros, au nom de <strong>{{ $accountName }}</strong> :
+                à l'un de ces numéros en tapant le code, au nom de <strong>{{ $accountName }}</strong> :
             </p>
             <div class="pay-numbers">
                 <div class="pay-number">
@@ -43,7 +43,7 @@
                 <div class="pay-number">
                     <span class="pill muted">Moov Money</span>
                     @if ($moovNumber)
-                        <strong>{{ $moovNumber }}</strong>
+                        <div>*144*2*1*<strong>{{ $moovNumber }}</strong>*montant#</div>
                     @else
                         <em class="pay-muted">Numéro bientôt disponible</em>
                     @endif
