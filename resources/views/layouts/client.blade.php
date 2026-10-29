@@ -112,6 +112,8 @@
             .shop-price { font-weight: 800; font-size: 1.05rem; color: var(--accent); }
             @media (max-width: 900px) { .shop-grid { grid-template-columns: repeat(2, 1fr); } }
             @media (max-width: 600px) { .shop-grid { grid-template-columns: 1fr; } }
+            /* Filet de sécurité : aucune icône SVG de pagination ne peut devenir géante */
+            nav[role="navigation"] svg { width: 18px !important; height: 18px !important; max-width: 18px; flex: none; }
         </style>
     </head>
     <body>

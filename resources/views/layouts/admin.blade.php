@@ -69,6 +69,8 @@
                 .mobile-toggle { display: block; }
                 #desktop-user-dropdown { display: none; }
             }
+            /* Filet de sécurité : aucune icône SVG de pagination ne peut devenir géante */
+            nav[role="navigation"] svg { width: 18px !important; height: 18px !important; max-width: 18px; flex: none; }
         </style>
     </head>
     <body>
