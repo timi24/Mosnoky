@@ -49,11 +49,7 @@
 
             <div class="pdp-price-box">
                 <span class="pdp-price">{{ number_format($product->price, 0, ',', ' ') }} FCFA</span>
-                @if ($product->stock > 0)
-                    <span class="pdp-stock ok">En stock ({{ $product->stock }} disponibles)</span>
-                @else
-                    <span class="pdp-stock out">Rupture de stock</span>
-                @endif
+                
             </div>
 
             <p class="pdp-desc-short">{{ Str::limit($product->description, 140) }}</p>
@@ -79,7 +75,7 @@
 
             <div class="pdp-trust">
                 <div class="pdp-trust-item">🚚 Livraison partout au Burkina Faso</div>
-                <div class="pdp-trust-item">🔒 Paiement sécurisé (Orange Money, Moov Money, carte)</div>
+                <div class="pdp-trust-item">🔒 Paiement sécurisé (Orange Money, Moov Money)</div>
                 <div class="pdp-trust-item">✋ Fabriqué à la main, Made in Burkina Faso</div>
             </div>
         </div>

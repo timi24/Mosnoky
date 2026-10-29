@@ -14,13 +14,22 @@
     @else
         <div style="display:flex; flex-direction:column; gap:10px;">
             @foreach ($notifications as $notification)
+                @php
+                    // Date sûre : fonctionne que la colonne soit un texte ou une vraie date
+                    $when = $notification->sent_at ?? $notification->created_at ?? null;
+                    try {
+                        $whenText = $when ? \Illuminate\Support\Carbon::parse($when)->diffForHumans() : '';
+                    } catch (\Throwable $e) {
+                        $whenText = '';
+                    }
+                @endphp
                 <div class="form-panel" style="padding:16px 20px;">
                     <div style="display:flex; justify-content:space-between; align-items:start; gap:12px;">
                         <div>
                             <strong>{{ $notification->title }}</strong>
                             <p style="margin:4px 0 0; color:var(--muted); font-size:.9rem;">{{ $notification->content }}</p>
                         </div>
-                        <span style="font-size:.75rem; color:var(--muted); white-space:nowrap;">{{ $notification->sent_at?->diffForHumans() }}</span>
+                        <span style="font-size:.75rem; color:var(--muted); white-space:nowrap;">{{ $whenText }}</span>
                     </div>
                 </div>
             @endforeach
