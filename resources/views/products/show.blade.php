@@ -49,7 +49,9 @@
 
             <div class="pdp-price-box">
                 <span class="pdp-price">{{ number_format($product->price, 0, ',', ' ') }} FCFA</span>
-                
+                @if ($product->stock < 1)
+                    <span class="pdp-stock out">Rupture de stock</span>
+                @endif
             </div>
 
             <p class="pdp-desc-short">{{ Str::limit($product->description, 140) }}</p>
@@ -145,16 +147,18 @@
         </div>
     @endif
 
-    @php
-        $imagesByColor = $product->images->whereNotNull('color')->mapWithKeys(fn ($img) => [strtolower($img->color) => $img->image_url]);
-    @endphp
     <script>
-        const pdpColorImageMap = @json($imagesByColor);
+        // Normalise : minuscules, sans accents ni espaces superflus ("Marron Clair " = "marron clair")
+        function pdpNorm(v) {
+            return (v || '').toString().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+        }
 
         function pdpSetMainImage(btn) {
-            document.getElementById('main-product-image').src = btn.dataset.image;
+            const main = document.getElementById('main-product-image');
+            if (main) { main.src = btn.dataset.image; }
             document.querySelectorAll('.pdp-thumb').forEach(t => t.classList.remove('active'));
             btn.classList.add('active');
+            btn.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
         }
 
         function pdpStepQty(delta) {
@@ -165,17 +169,41 @@
             input.value = value;
         }
 
+        // Quand on choisit une couleur, la photo de cette couleur s'affiche toute seule
+        function pdpShowColor(color) {
+            const chosen = pdpNorm(color);
+            if (!chosen) { return; }
+            const thumbs = Array.from(document.querySelectorAll('.pdp-thumb'));
+            const match = thumbs.find(t => pdpNorm(t.dataset.color) === chosen)
+                       || thumbs.find(t => t.dataset.color && (pdpNorm(t.dataset.color).includes(chosen) || chosen.includes(pdpNorm(t.dataset.color))));
+            if (match) { pdpSetMainImage(match); }
+        }
+
+        function pdpReadChosenColor() {
+            const checked = document.querySelector('input[name="color"]:checked');
+            if (checked) { return checked.value; }
+            const select = document.querySelector('select[name="color"]');
+            return select ? select.value : '';
+        }
+
+        // change (boutons radio, liste) + clic (pastilles de couleur, selon le modèle du sélecteur)
         document.addEventListener('change', function (e) {
-            if (e.target.matches('input[name="color"]')) {
-                const chosen = e.target.value.toLowerCase();
-                const mainImg = document.getElementById('main-product-image');
-                if (mainImg && pdpColorImageMap[chosen]) {
-                    mainImg.src = pdpColorImageMap[chosen];
-                    document.querySelectorAll('.pdp-thumb').forEach(t => {
-                        t.classList.toggle('active', t.dataset.color === chosen);
-                    });
-                }
-            }
+            if (e.target.matches('[name="color"]')) { pdpShowColor(e.target.value); }
+        });
+        document.addEventListener('click', function (e) {
+            const target = e.target.closest('[name="color"], [data-color-value], .variant-option, .variant-swatch, label');
+            if (!target) { return; }
+            // on attend que le navigateur coche la pastille, puis on lit la couleur choisie
+            setTimeout(function () {
+                const direct = target.dataset && target.dataset.colorValue;
+                pdpShowColor(direct || pdpReadChosenColor());
+            }, 0);
+        });
+
+        // Couleur déjà cochée à l'ouverture de la page
+        document.addEventListener('DOMContentLoaded', function () {
+            const initial = pdpReadChosenColor();
+            if (initial) { pdpShowColor(initial); }
         });
     </script>
 
@@ -183,7 +211,8 @@
         .pdp-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 40px; }
         .pdp-gallery { display: flex; flex-direction: column; gap: 12px; }
         .pdp-main-image { aspect-ratio: 1; border-radius: 12px; overflow: hidden; background: #eee7dc; display: flex; align-items: center; justify-content: center; border: 1px solid var(--line); }
-        .pdp-main-image img { width: 100%; height: 100%; object-fit: cover; }
+        .pdp-main-image img { width: 100%; height: 100%; object-fit: cover; animation: pdpFade .35s ease; }
+        @keyframes pdpFade { from { opacity: .35; } to { opacity: 1; } }
         .pdp-no-image { color: var(--muted); font-size: .9rem; }
         .pdp-thumbs { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; }
         .pdp-thumb { flex-shrink: 0; width: 66px; height: 66px; border-radius: 8px; overflow: hidden; border: 2px solid var(--line); padding: 0; cursor: pointer; background: none; transition: .15s ease; }
