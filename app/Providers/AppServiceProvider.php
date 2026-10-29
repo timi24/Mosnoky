@@ -5,9 +5,7 @@ namespace App\Providers;
 use App\Models\Administrator;
 use App\Models\AppNotification;
 use App\Models\Message;
-use App\Models\Payment;
 use Carbon\CarbonImmutable;
-use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -38,11 +36,6 @@ class AppServiceProvider extends ServiceProvider
     \Illuminate\Support\Facades\URL::forceScheme('https');
 }
 
-        // Pagination aux couleurs du site sur TOUTES les pages (la version par
-        // défaut de Laravel affichait d'énormes flèches faute de Tailwind).
-        Paginator::defaultView('vendor.pagination.mosnoky');
-        Paginator::defaultSimpleView('vendor.pagination.mosnoky-simple');
-
         $this->shareUnreadCounters();
     }
 
@@ -65,10 +58,6 @@ class AppServiceProvider extends ServiceProvider
                 // Admin : messages envoyés par des clients et pas encore lus
                 $view->with('adminUnreadMessageCount',
                     Message::whereNotIn('sender_id', $adminIds)->whereNull('read_at')->count()
-                );
-                // Paiements Orange/Moov déclarés par des clients et à vérifier
-                $view->with('adminPendingPaymentCount',
-                    Payment::where('status', 'EN_ATTENTE')->whereNotNull('submitted_at')->count()
                 );
             } else {
                 // Client : messages de l'équipe pas encore lus + notifications non lues
