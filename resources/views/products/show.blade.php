@@ -49,11 +49,6 @@
 
             <div class="pdp-price-box">
                 <span class="pdp-price">{{ number_format($product->price, 0, ',', ' ') }} FCFA</span>
-                @if ($product->stock < 1)
-                    <span class="pdp-stock out">Rupture de stock</span>
-                @else
-                    <span class="pdp-stock ok">Disponible · {{ $product->stock }} en stock</span>
-                @endif
             </div>
 
             <p class="pdp-desc-short">{{ Str::limit($product->description, 140) }}</p>
@@ -249,10 +244,6 @@
 
         .pdp-price-box { display: flex; align-items: center; gap: 16px; padding: 18px 20px; background: var(--paper); border-radius: 12px; margin-bottom: 16px; }
         .pdp-price { font-size: 1.9rem; font-weight: 800; color: var(--accent); }
-        .pdp-stock { font-size: .82rem; font-weight: 700; padding: 4px 10px; border-radius: 999px; }
-        .pdp-stock.ok { background: #eef1ea; color: #2f6f4e; }
-        .pdp-stock.out { background: #fbe9e6; color: #b1372f; }
-
         .pdp-desc-short { color: var(--muted); font-size: .94rem; line-height: 1.6; margin-bottom: 20px; }
 
         .pdp-form { display: flex; flex-direction: column; gap: 4px; }
