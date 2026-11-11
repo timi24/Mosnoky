@@ -51,6 +51,7 @@
         var list = document.getElementById('live-notif-list');
         var readAllBtn = document.getElementById('notif-read-all');
         var READ_URL = @json(route('live.notifications.read'));
+        var LIVE_URL = @json(route('live.counts', ['items' => 1]));
         var CSRF = @json(csrf_token());
         // Les nouvelles notifications ne s'ajoutent en direct que sur la 1re page
         var isFirstPage = @json($notifications->currentPage() === 1);
@@ -85,6 +86,26 @@
         }
 
         if (readAllBtn) { readAllBtn.addEventListener('click', markAllRead); }
+
+        function pollNotifications() {
+            if (document.hidden) { return; }
+
+            fetch(LIVE_URL, {
+                headers: { 'Accept': 'application/json' },
+                credentials: 'same-origin'
+            }).then(function (response) {
+                if (!response.ok) { return null; }
+                return response.json();
+            }).then(function (data) {
+                if (data) {
+                    document.dispatchEvent(new CustomEvent('mosnoky:live', { detail: data }));
+                }
+            }).catch(function () {});
+        }
+
+        window.mosnokyLivePoll = pollNotifications;
+        pollNotifications();
+        window.setInterval(pollNotifications, 15000);
 
         document.addEventListener('mosnoky:live', function (e) {
             var items = e.detail && e.detail.items;

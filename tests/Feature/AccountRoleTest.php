@@ -41,3 +41,18 @@ test('notification links use the user role to select the administrator destinati
         ->get(route('live.notifications.open', $notification))
         ->assertRedirect(route('admin.payments.index'));
 });
+
+test('administrator notification cards link to their destination', function () {
+    $administrator = User::factory()->create(['role' => 'ADMINISTRATEUR']);
+    $notification = AppNotification::create([
+        'user_id' => $administrator->id,
+        'title' => 'Paiement en attente',
+        'content' => 'Un paiement est à traiter.',
+    ]);
+
+    $this->actingAs($administrator)
+        ->get(route('admin.notifications.index'))
+        ->assertOk()
+        ->assertSee(route('live.notifications.open', $notification), false)
+        ->assertSee('Voir ›');
+});
