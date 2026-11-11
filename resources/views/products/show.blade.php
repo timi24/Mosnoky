@@ -103,7 +103,9 @@
         </div>
 
         @if ($ownReview)
-            @php($reviewStatusLabels = ['EN_ATTENTE' => 'En attente de modération', 'APPROUVE' => 'Publié', 'MASQUE' => 'Non publié'])
+            @php
+                $reviewStatusLabels = ['EN_ATTENTE' => 'En attente de modération', 'APPROUVE' => 'Publié', 'MASQUE' => 'Non publié'];
+            @endphp
             <div class="pdp-own-review-status">
                 <span class="pill {{ $ownReview->moderation_status === 'APPROUVE' ? '' : 'muted' }}">{{ $reviewStatusLabels[$ownReview->moderation_status] ?? 'Statut indisponible' }}</span>
                 <span>Vous avez déjà envoyé un avis pour ce produit.</span>

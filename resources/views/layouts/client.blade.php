@@ -14,6 +14,13 @@
             .topbar { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 20px 0; }
             .brand { display: flex; align-items: center; gap: 10px; font-size: 1.2rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
             .brand-logo { height: 38px; width: auto; }
+            .client-search { display: flex; flex: 1 1 240px; min-width: 190px; max-width: 360px; margin: 0; overflow: hidden; border: 2px solid #d9aaa2; border-radius: 999px; background: #fff; box-shadow: 0 3px 12px rgba(34,31,29,.08); transition: border-color .2s ease, box-shadow .2s ease; }
+            .client-search:focus-within { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(177,55,47,.13); }
+            .client-search input { width: 100%; min-width: 0; padding: 11px 15px; border: 0; outline: 0; background: transparent; color: var(--ink); font: inherit; font-size: .9rem; }
+            .client-search input::placeholder { color: #71665f; opacity: 1; }
+            .client-search button { display: grid; width: 44px; flex: 0 0 44px; place-items: center; border: 0; background: var(--accent); color: #fff; cursor: pointer; transition: background .2s ease; }
+            .client-search button:hover { background: var(--danger); }
+            .client-search button svg { width: 18px; height: 18px; }
             .nav-links { display: flex; align-items: center; gap: 18px; font-size: .92rem; font-weight: 600; flex-wrap: wrap; }
             .nav-links a:hover { color: var(--accent); }
             .nav-links a.active { color: var(--accent); font-weight: 800; }
@@ -78,7 +85,7 @@
             .mobile-search { width: 100%; padding: 12px 14px; border: 1px solid var(--line); border-radius: 999px; font-size: .95rem; margin-bottom: 10px; }
             @media (max-width: 760px) {
                 .mobile-toggle { display: block; }
-                .topbar form[action*="search"] { display: none; }
+                .topbar .client-search { display: none; }
                 #desktop-user-dropdown { display: none; }
             }
 
@@ -123,9 +130,11 @@
                     <img src="{{ asset('images/mosnoky-logo.jpg') }}" alt="Mosnoky" class="brand-logo">
                 </a>
 
-                <form method="GET" action="{{ route('search.index') }}" style="flex:1; max-width:320px; margin:0 20px;">
-                    <input type="text" name="q" placeholder="Rechercher…" value="{{ request('q') }}"
-                           style="width:100%; padding:9px 14px; border:1px solid var(--line); border-radius:999px; font-size:.88rem;">
+                <form method="GET" action="{{ route('search.index') }}" class="client-search" role="search">
+                    <input type="search" name="q" placeholder="Rechercher un produit…" value="{{ request('q') }}" aria-label="Rechercher un produit">
+                    <button type="submit" aria-label="Lancer la recherche">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8" stroke="currentColor" stroke-width="2"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                    </button>
                 </form>
 
                 <nav class="nav-links" aria-label="Navigation client">
