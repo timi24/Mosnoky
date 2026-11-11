@@ -1,7 +1,6 @@
-
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -9,15 +8,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
+use App\Http\Controllers\Controller;
 
 class AccountController extends Controller
 {
-    /** Page Mon compte */
     public function show(): View
     {
         $user = Auth::user();
 
-        // Vérification du rôle directement dans la table users
+        // Vérification du rôle dans la table users
         $isAdmin = strtoupper(trim($user->role ?? '')) === 'ADMINISTRATEUR';
 
         return view('account.show', [
@@ -37,7 +36,7 @@ class AccountController extends Controller
                 'required',
                 'confirmed',
                 'different:current_password',
-                Password::defaults()
+                Password::defaults(),
             ],
         ], [
             'current_password.required' => 'Saisissez votre mot de passe actuel.',
