@@ -13,6 +13,16 @@ test('administrator can open their account page with the administrator role', fu
         ->assertSee('Administrateur');
 });
 
+test('client navigation includes the account page', function () {
+    $client = User::factory()->create(['role' => 'CLIENT']);
+
+    $this->actingAs($client)
+        ->get(route('client.dashboard'))
+        ->assertOk()
+        ->assertSee('Mon compte')
+        ->assertSee(route('account.show'), false);
+});
+
 test('live counts determine administrator status from the user role', function () {
     $administrator = User::factory()->create(['role' => 'ADMINISTRATEUR']);
     $clientWithAdministratorRecord = User::factory()->create(['role' => 'CLIENT']);
@@ -55,4 +65,26 @@ test('administrator notification cards link to their destination', function () {
         ->assertOk()
         ->assertSee(route('live.notifications.open', $notification), false)
         ->assertSee('Voir ›');
+});
+
+test('client notification dates and pagination are shown in French', function () {
+    $client = User::factory()->create(['role' => 'CLIENT']);
+
+    foreach (range(1, 16) as $index) {
+        AppNotification::create([
+            'user_id' => $client->id,
+            'title' => 'Notification '.$index,
+            'content' => 'Détail de la notification.',
+            'sent_at' => now()->subMinutes(5),
+        ]);
+    }
+
+    $this->actingAs($client)
+        ->get(route('notifications.index'))
+        ->assertOk()
+        ->assertSee('Affichage de 1 à 15 sur 16 notifications')
+        ->assertSee('Page 1 sur 2')
+        ->assertSee('Précédente')
+        ->assertSee('Suivante')
+        ->assertSee('il y a');
 });

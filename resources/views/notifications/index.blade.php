@@ -19,7 +19,7 @@
                 @php
                     $when = $notification->sent_at ?? $notification->created_at ?? null;
                     try {
-                        $whenText = $when ? \Illuminate\Support\Carbon::parse($when)->diffForHumans() : '';
+                    $whenText = $when ? \Illuminate\Support\Carbon::parse($when)->locale('fr')->diffForHumans() : '';
                     } catch (\Throwable $e) {
                         $whenText = '';
                     }
@@ -42,7 +42,7 @@
         </div>
 
         <div style="margin-top: 20px;">
-            {{ $notifications->links() }}
+            {{ $notifications->links('vendor.pagination.notifications') }}
         </div>
     @endif
 

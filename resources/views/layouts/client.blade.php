@@ -148,6 +148,9 @@
                             <span class="badge">{{ $unreadNotificationCount }}</span>
                         @endif
                     </a>
+                    @if (Route::has('account.show'))
+                        <a href="{{ route('account.show') }}" class="{{ request()->routeIs('account.*') ? 'active' : '' }}">Mon compte</a>
+                    @endif
                 </nav>
 
                 <div class="user-dropdown" id="desktop-user-dropdown">
@@ -200,7 +203,7 @@
                     @endif
                 </a>
                 @if (Route::has('account.show'))
-                    <a href="{{ route('account.show') }}">Mon compte</a>
+                    <a href="{{ route('account.show') }}" class="{{ request()->routeIs('account.*') ? 'active' : '' }}">Mon compte</a>
                 @endif
                 @if (Route::has('logout'))
                     <form method="POST" action="{{ route('logout') }}" style="margin-top:20px;">

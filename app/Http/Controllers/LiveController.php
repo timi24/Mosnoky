@@ -48,7 +48,7 @@ class LiveController extends Controller
                 ->map(function ($n) use ($isAdmin) {
                     $when = $n->sent_at ?? $n->created_at ?? null;
                     try {
-                        $whenText = $when ? Carbon::parse($when)->diffForHumans() : '';
+                        $whenText = $when ? Carbon::parse($when)->locale('fr')->diffForHumans() : '';
                     } catch (\Throwable $e) {
                         $whenText = '';
                     }

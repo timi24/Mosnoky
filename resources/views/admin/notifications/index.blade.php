@@ -26,14 +26,14 @@
                         <strong>{{ $notification->title }}</strong>
                         <p>{{ $notification->content }}</p>
                     </div>
-                    <span class="notif-when">{{ $notification->sent_at?->diffForHumans() }}</span>
+                    <span class="notif-when">{{ $notification->sent_at?->locale('fr')->diffForHumans() }}</span>
                     @if ($link)<span class="notif-go">Voir ›</span>@endif
                 </{{ $link ? 'a' : 'div' }}>
             @endforeach
         </div>
 
         <div style="margin-top: 20px;">
-            {{ $notifications->links() }}
+            {{ $notifications->links('vendor.pagination.notifications') }}
         </div>
     @endif
 
