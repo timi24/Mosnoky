@@ -54,4 +54,4 @@ Route::get('/dashboard', function () {
 require __DIR__.'/settings.php';
 
 require __DIR__.'/payments.php';
-
+require __DIR__.'/account.php';

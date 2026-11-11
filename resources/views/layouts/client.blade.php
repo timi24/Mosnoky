@@ -199,8 +199,8 @@
                         <span class="badge">{{ $unreadNotificationCount }}</span>
                     @endif
                 </a>
-                @if (Route::has('profile.edit'))
-                    <a href="{{ route('profile.edit') }}">Mon profil</a>
+                @if (Route::has('account.show'))
+                    <a href="{{ route('account.show') }}">Mon compte</a>
                 @endif
                 @if (Route::has('logout'))
                     <form method="POST" action="{{ route('logout') }}" style="margin-top:20px;">

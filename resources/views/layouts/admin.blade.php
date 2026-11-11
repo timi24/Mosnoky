@@ -119,8 +119,8 @@
                         <span>{{ auth()->user()->first_name ?? auth()->user()->name }}</span>
                     </button>
                     <div class="dropdown-menu">
-                        @if (Route::has('profile.edit'))
-                            <a href="{{ route('profile.edit') }}" class="dropdown-item">Mon profil</a>
+                        @if (Route::has('account.show'))
+                            <a href="{{ route('account.show') }}" class="dropdown-item">Mon compte</a>
                         @endif
                         <div class="dropdown-divider"></div>
                         @if (Route::has('logout'))
@@ -171,8 +171,8 @@
                         <span class="badge">{{ $adminUnreadNotifCount }}</span>
                     @endif
                 </a>
-                @if (Route::has('profile.edit'))
-                    <a href="{{ route('profile.edit') }}">Mon profil</a>
+                @if (Route::has('account.show'))
+                    <a href="{{ route('account.show') }}">Mon compte</a>
                 @endif
                 @if (Route::has('logout'))
                     <form method="POST" action="{{ route('logout') }}" style="margin-top:20px;">
