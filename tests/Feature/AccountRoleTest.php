@@ -2,6 +2,7 @@
 
 use App\Models\Administrator;
 use App\Models\AppNotification;
+use App\Models\Message;
 use App\Models\User;
 
 test('administrator can open their account page with the administrator role', function () {
@@ -21,6 +22,28 @@ test('client navigation includes the account page', function () {
         ->assertOk()
         ->assertSee('Mon compte')
         ->assertSee(route('account.show'), false);
+});
+
+test('client messages appear in the administrator inbox using the user role', function () {
+    $administrator = User::factory()->create(['role' => 'ADMINISTRATEUR']);
+    $client = User::factory()->create(['role' => 'CLIENT']);
+
+    $this->actingAs($client)
+        ->post(route('messages.store'), ['content' => 'Bonjour, j’ai une question sur ma commande.'])
+        ->assertRedirect(route('messages.index'));
+
+    $message = Message::where('sender_id', $client->id)->firstOrFail();
+
+    expect($message->receiver_id)->toBe($administrator->id);
+
+    $this->actingAs($administrator)
+        ->get(route('admin.messages.index'))
+        ->assertOk()
+        ->assertSee('Bonjour, j’ai une question sur ma commande.');
+
+    $this->get(route('admin.messages.show', $client))
+        ->assertOk()
+        ->assertSee('Bonjour, j’ai une question sur ma commande.');
 });
 
 test('live counts determine administrator status from the user role', function () {
@@ -82,9 +105,10 @@ test('client notification dates and pagination are shown in French', function ()
     $this->actingAs($client)
         ->get(route('notifications.index'))
         ->assertOk()
-        ->assertSee('Affichage de 1 à 15 sur 16 notifications')
+        ->assertSee('Affichage de 1 à 15 sur 16 éléments')
         ->assertSee('Page 1 sur 2')
         ->assertSee('Précédente')
         ->assertSee('Suivante')
+        ->assertSee('Aller à la page 2')
         ->assertSee('il y a');
 });

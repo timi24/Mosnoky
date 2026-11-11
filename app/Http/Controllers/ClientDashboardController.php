@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Administrator;
 use App\Models\AppNotification;
 use App\Models\Cart;
 use App\Models\Category;
 use App\Models\Client;
 use App\Models\Message;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\View\View;
 
 class ClientDashboardController extends Controller
@@ -17,14 +17,18 @@ class ClientDashboardController extends Controller
     {
         $user = request()->user();
         $client = Client::firstOrCreate(['user_id' => $user->id]);
-        $adminIds = Administrator::pluck('user_id');
+        $adminIds = User::query()->whereRaw('UPPER(TRIM(role)) = ?', ['ADMINISTRATEUR'])->pluck('id');
 
         $cart = Cart::where('client_id', $client->id)->where('status', 'OUVERT')->first();
 
         $products = Product::where('status', 'ACTIF')
             ->with('images')
-            ->withCount(['reviews as approved_reviews_count' => function ($q) { $q->where('moderation_status', 'APPROUVE'); }])
-            ->withAvg(['reviews as approved_reviews_avg_rating' => function ($q) { $q->where('moderation_status', 'APPROUVE'); }], 'rating')
+            ->withCount(['reviews as approved_reviews_count' => function ($q) {
+                $q->where('moderation_status', 'APPROUVE');
+            }])
+            ->withAvg(['reviews as approved_reviews_avg_rating' => function ($q) {
+                $q->where('moderation_status', 'APPROUVE');
+            }], 'rating')
             ->withSum('orderItems as sold_count', 'quantity')
             ->orderByDesc('created_at')
             ->get();

@@ -2,14 +2,15 @@
 
 namespace App\Providers;
 
-use App\Models\Administrator;
 use App\Models\AppNotification;
 use App\Models\Message;
+use App\Models\User;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
@@ -33,8 +34,8 @@ class AppServiceProvider extends ServiceProvider
 
         $this->configureDefaults();
         if ($this->app->environment('production')) {
-    \Illuminate\Support\Facades\URL::forceScheme('https');
-}
+            URL::forceScheme('https');
+        }
 
         $this->shareUnreadCounters();
     }
@@ -52,7 +53,7 @@ class AppServiceProvider extends ServiceProvider
             }
 
             $userId = Auth::id();
-            $adminIds = Administrator::pluck('user_id');
+            $adminIds = User::query()->whereRaw('UPPER(TRIM(role)) = ?', ['ADMINISTRATEUR'])->pluck('id');
 
             if ($adminIds->contains($userId)) {
                 // Admin : messages envoyés par des clients et pas encore lus

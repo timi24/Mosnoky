@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Administrator;
 use App\Models\Client;
 use App\Models\Message;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Review;
+use App\Models\User;
 use Illuminate\View\View;
 
 class AdminDashboardController extends Controller
 {
     public function __invoke(): View
     {
-        $adminIds = Administrator::pluck('user_id');
+        $adminIds = User::query()->whereRaw('UPPER(TRIM(role)) = ?', ['ADMINISTRATEUR'])->pluck('id');
 
         return view('admin.dashboard', [
             'productCount' => Product::count(),

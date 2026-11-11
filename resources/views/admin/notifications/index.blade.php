@@ -33,7 +33,7 @@
         </div>
 
         <div style="margin-top: 20px;">
-            {{ $notifications->links('vendor.pagination.notifications') }}
+            {{ $notifications->links() }}
         </div>
     @endif
 

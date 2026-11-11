@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Administrator;
 use App\Models\Message;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -14,7 +13,7 @@ class MessageController extends Controller
 {
     public function index(Request $request): View
     {
-        $adminIds = Administrator::pluck('user_id');
+        $adminIds = User::query()->whereRaw('UPPER(TRIM(role)) = ?', ['ADMINISTRATEUR'])->pluck('id');
 
         // On récupère l'ensemble des clients ayant échangé avec la boutique,
         // avec leur dernier message et le nombre de messages non lus.
@@ -59,7 +58,7 @@ class MessageController extends Controller
 
     public function show(Request $request, User $client): View
     {
-        $adminIds = Administrator::pluck('user_id');
+        $adminIds = User::query()->whereRaw('UPPER(TRIM(role)) = ?', ['ADMINISTRATEUR'])->pluck('id');
 
         $messages = Message::where(function ($q) use ($client, $adminIds) {
             $q->where('sender_id', $client->id)->whereIn('receiver_id', $adminIds);

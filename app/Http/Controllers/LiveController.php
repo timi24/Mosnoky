@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Administrator;
 use App\Models\AppNotification;
 use App\Models\Message;
 use App\Models\Payment;
+use App\Models\User;
 use App\Support\NotificationLink;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -21,7 +21,7 @@ class LiveController extends Controller
     public function counts(Request $request): JsonResponse
     {
         $user = $request->user();
-        $adminIds = Administrator::pluck('user_id');
+        $adminIds = User::query()->whereRaw('UPPER(TRIM(role)) = ?', ['ADMINISTRATEUR'])->pluck('id');
         $isAdmin = strtoupper(trim($user->role ?? '')) === 'ADMINISTRATEUR';
 
         $data = [

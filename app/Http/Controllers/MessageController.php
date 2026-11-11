@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Administrator;
 use App\Models\Message;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -13,7 +13,7 @@ class MessageController extends Controller
     public function index(Request $request): View
     {
         $user = $request->user();
-        $adminIds = Administrator::pluck('user_id');
+        $adminIds = User::query()->whereRaw('UPPER(TRIM(role)) = ?', ['ADMINISTRATEUR'])->pluck('id');
 
         $messages = Message::where(function ($q) use ($user, $adminIds) {
             $q->where('sender_id', $user->id)->whereIn('receiver_id', $adminIds);
@@ -41,7 +41,7 @@ class MessageController extends Controller
         $user = $request->user();
 
         // On adresse le message au dernier admin ayant répondu, sinon au premier admin disponible
-        $adminIds = Administrator::pluck('user_id');
+        $adminIds = User::query()->whereRaw('UPPER(TRIM(role)) = ?', ['ADMINISTRATEUR'])->pluck('id');
 
         $lastAdminSender = Message::where('receiver_id', $user->id)
             ->whereIn('sender_id', $adminIds)
