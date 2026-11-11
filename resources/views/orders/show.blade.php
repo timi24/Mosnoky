@@ -9,7 +9,7 @@
             <p class="page-subtitle">Passée le {{ $order->created_at->format('d/m/Y à H:i') }}</p>
         </div>
         <div style="display:flex; gap:8px;">
-            @if ($order->status === 'EN_ATTENTE')
+            @if ($order->status === 'EN_ATTENTE' && ! $order->payment?->submitted_at)
                 <form method="POST" action="{{ route('orders.cancel', $order) }}" onsubmit="return confirm('Annuler cette commande ?');">
                     @csrf
                     @method('PATCH')
@@ -22,22 +22,35 @@
     </div>
 
     <!-- Paiement en ligne -->
-    @if ($order->status === 'EN_ATTENTE' && (! $order->payment || $order->payment->status !== 'ACCEPTE'))
-        <div class="form-panel" style="margin-bottom:24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
+    @if ($order->status === 'EN_ATTENTE' && $order->payment?->isAwaitingVerification())
+        <div class="order-payment-card order-payment-pending">
             <div>
+                <span class="order-payment-eyebrow">Paiement déclaré</span>
+                <h3>Vérification en cours</h3>
+                <p>Votre déclaration a bien été reçue. L’équipe vérifie le transfert et vous informera dès qu’il sera confirmé.</p>
+            </div>
+            <a class="button" href="{{ route('payments.manual.show', $order) }}">Voir le suivi</a>
+        </div>
+    @elseif ($order->status === 'EN_ATTENTE' && (! $order->payment || $order->payment->status !== 'ACCEPTE'))
+        <div class="order-payment-card">
+            <div>
+                <span class="order-payment-eyebrow">Paiement Mobile Money</span>
                 <h3 style="margin:0 0 4px;">Payer cette commande en ligne</h3>
-                <p style="margin:0; color:var(--muted); font-size:.88rem;">Paiement Mobile Money (Orange Money ou Moov Money) — {{ number_format($order->total, 0, ',', ' ') }} FCFA</p>
+                <p style="margin:0; color:var(--muted); font-size:.9rem;">Orange Money ou Moov Money</p>
                 @if ($order->payment?->status === 'REFUSE')
                     <p style="margin:6px 0 0; color:var(--danger); font-size:.85rem; font-weight:700;">Le dernier paiement a échoué. Vous pouvez réessayer.</p>
                 @endif
             </div>
-            <form method="POST" action="{{ route('payments.cinetpay.initiate', $order) }}">
-                @csrf
-                <button type="submit" class="button primary">Payer maintenant</button>
-            </form>
+            <div class="order-payment-action">
+                <strong>{{ number_format($order->total, 0, ',', ' ') }} FCFA</strong>
+                <form method="POST" action="{{ route('payments.cinetpay.initiate', $order) }}">
+                    @csrf
+                    <button type="submit" class="button primary">Payer maintenant</button>
+                </form>
+            </div>
         </div>
     @elseif ($order->payment?->status === 'ACCEPTE')
-        <div class="alert alert-success" style="margin-bottom:24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+        <div class="alert alert-success order-payment-confirmed" style="margin-bottom:24px;">
             <span>✅ Paiement reçu — {{ $order->payment->paid_at?->format('d/m/Y à H:i') }}</span>
             <a class="button small" href="{{ route('receipts.download', $order) }}">📄 Télécharger le reçu PDF</a>
         </div>
@@ -167,6 +180,16 @@
     <style>
         .review-row { display: none; }
         .review-row.open { display: table-row; }
+        .order-payment-card { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 24px; padding: 23px 26px; border: 1px solid rgba(177,55,47,.2); border-radius: 16px; background: linear-gradient(125deg, #fff 0%, #fff8f3 100%); box-shadow: 0 10px 28px rgba(34,31,29,.05); }
+        .order-payment-card h3 { margin: 3px 0 5px; font-family: Georgia, serif; font-size: 1.25rem; font-weight: 500; }
+        .order-payment-card p { max-width: 620px; margin: 0; color: var(--muted); font-size: .9rem; line-height: 1.55; }
+        .order-payment-eyebrow { color: var(--accent); font-size: .72rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
+        .order-payment-action { display: flex; align-items: center; gap: 18px; }
+        .order-payment-action > strong { color: var(--accent); font-size: 1.15rem; white-space: nowrap; }
+        .order-payment-action .button { min-height: 44px; white-space: nowrap; }
+        .order-payment-pending { border-color: #e9d8af; background: linear-gradient(125deg, #fff 0%, #fffaf0 100%); }
+        .order-payment-pending .order-payment-eyebrow { color: #8a641d; }
+        .order-payment-confirmed { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
         .order-tracking-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
         .order-tracking-steps { display: grid; grid-template-columns: repeat(5, minmax(90px, 1fr)); gap: 8px; overflow-x: auto; padding: 4px 0 10px; }
         .order-tracking-step { display: grid; justify-items: center; gap: 7px; text-align: center; color: var(--muted); }
@@ -176,6 +199,13 @@
         .order-tracking-label { font-size: .78rem; }
         .order-tracking-alert { margin: 0 0 14px; color: var(--danger); font-size: .9rem; font-weight: 700; }
         .order-tracking-detail { margin: 10px 0 0; color: var(--muted); font-size: .88rem; }
+        @media (max-width: 700px) {
+            .order-payment-card { align-items: stretch; flex-direction: column; padding: 19px; }
+            .order-payment-action { align-items: stretch; flex-direction: column; gap: 11px; padding-top: 14px; border-top: 1px solid var(--line); }
+            .order-payment-action .button, .order-payment-pending > .button { width: 100%; }
+            .order-tracking-panel { padding: 16px; }
+            .order-tracking-steps { grid-template-columns: repeat(5, minmax(76px, 1fr)); }
+        }
     </style>
 
     <div style="display:flex; justify-content:flex-end; margin-top:20px;">
