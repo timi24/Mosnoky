@@ -1,8 +1,8 @@
+
 <?php
 
 namespace App\Http\Controllers;
 
-use App\Models\Administrator;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,17 +12,20 @@ use Illuminate\View\View;
 
 class AccountController extends Controller
 {
-    /** Page "Mon compte" : informations de la personne connectée + changement de mot de passe. */
+    /** Page Mon compte */
     public function show(): View
     {
         $user = Auth::user();
-        $isAdmin = Administrator::where('user_id', $user->id)->exists();
+
+        // Vérification du rôle directement dans la table users
+        $isAdmin = strtoupper(trim($user->role ?? '')) === 'ADMINISTRATEUR';
 
         return view('account.show', [
             'user' => $user,
             'isAdmin' => $isAdmin,
-            // Même page, habillée avec le menu du client ou celui de l'administrateur
-            'layout' => $isAdmin ? 'layouts.admin' : 'layouts.client',
+            'layout' => $isAdmin
+                ? 'layouts.admin'
+                : 'layouts.client',
         ]);
     }
 
@@ -30,7 +33,12 @@ class AccountController extends Controller
     {
         $validated = $request->validateWithBag('password', [
             'current_password' => ['required', 'current_password'],
-            'password' => ['required', 'confirmed', 'different:current_password', Password::defaults()],
+            'password' => [
+                'required',
+                'confirmed',
+                'different:current_password',
+                Password::defaults()
+            ],
         ], [
             'current_password.required' => 'Saisissez votre mot de passe actuel.',
             'current_password.current_password' => 'Le mot de passe actuel est incorrect.',
