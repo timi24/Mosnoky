@@ -63,8 +63,8 @@
 
             <div class="form-panel" style="max-width:none;">
                 <h3 style="margin-top:0;">Client</h3>
-                <p style="margin:4px 0;">{{ $order->client->user->first_name ?? '' }} {{ $order->client->user->last_name ?? '' }}</p>
-                <p style="margin:4px 0; color:var(--muted);">{{ $order->client->user->email ?? '' }}</p>
+                <p style="margin:4px 0;">{{ $order->client->user?->displayName() ?? 'Compte indisponible' }}</p>
+                <p style="margin:4px 0; color:var(--muted);">{{ $order->client->user?->email ?? '—' }}</p>
                 @php($shippingAddress = $order->shipping_address_snapshot ?? [])
                 <div style="margin-top:12px; padding-top:12px; border-top:1px solid var(--line);">
                     <strong>Adresse de livraison</strong>

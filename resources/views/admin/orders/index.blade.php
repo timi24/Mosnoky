@@ -41,7 +41,7 @@
                     @foreach ($orders as $order)
                         <tr>
                             <td>{{ $order->order_number }}</td>
-                            <td>{{ $order->client->user->first_name ?? '—' }} {{ $order->client->user->last_name ?? '' }}</td>
+                            <td>{{ $order->client->user?->displayName() ?? 'Compte indisponible' }}</td>
                             <td>{{ number_format($order->total, 0, ',', ' ') }} FCFA</td>
                             <td>
                                 <span class="pill {{ in_array($order->status, ['LIVREE', 'CONFIRMEE']) ? '' : 'muted' }}">

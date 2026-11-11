@@ -6,7 +6,7 @@
     <div class="page-head">
         <div>
             <h1 class="page-title">Livraison — {{ $order->order_number }}</h1>
-            <p class="page-subtitle">Client : {{ $order->client->user->first_name ?? '' }} {{ $order->client->user->last_name ?? '' }}</p>
+            <p class="page-subtitle">Client : {{ $order->client->user?->displayName() ?? 'Compte indisponible' }}</p>
         </div>
         <a class="button small" href="{{ route('admin.deliveries.index') }}">← Retour</a>
     </div>

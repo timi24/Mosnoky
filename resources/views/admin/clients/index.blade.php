@@ -30,24 +30,30 @@
                         <th>Email</th>
                         <th>Statut</th>
                         <th>Commandes</th>
-                        <th>Client depuis</th>
+                        <th>Compte créé le</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($clients as $client)
+                        @php($user = $client->user)
+                        @php($accountStatus = $user?->account_status)
                         <tr>
-                            <td>{{ $client->user->first_name ?? '—' }} {{ $client->user->last_name ?? '' }}</td>
-                            <td>{{ $client->user->email ?? '—' }}</td>
+                            <td>{{ $user?->displayName() ?? 'Compte indisponible' }}</td>
+                            <td>{{ $user?->email ?? '—' }}</td>
                             <td>
-                                @if (($client->user->account_status ?? null) === 'ACTIF')
+                                @if ($accountStatus === 'ACTIF')
                                     <span class="pill">Actif</span>
+                                @elseif ($accountStatus === 'BLOQUE')
+                                    <span class="pill muted">Bloqué</span>
+                                @elseif ($accountStatus === 'SUSPENDU')
+                                    <span class="pill muted">Suspendu</span>
                                 @else
-                                    <span class="pill muted">{{ $client->user->account_status ?? '—' }}</span>
+                                    <span class="pill muted">{{ $accountStatus ?? 'Compte indisponible' }}</span>
                                 @endif
                             </td>
                             <td>{{ $client->orders_count }}</td>
-                            <td>{{ $client->created_at->format('d/m/Y') }}</td>
+                            <td>{{ ($user?->created_at ?? $client->created_at)->format('d/m/Y') }}</td>
                             <td>
                                 <a class="button small" href="{{ route('admin.clients.show', $client) }}">Voir la fiche</a>
                             </td>

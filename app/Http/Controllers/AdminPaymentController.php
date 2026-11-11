@@ -61,6 +61,12 @@ class AdminPaymentController extends Controller
                 return false;
             }
 
+            $locked->load('order');
+
+            if (! $locked->order || $locked->order->status === 'ANNULEE') {
+                return false;
+            }
+
             $locked->update(['status' => 'ACCEPTE', 'paid_at' => now()]);
             $locked->order->update(['status' => 'CONFIRMEE']);
 
@@ -75,7 +81,7 @@ class AdminPaymentController extends Controller
 
         return back()->with('status', $done
             ? 'Paiement confirmé : la commande est validée et le client a été prévenu.'
-            : 'Ce paiement a déjà été traité.');
+            : 'Ce paiement a déjà été traité ou la commande a été annulée.');
     }
 
     public function reject(Payment $payment): RedirectResponse

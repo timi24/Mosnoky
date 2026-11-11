@@ -40,7 +40,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property-read Collection<int, Membership> $teamMemberships
  * @property-read Collection<int, Team> $teams
  */
-#[Fillable(['name', 'email', 'password', 'current_team_id','role'])]
+#[Fillable(['name', 'email', 'password', 'current_team_id', 'role'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token', 'verification_code'])]
 class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
 {
@@ -72,6 +72,22 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
         return Str::length($initials) > 1
             ? Str::substr($initials, 0, 1).Str::substr($initials, -1)
             : $initials;
+    }
+
+    public function displayName(): string
+    {
+        $firstAndLastName = trim(implode(' ', array_filter([
+            $this->first_name,
+            $this->last_name,
+        ])));
+
+        if ($firstAndLastName !== '') {
+            return $firstAndLastName;
+        }
+
+        return trim((string) $this->name) !== ''
+            ? trim((string) $this->name)
+            : 'Nom non renseigné';
     }
 
     /**

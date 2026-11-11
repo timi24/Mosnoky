@@ -92,7 +92,7 @@
                     <tbody>
                         @foreach ($recentReviews as $review)
                             <tr>
-                                <td>{{ $review->client->user->first_name ?? '—' }}</td>
+                                <td>{{ $review->client->user?->displayName() ?? 'Compte indisponible' }}</td>
                                 <td>{{ $review->product->name ?? '—' }}</td>
                                 <td>{{ str_repeat('⭐', $review->rating) }}</td>
                                 <td>{{ Str::limit($review->comment, 50) ?: '—' }}</td>

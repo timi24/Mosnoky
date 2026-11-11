@@ -8,6 +8,7 @@ use App\Models\Client;
 use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class CartController extends Controller
@@ -27,14 +28,27 @@ class CartController extends Controller
 
     public function store(Request $request, Product $product): RedirectResponse
     {
+        $sizeRules = [$product->available_sizes ? 'required' : 'nullable', 'string'];
+        $colorRules = [$product->available_colors ? 'required' : 'nullable', 'string'];
+
+        if (! empty($product->available_sizes)) {
+            $sizeRules[] = Rule::in($product->available_sizes);
+        }
+
+        if (! empty($product->available_colors)) {
+            $colorRules[] = Rule::in($product->available_colors);
+        }
+
         $validated = $request->validate([
             'quantity' => ['nullable', 'integer', 'min:1', 'max:'.$product->stock],
-            'size' => [$product->available_sizes ? 'required' : 'nullable', 'string'],
-            'color' => [$product->available_colors ? 'required' : 'nullable', 'string'],
+            'size' => $sizeRules,
+            'color' => $colorRules,
         ], [
             'quantity.integer' => 'La quantité doit être un nombre entier.',
             'quantity.min' => 'La quantité doit être au moins égale à 1.',
             'quantity.max' => 'La quantité demandée dépasse le stock disponible.',
+            'size.in' => 'La taille sélectionnée n’est plus disponible.',
+            'color.in' => 'La couleur sélectionnée n’est plus disponible.',
         ]);
 
         $quantity = $validated['quantity'] ?? 1;

@@ -11,14 +11,20 @@ class ClientController extends Controller
 {
     public function index(Request $request): View
     {
+        $searchTerms = preg_split('/\s+/', trim($request->string('search')->toString()), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+
         $clients = Client::with('user')
             ->withCount('orders')
-            ->when($request->filled('search'), function ($query) use ($request) {
-                $search = $request->string('search');
-                $query->whereHas('user', function ($q) use ($search) {
-                    $q->where('first_name', 'like', "%{$search}%")
-                        ->orWhere('last_name', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%");
+            ->when($searchTerms !== [], function ($query) use ($searchTerms) {
+                $query->whereHas('user', function ($userQuery) use ($searchTerms) {
+                    foreach ($searchTerms as $term) {
+                        $userQuery->where(function ($nameQuery) use ($term) {
+                            $nameQuery->where('first_name', 'like', "%{$term}%")
+                                ->orWhere('last_name', 'like', "%{$term}%")
+                                ->orWhere('name', 'like', "%{$term}%")
+                                ->orWhere('email', 'like', "%{$term}%");
+                        });
+                    }
                 });
             })
             ->orderByDesc('created_at')

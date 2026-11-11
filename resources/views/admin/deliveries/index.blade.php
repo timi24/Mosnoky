@@ -29,7 +29,7 @@
                     @foreach ($orders as $order)
                         <tr>
                             <td>{{ $order->order_number }}</td>
-                            <td>{{ $order->client->user->first_name ?? '—' }}</td>
+                            <td>{{ $order->client->user?->displayName() ?? 'Compte indisponible' }}</td>
                             <td><span class="pill muted">{{ $order->status }}</span></td>
                             <td>
                                 @if ($order->delivery)

@@ -37,7 +37,7 @@
                 <tbody>
                     @foreach ($reports as $report)
                         <tr>
-                            <td>{{ $report->client->user->first_name ?? '—' }}</td>
+                            <td>{{ $report->client->user?->displayName() ?? 'Compte indisponible' }}</td>
                             <td>{{ $report->report_type }}</td>
                             <td>{{ $report->order->order_number ?? '—' }}</td>
                             <td>{{ Str::limit($report->description, 50) }}</td>

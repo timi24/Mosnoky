@@ -1,11 +1,11 @@
 @extends('layouts.admin')
 
-@section('title', 'Conversation avec ' . $client->first_name)
+@section('title', 'Conversation avec ' . $client->displayName())
 
 @section('content')
     <div class="page-head">
         <div>
-            <h1 class="page-title">{{ $client->first_name }} {{ $client->last_name }}</h1>
+            <h1 class="page-title">{{ $client->displayName() }}</h1>
             <p class="page-subtitle">{{ $client->email }}</p>
         </div>
         <a class="button small" href="{{ route('admin.messages.index') }}">← Toutes les conversations</a>

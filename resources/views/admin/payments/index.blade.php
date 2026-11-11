@@ -31,7 +31,7 @@
                     @foreach ($pending as $payment)
                         <tr>
                             <td>{{ $payment->order->order_number ?? '—' }}</td>
-                            <td>{{ $payment->order->client->user->name ?? '—' }}</td>
+                            <td>{{ $payment->order->client->user?->displayName() ?? 'Compte indisponible' }}</td>
                             <td><strong>{{ number_format($payment->amount, 0, ',', ' ') }} FCFA</strong></td>
                             <td>{{ str_replace('_', ' ', $payment->payment_method) }}</td>
                             <td>{{ $payment->customer_phone }}</td>

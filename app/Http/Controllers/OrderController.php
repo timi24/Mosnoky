@@ -47,17 +47,33 @@ class OrderController extends Controller
     {
         abort_unless($order->client->user_id === $request->user()->id, 403);
 
-        if ($order->status !== 'EN_ATTENTE') {
-            return back()->with('status', 'Cette commande ne peut plus être annulée.');
-        }
+        $cancelled = DB::transaction(function () use ($order) {
+            $lockedOrder = Order::query()->lockForUpdate()->find($order->id);
 
-        DB::transaction(function () use ($order) {
-            foreach ($order->items as $item) {
+            if (! $lockedOrder || $lockedOrder->status !== 'EN_ATTENTE') {
+                return false;
+            }
+
+            $payment = $lockedOrder->payment;
+
+            if ($payment && ($payment->submitted_at !== null || $payment->status === 'ACCEPTE')) {
+                return false;
+            }
+
+            $lockedOrder->load('items');
+
+            foreach ($lockedOrder->items as $item) {
                 $item->product?->increment('stock', $item->quantity);
             }
 
-            $order->update(['status' => 'ANNULEE']);
+            $lockedOrder->update(['status' => 'ANNULEE']);
+
+            return true;
         });
+
+        if (! $cancelled) {
+            return back()->with('status', 'Cette commande ne peut plus être annulée après la déclaration du paiement ou le début de son traitement.');
+        }
 
         return redirect()
             ->route('orders.show', $order)

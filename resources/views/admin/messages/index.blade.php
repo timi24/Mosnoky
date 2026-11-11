@@ -27,7 +27,7 @@
                     @foreach ($conversations as $conv)
                         <tr>
                             <td>
-                                {{ $conv['user']->first_name }} {{ $conv['user']->last_name }}
+                                {{ $conv['user']->displayName() }}
                                 @if ($conv['unreadCount'] > 0)
                                     <span class="badge">{{ $conv['unreadCount'] }}</span>
                                 @endif
