@@ -43,8 +43,55 @@
             <a class="dash-button" href="{{ route('categories.index') }}">Voir tout le catalogue →</a>
         </div>
 
+        <form method="GET" action="{{ route('client.dashboard') }}" class="dashboard-product-filters">
+            <label class="dashboard-filter dashboard-filter-search">
+                <span>Rechercher un produit</span>
+                <input type="search" name="q" value="{{ $filters['q'] ?? '' }}" placeholder="Chaussures, sacs…">
+            </label>
+            <label class="dashboard-filter">
+                <span>Catégorie</span>
+                <select name="category_id">
+                    <option value="">Toutes les catégories</option>
+                    @foreach ($categories as $category)
+                        <option value="{{ $category->id }}" @selected((string) ($filters['category_id'] ?? '') === (string) $category->id)>{{ $category->name }}</option>
+                    @endforeach
+                </select>
+            </label>
+            <label class="dashboard-filter">
+                <span>Prix minimum</span>
+                <input type="number" name="min_price" min="0" step="500" value="{{ $filters['min_price'] ?? '' }}" placeholder="FCFA">
+            </label>
+            <label class="dashboard-filter">
+                <span>Prix maximum</span>
+                <input type="number" name="max_price" min="0" step="500" value="{{ $filters['max_price'] ?? '' }}" placeholder="FCFA">
+            </label>
+            <label class="dashboard-filter">
+                <span>Trier les résultats</span>
+                <select name="sort">
+                    <option value="recent" @selected(($filters['sort'] ?? 'recent') === 'recent')>Plus récents</option>
+                    <option value="price_asc" @selected(($filters['sort'] ?? '') === 'price_asc')>Prix croissant</option>
+                    <option value="price_desc" @selected(($filters['sort'] ?? '') === 'price_desc')>Prix décroissant</option>
+                    <option value="popular" @selected(($filters['sort'] ?? '') === 'popular')>Plus populaires</option>
+                </select>
+            </label>
+            <label class="dashboard-filter-stock">
+                <input type="checkbox" name="availability" value="available" @checked(($filters['availability'] ?? '') === 'available')>
+                <span>Afficher uniquement les produits en stock</span>
+            </label>
+            <div class="dashboard-filter-actions">
+                <button type="submit" class="dash-button primary">Rechercher et filtrer</button>
+                <a href="{{ route('client.dashboard') }}" class="dash-button">Effacer</a>
+            </div>
+        </form>
+
         @if (!isset($products) || $products->isEmpty())
-            <div class="empty">Les produits arrivent bientôt. Revenez découvrir la prochaine sélection.</div>
+            <div class="empty">
+                @if (request()->filled('q') || request()->filled('category_id') || request()->filled('min_price') || request()->filled('max_price') || request()->filled('availability') || request('sort') === 'popular' || request('sort') === 'price_asc' || request('sort') === 'price_desc')
+                    Aucun produit ne correspond à ces filtres. Essayez d’élargir votre recherche.
+                @else
+                    Les produits arrivent bientôt. Revenez découvrir la prochaine sélection.
+                @endif
+            </div>
         @else
             <div class="shop-grid">
                 @foreach ($products as $product)
@@ -91,10 +138,22 @@
                     </article>
                 @endforeach
             </div>
+            <div class="dashboard-product-pagination">{{ $products->links() }}</div>
         @endif
     </section>
 
     <style>
+        .dashboard-product-filters { display: grid; grid-template-columns: minmax(220px, 2fr) repeat(4, minmax(120px, 1fr)); gap: 12px; align-items: end; margin: 0 0 22px; padding: 17px; border: 1px solid var(--line); border-radius: 16px; background: var(--card); box-shadow: 0 8px 22px rgba(34,31,29,.04); }
+        .dashboard-filter { display: grid; gap: 6px; min-width: 0; }
+        .dashboard-filter > span { color: var(--muted); font-size: .74rem; font-weight: 800; }
+        .dashboard-filter input, .dashboard-filter select { width: 100%; min-height: 42px; padding: 9px 10px; border: 1px solid var(--line); border-radius: 9px; background: #fff; color: var(--ink); font: inherit; font-size: .86rem; }
+        .dashboard-filter input:focus, .dashboard-filter select:focus { outline: 2px solid rgba(177,55,47,.18); border-color: var(--accent); }
+        .dashboard-filter-stock { display: flex; align-items: center; gap: 8px; min-height: 42px; color: var(--ink); font-size: .83rem; font-weight: 600; }
+        .dashboard-filter-stock input { width: 18px; height: 18px; accent-color: var(--accent); }
+        .dashboard-filter-actions { display: flex; gap: 8px; grid-column: 1 / -1; }
+        .dashboard-filter-actions .dash-button { min-height: 42px; }
+        .dashboard-filter-actions .dash-button:not(.primary) { color: var(--ink); }
+        .dashboard-product-pagination { margin-top: 20px; }
         .dash-hero {
             position: relative;
             margin-top: 6px;
@@ -194,9 +253,16 @@
             .dash-stats { grid-template-columns: repeat(2, 1fr); }
             .shop-grid { grid-template-columns: repeat(2, 1fr); }
             .dash-hero-content { padding: 32px; }
+            .dashboard-product-filters { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            .dashboard-filter-search { grid-column: span 2; }
+            .dashboard-filter-stock, .dashboard-filter-actions { grid-column: 1 / -1; }
         }
         @media (max-width: 600px) {
             .shop-grid { grid-template-columns: 1fr; }
+            .dashboard-product-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; padding: 13px; }
+            .dashboard-filter-search, .dashboard-filter-actions, .dashboard-filter-stock { grid-column: 1 / -1; }
+            .dashboard-filter-actions { display: grid; grid-template-columns: 1fr 1fr; }
+            .dashboard-filter-actions .dash-button { padding-inline: 8px; font-size: .78rem; }
         }
     </style>
 
