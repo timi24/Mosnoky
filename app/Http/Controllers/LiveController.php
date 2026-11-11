@@ -22,7 +22,7 @@ class LiveController extends Controller
     {
         $user = $request->user();
         $adminIds = Administrator::pluck('user_id');
-        $isAdmin = $adminIds->contains($user->id);
+        $isAdmin = strtoupper(trim($user->role ?? '')) === 'ADMINISTRATEUR';
 
         $data = [
             'is_admin' => $isAdmin,
@@ -89,7 +89,7 @@ class LiveController extends Controller
             $notification->forceFill(['is_read' => true])->save();
         }
 
-        $isAdmin = Administrator::where('user_id', $user->id)->exists();
+        $isAdmin = strtoupper(trim($user->role ?? '')) === 'ADMINISTRATEUR';
         $url = NotificationLink::url($notification, $isAdmin);
 
         return $url ? redirect($url) : redirect()->back();

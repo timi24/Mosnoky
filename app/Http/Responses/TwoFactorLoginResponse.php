@@ -12,7 +12,7 @@ class TwoFactorLoginResponse implements TwoFactorLoginResponseContract
     {
         $user = $request->user();
 
-        $redirectUrl = $user->role === 'ADMINISTRATEUR'
+        $redirectUrl = strtoupper(trim($user->role ?? '')) === 'ADMINISTRATEUR'
             ? route('admin.dashboard')
             : route('client.dashboard');
 
