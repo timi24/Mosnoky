@@ -38,7 +38,66 @@
                     <div><dt>Membre depuis</dt><dd>{{ $user->created_at->translatedFormat('d F Y') }}</dd></div>
                 @endif
             </dl>
+
+            @if ($errors->profile->any())
+                <div class="acc-alert err">
+                    @foreach ($errors->profile->all() as $message)
+                        <div>{{ $message }}</div>
+                    @endforeach
+                </div>
+            @endif
+
+            <form method="POST" action="{{ route('account.profile') }}" class="acc-form acc-profile-form">
+                @csrf
+                @method('PUT')
+                <label class="acc-field">
+                    <span>Nom complet</span>
+                    <input type="text" name="name" value="{{ old('name', $fullName) }}" autocomplete="name" maxlength="255" required>
+                </label>
+                <label class="acc-field">
+                    <span>Téléphone</span>
+                    <input type="tel" name="phone" value="{{ old('phone', $phone) }}" autocomplete="tel" inputmode="tel" placeholder="Ex. 70 12 34 56">
+                </label>
+                <button type="submit" class="acc-btn">Enregistrer mes coordonnées</button>
+            </form>
         </section>
+
+        @unless ($isAdmin)
+            <section class="acc-card">
+                <h2 class="acc-h2">Adresse de livraison</h2>
+                <p class="acc-hint">Elle sera proposée automatiquement lors de votre prochaine commande.</p>
+
+                @if ($errors->address->any())
+                    <div class="acc-alert err">
+                        @foreach ($errors->address->all() as $message)
+                            <div>{{ $message }}</div>
+                        @endforeach
+                    </div>
+                @endif
+
+                <form method="POST" action="{{ route('account.address') }}" class="acc-form">
+                    @csrf
+                    @method('PUT')
+                    <label class="acc-field">
+                        <span>Adresse</span>
+                        <input type="text" name="street" value="{{ old('street', $deliveryAddress?->street) }}" maxlength="255" required>
+                    </label>
+                    <label class="acc-field">
+                        <span>Ville</span>
+                        <input type="text" name="city" value="{{ old('city', $deliveryAddress?->city) }}" maxlength="100" required>
+                    </label>
+                    <label class="acc-field">
+                        <span>Pays</span>
+                        <input type="text" name="country" value="{{ old('country', $deliveryAddress?->country ?? 'Burkina Faso') }}" maxlength="100" required>
+                    </label>
+                    <label class="acc-field">
+                        <span>Code postal (facultatif)</span>
+                        <input type="text" name="postal_code" value="{{ old('postal_code', $deliveryAddress?->postal_code) }}" maxlength="20" autocomplete="postal-code">
+                    </label>
+                    <button type="submit" class="acc-btn">Enregistrer l’adresse</button>
+                </form>
+            </section>
+        @endunless
 
         {{-- MOT DE PASSE --}}
         <section class="acc-card">
@@ -119,6 +178,9 @@
         .acc-form { display: flex; flex-direction: column; gap: 16px; }
         .acc-field { display: flex; flex-direction: column; gap: 6px; }
         .acc-field > span { font-size: .85rem; font-weight: 700; }
+        .acc-field input:not([type=password]) { width: 100%; box-sizing: border-box; min-height: 44px; padding: 11px 13px; border: 1.5px solid var(--line); border-radius: 11px; font: inherit; background: #fff; color: var(--ink); }
+        .acc-field input:not([type=password]):focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px rgba(177,55,47,.1); }
+        .acc-profile-form { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line); }
         .acc-field small { color: var(--muted); font-size: .78rem; }
         .acc-pass { position: relative; }
         .acc-pass input { width: 100%; box-sizing: border-box; padding: 12px 46px 12px 14px; border: 1.5px solid var(--line); border-radius: 12px; font-size: .95rem; font-family: inherit; background: #fff; color: var(--ink); transition: border-color .2s ease, box-shadow .2s ease; }
@@ -133,6 +195,6 @@
         .acc-alert.ok { background: #eef1ea; color: #2f6f4e; border: 1px solid #d3dcc9; max-width: 980px; }
         .acc-alert.err { background: #fbe9e6; color: #b1372f; border: 1px solid #f0c3ba; }
 
-        @media (max-width: 860px) { .acc-grid { grid-template-columns: 1fr; } .acc-card { padding: 20px; } }
+        @media (max-width: 860px) { .acc-grid { grid-template-columns: 1fr; } .acc-card { padding: 20px; } .acc-btn { width: 100%; min-height: 46px; } }
     </style>
 @endsection

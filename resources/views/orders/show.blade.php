@@ -141,21 +141,18 @@
                         <td>{{ number_format($item->unit_price, 2, ',', ' ') }} FCFA</td>
                         <td>{{ number_format($item->subtotal, 2, ',', ' ') }} FCFA</td>
                         @if ($order->status === 'LIVREE' && $item->product)
+                            @php($review = $reviewsByProduct->get($item->product_id))
                             <td>
-                                @php
-                                    $alreadyReviewed = \App\Models\Review::where('client_id', $order->client_id)
-                                        ->where('product_id', $item->product_id)
-                                        ->exists();
-                                @endphp
-                                @if ($alreadyReviewed)
-                                    <span class="pill muted">Avis envoyé</span>
+                                @if ($review)
+                                    @php($reviewStatusLabels = ['EN_ATTENTE' => 'En attente de modération', 'APPROUVE' => 'Publié', 'MASQUE' => 'Non publié'])
+                                    <span class="pill {{ $review->moderation_status === 'APPROUVE' ? '' : 'muted' }}">{{ $reviewStatusLabels[$review->moderation_status] ?? 'Avis envoyé' }}</span>
                                 @else
                                     <button type="button" class="button small" onclick="document.getElementById('review-form-{{ $item->product_id }}').classList.toggle('open')">Laisser un avis</button>
                                 @endif
                             </td>
                         @endif
                     </tr>
-                    @if ($order->status === 'LIVREE' && $item->product && ! ($alreadyReviewed ?? false))
+                    @if ($order->status === 'LIVREE' && $item->product && ! $reviewsByProduct->has($item->product_id))
                         <tr id="review-form-{{ $item->product_id }}" class="review-row">
                             <td colspan="5" style="background:var(--paper);">
                                 <form method="POST" action="{{ route('reviews.store', [$order, $item->product]) }}" style="display:flex; gap:12px; align-items:flex-start; padding:10px 0;">

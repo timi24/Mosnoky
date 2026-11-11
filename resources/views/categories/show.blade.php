@@ -11,6 +11,22 @@
         <a class="button small" href="{{ route('categories.index') }}">← Toutes les catégories</a>
     </div>
 
+    <form method="GET" action="{{ route('categories.show', $category) }}" class="category-filters">
+        <label><span>Prix minimum</span><input type="number" name="min_price" min="0" step="500" value="{{ $filters['min_price'] ?? '' }}" placeholder="FCFA"></label>
+        <label><span>Prix maximum</span><input type="number" name="max_price" min="0" step="500" value="{{ $filters['max_price'] ?? '' }}" placeholder="FCFA"></label>
+        <label><span>Trier par</span><select name="sort">
+            <option value="recent" @selected(($filters['sort'] ?? 'recent') === 'recent')>Plus récents</option>
+            <option value="price_asc" @selected(($filters['sort'] ?? '') === 'price_asc')>Prix croissant</option>
+            <option value="price_desc" @selected(($filters['sort'] ?? '') === 'price_desc')>Prix décroissant</option>
+            <option value="popular" @selected(($filters['sort'] ?? '') === 'popular')>Plus populaires</option>
+        </select></label>
+        <label class="category-availability"><input type="checkbox" name="availability" value="available" @checked(($filters['availability'] ?? '') === 'available')> En stock uniquement</label>
+        <div class="category-filter-actions">
+            <button class="button primary" type="submit">Appliquer</button>
+            <a class="button" href="{{ route('categories.show', $category) }}">Effacer</a>
+        </div>
+    </form>
+
     @if ($products->isEmpty())
         <div class="empty">Aucun produit disponible dans cette catégorie pour le moment.</div>
     @else
@@ -66,6 +82,13 @@
     @endif
 
     <style>
+        .category-filters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) auto; align-items: end; gap: 12px; margin-bottom: 22px; padding: 16px; border: 1px solid var(--line); border-radius: 15px; background: var(--card); }
+        .category-filters label { display: grid; gap: 6px; min-width: 0; color: var(--muted); font-size: .76rem; font-weight: 800; }
+        .category-filters input[type=number], .category-filters select { width: 100%; min-height: 42px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 9px; background: #fff; color: var(--ink); font: inherit; font-weight: 500; }
+        .category-filters .category-availability { display: flex; align-items: center; gap: 8px; min-height: 42px; white-space: nowrap; color: var(--ink); font-size: .83rem; }
+        .category-availability input { width: 17px; height: 17px; accent-color: var(--accent); }
+        .category-filter-actions { display: flex; gap: 7px; }
+        .category-filter-actions .button { min-height: 42px; padding-inline: 12px; }
         /* Diaporama des photos produit (même principe que l'accueil client) */
         .shop-card-image { position: relative; touch-action: pan-y; }
         .product-slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.04); transition: opacity 1.2s ease; will-change: opacity, transform; }
@@ -110,6 +133,11 @@
             .product-slide.active { animation: none; transform: none; }
             .product-slide { transition-duration: .01s; }
             .thumb-dot.active::after { animation: none; transform: scaleX(1); }
+        }
+        @media (max-width: 760px) {
+            .category-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .category-availability, .category-filter-actions { grid-column: 1 / -1; }
+            .category-filter-actions { display: grid; grid-template-columns: 1fr 1fr; }
         }
     </style>
 

@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Address;
 use App\Models\AppNotification;
 use App\Models\Cart;
 use App\Models\Client;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Review;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -17,8 +19,6 @@ use Illuminate\View\View;
 
 class OrderController extends Controller
 {
-    private const SHIPPING_FEE = 2000.00;
-
     public function index(Request $request): View
     {
         $client = Client::firstOrCreate(['user_id' => $request->user()->id]);
@@ -37,9 +37,15 @@ class OrderController extends Controller
         abort_unless($order->client->user_id === $request->user()->id, 403);
 
         $order->load(['items.product', 'payment', 'delivery']);
+        $reviewsByProduct = Review::query()
+            ->where('client_id', $order->client_id)
+            ->whereIn('product_id', $order->items->pluck('product_id'))
+            ->get()
+            ->keyBy('product_id');
 
         return view('orders.show', [
             'order' => $order,
+            'reviewsByProduct' => $reviewsByProduct,
         ]);
     }
 
@@ -87,11 +93,18 @@ class OrderController extends Controller
         $cart?->load('items.product');
 
         $subtotal = $cart?->items->sum(fn ($item) => $item->quantity * $item->unit_price) ?? 0;
+        $shippingFee = (float) config('services.shop.shipping_fee', 2000);
+        $deliveryAddress = Address::query()
+            ->where('user_id', $request->user()->id)
+            ->where('address_type', 'LIVRAISON')
+            ->where('is_default', true)
+            ->first();
 
         return view('orders.create', [
             'cart' => $cart,
             'subtotal' => $subtotal,
-            'shippingFee' => self::SHIPPING_FEE,
+            'shippingFee' => $shippingFee,
+            'deliveryAddress' => $deliveryAddress,
         ]);
     }
 
@@ -121,7 +134,7 @@ class OrderController extends Controller
 
         $order = DB::transaction(function () use ($cart, $client, $validated, $request) {
             $subtotal = $cart->items->sum(fn ($item) => $item->quantity * $item->unit_price);
-            $shippingFee = self::SHIPPING_FEE;
+            $shippingFee = (float) config('services.shop.shipping_fee', 2000);
 
             $order = Order::create([
                 'client_id' => $client->id,

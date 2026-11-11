@@ -16,10 +16,45 @@
         </div>
     </div>
 
-    <form method="GET" action="{{ route('search.index') }}" style="margin-bottom:24px; display:flex; gap:10px; max-width:480px;">
-        <input type="text" name="q" value="{{ $query }}" placeholder="Rechercher une paire de chaussures, un sac…"
-               style="flex:1; padding:11px 14px; border:1px solid var(--line); border-radius:999px;">
-        <button type="submit" class="button primary">Rechercher</button>
+    <form method="GET" action="{{ route('search.index') }}" class="catalog-filters">
+        <label class="catalog-filter catalog-filter-search">
+            <span>Recherche</span>
+            <input type="search" name="q" value="{{ $query }}" placeholder="Chaussures, sacs…">
+        </label>
+        <label class="catalog-filter">
+            <span>Catégorie</span>
+            <select name="category_id">
+                <option value="">Toutes</option>
+                @foreach ($categories as $category)
+                    <option value="{{ $category->id }}" @selected((string) ($filters['category_id'] ?? '') === (string) $category->id)>{{ $category->name }}</option>
+                @endforeach
+            </select>
+        </label>
+        <label class="catalog-filter">
+            <span>Prix minimum</span>
+            <input type="number" name="min_price" min="0" step="500" value="{{ $filters['min_price'] ?? '' }}" placeholder="FCFA">
+        </label>
+        <label class="catalog-filter">
+            <span>Prix maximum</span>
+            <input type="number" name="max_price" min="0" step="500" value="{{ $filters['max_price'] ?? '' }}" placeholder="FCFA">
+        </label>
+        <label class="catalog-filter">
+            <span>Trier par</span>
+            <select name="sort">
+                <option value="recent" @selected(($filters['sort'] ?? 'recent') === 'recent')>Plus récents</option>
+                <option value="price_asc" @selected(($filters['sort'] ?? '') === 'price_asc')>Prix croissant</option>
+                <option value="price_desc" @selected(($filters['sort'] ?? '') === 'price_desc')>Prix décroissant</option>
+                <option value="popular" @selected(($filters['sort'] ?? '') === 'popular')>Plus populaires</option>
+            </select>
+        </label>
+        <label class="catalog-availability">
+            <input type="checkbox" name="availability" value="available" @checked(($filters['availability'] ?? '') === 'available')>
+            <span>Disponibles uniquement</span>
+        </label>
+        <div class="catalog-filter-actions">
+            <button type="submit" class="button primary">Appliquer les filtres</button>
+            <a class="button" href="{{ route('search.index') }}">Effacer</a>
+        </div>
     </form>
 
     @if ($products->isEmpty())
@@ -77,6 +112,15 @@
     @endif
 
     <style>
+        .catalog-filters { display: grid; grid-template-columns: minmax(220px, 2fr) repeat(4, minmax(125px, 1fr)); gap: 12px; align-items: end; margin-bottom: 24px; padding: 18px; border: 1px solid var(--line); border-radius: 16px; background: var(--card); box-shadow: 0 8px 22px rgba(34,31,29,.04); }
+        .catalog-filter { display: grid; gap: 6px; min-width: 0; }
+        .catalog-filter > span { color: var(--muted); font-size: .75rem; font-weight: 800; }
+        .catalog-filter input, .catalog-filter select { width: 100%; min-height: 43px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 9px; background: #fff; color: var(--ink); font: inherit; font-size: .88rem; }
+        .catalog-filter input:focus, .catalog-filter select:focus { outline: 2px solid rgba(177,55,47,.18); border-color: var(--accent); }
+        .catalog-filter-actions { display: flex; gap: 8px; grid-column: 1 / -1; }
+        .catalog-filter-actions .button { min-height: 42px; }
+        .catalog-availability { display: flex; align-items: center; gap: 8px; min-height: 43px; color: var(--ink); font-size: .84rem; font-weight: 600; }
+        .catalog-availability input { width: 18px; height: 18px; accent-color: var(--accent); }
         /* Diaporama des photos produit (même principe que l'accueil client) */
         .shop-card-image { position: relative; touch-action: pan-y; }
         .product-slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.04); transition: opacity 1.2s ease; will-change: opacity, transform; }
@@ -121,6 +165,13 @@
             .product-slide.active { animation: none; transform: none; }
             .product-slide { transition-duration: .01s; }
             .thumb-dot.active::after { animation: none; transform: scaleX(1); }
+        }
+        @media (max-width: 760px) {
+            .catalog-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; padding: 14px; }
+            .catalog-filter-search, .catalog-filter-actions { grid-column: 1 / -1; }
+            .catalog-filter-actions { display: grid; grid-template-columns: 1fr 1fr; }
+            .catalog-filter-actions .button { padding-inline: 9px; font-size: .8rem; }
+            .catalog-availability { grid-column: 1 / -1; }
         }
     </style>
 

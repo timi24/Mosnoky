@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Review;
@@ -21,21 +22,32 @@ class ProductController extends Controller
         $averageRating = $product->reviews->avg('rating');
         $soldCount = OrderItem::where('product_id', $product->id)->sum('quantity');
 
-        $alreadyReviewed = false;
+        $ownReview = null;
+        $eligibleReviewOrder = null;
 
         if (auth()->check()) {
             $client = Client::firstOrCreate(['user_id' => auth()->id()]);
 
-            $alreadyReviewed = Review::where('client_id', $client->id)
+            $ownReview = Review::query()
+                ->where('client_id', $client->id)
                 ->where('product_id', $product->id)
-                ->exists();
+                ->latest()
+                ->first();
+
+            $eligibleReviewOrder = Order::query()
+                ->where('client_id', $client->id)
+                ->where('status', 'LIVREE')
+                ->whereHas('items', fn ($query) => $query->where('product_id', $product->id))
+                ->latest()
+                ->first();
         }
 
         return view('products.show', [
             'product' => $product,
             'averageRating' => $averageRating,
             'soldCount' => $soldCount,
-            'alreadyReviewed' => $alreadyReviewed,
+            'ownReview' => $ownReview,
+            'eligibleReviewOrder' => $eligibleReviewOrder,
         ]);
     }
 }

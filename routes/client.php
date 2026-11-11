@@ -34,6 +34,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/commandes/{order}/annuler', [OrderController::class, 'cancel'])->name('orders.cancel');
 
     // Avis
+    Route::get('/mes-avis', [ReviewController::class, 'index'])->name('reviews.index');
     Route::post('/commandes/{order}/produits/{product}/avis', [ReviewController::class, 'store'])->name('reviews.store');
     Route::post('/produits/{product}/avis', [ReviewController::class, 'storeForProduct'])->name('reviews.store-product');
 

@@ -19,10 +19,12 @@ class CartController extends Controller
         $cart->load('items.product');
 
         $subtotal = $cart->items->sum(fn ($item) => $item->quantity * $item->unit_price);
+        $shippingFee = (float) config('services.shop.shipping_fee', 2000);
 
         return view('cart.index', [
             'cart' => $cart,
             'subtotal' => $subtotal,
+            'shippingFee' => $shippingFee,
         ]);
     }
 

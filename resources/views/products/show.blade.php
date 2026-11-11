@@ -94,26 +94,40 @@
 
     <!-- AVIS -->
     <div class="pdp-review-form">
-        <h3 style="margin-top:0;">Donnez votre avis sur ce produit</h3>
+        <div class="pdp-review-heading">
+            <div>
+                <h3 style="margin:0 0 4px;">Votre avis</h3>
+                <p>Les avis sont réservés aux clients ayant reçu ce produit et sont publiés après vérification.</p>
+            </div>
+            <a class="button small" href="{{ route('reviews.index') }}">Mes avis</a>
+        </div>
 
-        @if ($alreadyReviewed)
-            <p style="color:var(--muted); margin:0;">Vous avez déjà laissé un avis pour ce produit. Merci pour votre retour !</p>
-        @else
-            <form method="POST" action="{{ route('reviews.store-product', $product) }}" style="display:flex; gap:12px; align-items:flex-start; flex-wrap:wrap;">
+        @if ($ownReview)
+            @php($reviewStatusLabels = ['EN_ATTENTE' => 'En attente de modération', 'APPROUVE' => 'Publié', 'MASQUE' => 'Non publié'])
+            <div class="pdp-own-review-status">
+                <span class="pill {{ $ownReview->moderation_status === 'APPROUVE' ? '' : 'muted' }}">{{ $reviewStatusLabels[$ownReview->moderation_status] ?? 'Statut indisponible' }}</span>
+                <span>Vous avez déjà envoyé un avis pour ce produit.</span>
+            </div>
+        @elseif ($eligibleReviewOrder)
+            <form method="POST" action="{{ route('reviews.store-product', $product) }}" class="pdp-review-entry">
                 @csrf
-                <select name="rating" required style="padding:10px 12px; border:1px solid var(--line); border-radius:8px;">
+                <label class="sr-only" for="review-rating">Votre note</label>
+                <select id="review-rating" name="rating" required>
                     <option value="">Votre note</option>
                     @for ($i = 5; $i >= 1; $i--)
                         <option value="{{ $i }}">{{ str_repeat('⭐', $i) }}</option>
                     @endfor
                 </select>
-                <input type="text" name="comment" placeholder="Votre commentaire (optionnel)" style="flex:1; min-width:220px; padding:10px 14px; border:1px solid var(--line); border-radius:8px;">
+                <label class="sr-only" for="review-comment">Votre commentaire</label>
+                <input id="review-comment" type="text" name="comment" placeholder="Votre commentaire (optionnel)" maxlength="1000">
                 <button type="submit" class="button primary">Publier mon avis</button>
             </form>
-            @error('rating')
-                <div class="error">{{ $message }}</div>
-            @enderror
+        @else
+            <p class="pdp-review-prompt">Vous pourrez donner votre avis depuis cette page après la livraison de ce produit.</p>
         @endif
+        @error('rating')
+            <div class="error">{{ $message }}</div>
+        @enderror
     </div>
 
     <h3 style="margin-bottom:16px;">Avis clients ({{ $product->reviews->count() }})</h3>
@@ -257,7 +271,14 @@
         .pdp-full-desc h3 { margin: 0 0 10px; }
         .pdp-full-desc p { color: var(--muted); line-height: 1.7; }
 
-        .pdp-review-form { border: 1px solid var(--line); border-radius: 12px; background: var(--card); padding: 20px; margin-bottom: 24px; }
+        .pdp-review-form { border: 1px solid var(--line); border-radius: 14px; background: var(--card); padding: 20px; margin-bottom: 24px; }
+        .pdp-review-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+        .pdp-review-heading h3 { font-family: Georgia, serif; font-size: 1.25rem; font-weight: 500; }
+        .pdp-review-heading p, .pdp-review-prompt { margin: 0; color: var(--muted); font-size: .86rem; line-height: 1.5; }
+        .pdp-review-entry { display: grid; grid-template-columns: 170px minmax(180px, 1fr) auto; gap: 10px; align-items: center; }
+        .pdp-review-entry select, .pdp-review-entry input { width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 9px; background: #fff; color: var(--ink); font: inherit; }
+        .pdp-own-review-status { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; color: var(--muted); font-size: .86rem; }
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 
         .feed { display: flex; flex-direction: column; gap: 14px; max-width: 640px; }
         .feed-post { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
@@ -272,6 +293,9 @@
 
         @media (max-width: 900px) {
             .pdp-wrap { grid-template-columns: 1fr; gap: 24px; }
+            .pdp-review-entry { grid-template-columns: 1fr; }
+            .pdp-review-heading { flex-direction: column; }
+            .pdp-review-heading > .button, .pdp-review-entry .button { width: 100%; min-height: 44px; }
         }
     </style>
 @endsection

@@ -2,6 +2,10 @@
 
 return [
 
+    'shop' => [
+        'shipping_fee' => (float) env('SHOP_SHIPPING_FEE', 2000),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Third Party Services
@@ -47,8 +51,8 @@ return [
         ],
     ],
     'cinetpay' => [
-    'api_key' => env('CINETPAY_API_KEY'),
-    'site_id' => env('CINETPAY_SITE_ID'),
-],
+        'api_key' => env('CINETPAY_API_KEY'),
+        'site_id' => env('CINETPAY_SITE_ID'),
+    ],
 
 ];

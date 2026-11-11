@@ -29,25 +29,25 @@
 
                     <div class="field">
                         <label for="street">Adresse</label>
-                        <input type="text" id="street" name="street" value="{{ old('street') }}" required>
+                        <input type="text" id="street" name="street" value="{{ old('street', $deliveryAddress?->street) }}" autocomplete="street-address" required>
                         @error('street')<div class="error">{{ $message }}</div>@enderror
                     </div>
 
                     <div class="field">
                         <label for="city">Ville</label>
-                        <input type="text" id="city" name="city" value="{{ old('city') }}" required>
+                        <input type="text" id="city" name="city" value="{{ old('city', $deliveryAddress?->city) }}" autocomplete="address-level2" required>
                         @error('city')<div class="error">{{ $message }}</div>@enderror
                     </div>
 
                     <div class="field">
                         <label for="country">Pays</label>
-                        <input type="text" id="country" name="country" value="{{ old('country', 'Burkina Faso') }}" required>
+                        <input type="text" id="country" name="country" value="{{ old('country', $deliveryAddress?->country ?? 'Burkina Faso') }}" autocomplete="country-name" required>
                         @error('country')<div class="error">{{ $message }}</div>@enderror
                     </div>
 
                     <div class="field">
                         <label for="postal_code">Code postal (optionnel)</label>
-                        <input type="text" id="postal_code" name="postal_code" value="{{ old('postal_code') }}">
+                        <input type="text" id="postal_code" name="postal_code" value="{{ old('postal_code', $deliveryAddress?->postal_code) }}" autocomplete="postal-code">
                     </div>
 
                     <div class="form-actions">
