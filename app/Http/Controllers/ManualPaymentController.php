@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Administrator;
 use App\Models\AppNotification;
 use App\Models\Order;
 use App\Models\Payment;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -106,14 +106,17 @@ class ManualPaymentController extends Controller
             ]);
 
             // On prévient tous les administrateurs qu'un paiement attend vérification
-            $adminRows = Administrator::pluck('user_id')->map(fn ($userId) => [
-                'user_id' => $userId,
-                'title' => 'Paiement à vérifier 💰',
-                'content' => "Commande {$order->order_number} : le client déclare avoir payé ".number_format($payment->amount, 0, ',', ' ').' FCFA ('
-                    .str_replace('_', ' ', $data['payment_method']).", référence {$data['customer_reference']}). Vérifiez le SMS reçu puis confirmez dans Paiements.",
-                'is_read' => false,
-                'sent_at' => now(),
-            ])->all();
+            $adminRows = User::query()
+                ->whereRaw('UPPER(TRIM(role)) = ?', ['ADMINISTRATEUR'])
+                ->pluck('id')
+                ->map(fn ($userId) => [
+                    'user_id' => $userId,
+                    'title' => 'Paiement à vérifier 💰',
+                    'content' => "Commande {$order->order_number} : le client déclare avoir payé ".number_format($payment->amount, 0, ',', ' ').' FCFA ('
+                        .str_replace('_', ' ', $data['payment_method']).", référence {$data['customer_reference']}). Vérifiez le SMS reçu puis confirmez dans Paiements.",
+                    'is_read' => false,
+                    'sent_at' => now(),
+                ])->all();
 
             if (! empty($adminRows)) {
                 AppNotification::insert($adminRows);

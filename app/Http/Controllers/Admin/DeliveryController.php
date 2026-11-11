@@ -55,6 +55,7 @@ class DeliveryController extends Controller
         ]);
 
         $delivery = $order->delivery ?? new Delivery(['order_id' => $order->id]);
+        $previousExpectedDate = $delivery->expected_delivery_at?->toDateString();
         $delivery->fill($validated);
 
         if ($validated['status'] === 'EXPEDIEE' && ! $delivery->shipped_at) {
@@ -80,13 +81,24 @@ class DeliveryController extends Controller
                 'EN_TRANSIT' => "Votre commande {$order->order_number} est en transit.",
                 'LIVREE' => "Votre commande {$order->order_number} a été livrée. Merci pour votre confiance !",
                 'RETARDEE' => "Votre commande {$order->order_number} est retardée, nous en sommes désolés.",
+                'ECHEC' => "Un problème est survenu pendant la livraison de la commande {$order->order_number}. Contactez-nous pour obtenir de l'aide.",
             ];
 
-            if (isset($messages[$validated['status']])) {
+            $notificationContent = $messages[$validated['status']] ?? null;
+            $expectedDate = $delivery->expected_delivery_at?->toDateString();
+
+            if ($expectedDate && $expectedDate !== $previousExpectedDate) {
+                $dateMessage = 'La livraison de votre commande '.$order->order_number.' est estimée le '.$delivery->expected_delivery_at->format('d/m/Y').'.';
+                $notificationContent = $notificationContent
+                    ? $notificationContent.' '.$dateMessage
+                    : $dateMessage;
+            }
+
+            if ($notificationContent) {
                 AppNotification::create([
                     'user_id' => $order->client->user->id,
-                    'title' => 'Suivi de livraison',
-                    'content' => $messages[$validated['status']],
+                    'title' => $validated['status'] === 'RETARDEE' ? 'Retard de livraison' : 'Suivi de livraison',
+                    'content' => $notificationContent,
                 ]);
             }
         }

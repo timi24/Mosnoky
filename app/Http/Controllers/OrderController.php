@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Administrator;
 use App\Models\AppNotification;
 use App\Models\Cart;
 use App\Models\Client;
 use App\Models\Order;
+use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class OrderController extends Controller
@@ -80,10 +82,17 @@ class OrderController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
+            'phone' => ['required', 'string', 'regex:/^\\+?[0-9 ]{8,15}$/'],
             'street' => ['required', 'string', 'max:255'],
             'city' => ['required', 'string', 'max:100'],
             'country' => ['required', 'string', 'max:100'],
             'postal_code' => ['nullable', 'string', 'max:20'],
+        ], [
+            'phone.required' => 'Indiquez un numéro joignable pour la livraison.',
+            'phone.regex' => 'Le numéro de téléphone est invalide.',
+            'street.required' => 'Indiquez votre adresse de livraison.',
+            'city.required' => 'Indiquez votre ville.',
+            'country.required' => 'Indiquez votre pays.',
         ]);
 
         $client = Client::firstOrCreate(['user_id' => $request->user()->id]);
@@ -109,6 +118,16 @@ class OrderController extends Controller
             ]);
 
             foreach ($cart->items as $item) {
+                $product = Product::query()->lockForUpdate()->find($item->product_id);
+
+                if (! $product || $product->status !== 'ACTIF' || $product->stock < $item->quantity) {
+                    $productName = $item->product?->name ?? 'ce produit';
+
+                    throw ValidationException::withMessages([
+                        'cart' => "Le stock de « {$productName} » a changé. Ajustez votre panier avant de recommander.",
+                    ]);
+                }
+
                 $order->items()->create([
                     'product_id' => $item->product_id,
                     'quantity' => $item->quantity,
@@ -118,7 +137,7 @@ class OrderController extends Controller
                     'color' => $item->color,
                 ]);
 
-                $item->product?->decrement('stock', $item->quantity);
+                $product->decrement('stock', $item->quantity);
             }
 
             $cart->update(['status' => 'VALIDE']);
@@ -140,13 +159,16 @@ class OrderController extends Controller
     {
         $now = now();
 
-        $rows = Administrator::pluck('user_id')->map(fn ($userId) => [
-            'user_id' => $userId,
-            'title' => 'Nouvelle commande reçue !',
-            'content' => "{$clientName} vient de passer la commande {$order->order_number} pour un total de ".number_format($order->total, 0, ',', ' ').' FCFA.',
-            'is_read' => false,
-            'sent_at' => $now,
-        ])->all();
+        $rows = User::query()
+            ->whereRaw('UPPER(TRIM(role)) = ?', ['ADMINISTRATEUR'])
+            ->pluck('id')
+            ->map(fn ($userId) => [
+                'user_id' => $userId,
+                'title' => 'Nouvelle commande reçue !',
+                'content' => "{$clientName} vient de passer la commande {$order->order_number} pour un total de ".number_format($order->total, 0, ',', ' ').' FCFA.',
+                'is_read' => false,
+                'sent_at' => $now,
+            ])->all();
 
         if (! empty($rows)) {
             AppNotification::insert($rows);

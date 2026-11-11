@@ -10,32 +10,37 @@
     </section>
 
     <section style="padding:12px 0 8px;">
-        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px;">
-            <div class="panel" style="padding:20px;">
+        <div class="admin-dashboard-stats">
+            <a class="admin-dashboard-stat panel" href="{{ route('admin.products.index') }}">
                 <div style="font-size:.78rem; font-weight:800; text-transform:uppercase; color:var(--muted);">Produits</div>
                 <div style="margin-top:6px; font-size:2rem; font-weight:800;">{{ $productCount ?? 0 }}</div>
                 <div style="margin-top:4px; font-size:.8rem; color:var(--muted);">au catalogue</div>
-            </div>
-            <div class="panel" style="padding:20px;">
+            </a>
+            <a class="admin-dashboard-stat panel" href="{{ route('admin.orders.index') }}">
                 <div style="font-size:.78rem; font-weight:800; text-transform:uppercase; color:var(--muted);">Commandes</div>
                 <div style="margin-top:6px; font-size:2rem; font-weight:800;">{{ $orderCount ?? 0 }}</div>
                 <div style="margin-top:4px; font-size:.8rem; color:var(--muted);">{{ $pendingOrderCount ?? 0 }} en attente</div>
-            </div>
-            <div class="panel" style="padding:20px;">
+            </a>
+            <a class="admin-dashboard-stat panel" href="{{ route('admin.clients.index') }}">
                 <div style="font-size:.78rem; font-weight:800; text-transform:uppercase; color:var(--muted);">Clients</div>
                 <div style="margin-top:6px; font-size:2rem; font-weight:800;">{{ $clientCount ?? 0 }}</div>
                 <div style="margin-top:4px; font-size:.8rem; color:var(--muted);">comptes actifs</div>
-            </div>
-            <div class="panel" style="padding:20px;">
+            </a>
+            <a class="admin-dashboard-stat panel" href="{{ route('admin.messages.index') }}">
                 <div style="font-size:.78rem; font-weight:800; text-transform:uppercase; color:var(--muted);">Messages non lus</div>
                 <div style="margin-top:6px; font-size:2rem; font-weight:800;">{{ $unreadMessageCount ?? 0 }}</div>
                 <div style="margin-top:4px; font-size:.8rem; color:var(--muted);">à traiter</div>
-            </div>
+            </a>
+            <a class="admin-dashboard-stat panel" href="{{ route('admin.payments.index') }}">
+                <div style="font-size:.78rem; font-weight:800; text-transform:uppercase; color:var(--muted);">Paiements à vérifier</div>
+                <div style="margin-top:6px; font-size:2rem; font-weight:800;">{{ $pendingPaymentCount ?? 0 }}</div>
+                <div style="margin-top:4px; font-size:.8rem; color:var(--muted);">déclarations clients</div>
+            </a>
         </div>
     </section>
 
     <section style="padding:36px 0 20px; border-top:1px solid var(--line); margin-top:24px;">
-        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px;">
+        <div class="admin-dashboard-actions">
             <a class="panel" style="padding:22px; display:block;" href="{{ route('admin.products.index') }}">
                 <h3 style="margin:0 0 6px;">Produits</h3>
                 <p style="margin:0; color:var(--muted); font-size:.9rem;">Ajouter, modifier ou retirer des produits.</p>
@@ -105,4 +110,12 @@
             </div>
         @endif
     </section>
+
+    <style>
+        .admin-dashboard-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; }
+        .admin-dashboard-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+        .admin-dashboard-stat { display: block; padding: 20px; color: inherit; text-decoration: none; transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
+        .admin-dashboard-stat:hover { transform: translateY(-2px); border-color: var(--brand-red, #b1372f); box-shadow: 0 10px 24px rgba(0, 0, 0, .06); }
+        @media (prefers-reduced-motion: reduce) { .admin-dashboard-stat { transition: none; } }
+    </style>
 @endsection

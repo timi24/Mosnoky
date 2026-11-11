@@ -20,6 +20,15 @@ class OrderController extends Controller
         'ANNULEE',
     ];
 
+    private const STATUS_LABELS = [
+        'EN_ATTENTE' => 'en attente de confirmation',
+        'CONFIRMEE' => 'confirmée',
+        'EN_PREPARATION' => 'en préparation',
+        'EXPEDIEE' => 'expédiée',
+        'LIVREE' => 'livrée',
+        'ANNULEE' => 'annulée',
+    ];
+
     public function index(Request $request): View
     {
         $orders = Order::with('client.user')
@@ -31,6 +40,7 @@ class OrderController extends Controller
         return view('admin.orders.index', [
             'orders' => $orders,
             'statuses' => self::STATUSES,
+            'statusLabels' => self::STATUS_LABELS,
             'currentStatus' => $request->string('status')->toString(),
         ]);
     }
@@ -42,6 +52,7 @@ class OrderController extends Controller
         return view('admin.orders.show', [
             'order' => $order,
             'statuses' => self::STATUSES,
+            'statusLabels' => self::STATUS_LABELS,
         ]);
     }
 
@@ -58,7 +69,7 @@ class OrderController extends Controller
             AppNotification::create([
                 'user_id' => $order->client->user->id,
                 'title' => 'Mise à jour de votre commande',
-                'content' => "Votre commande {$order->order_number} est maintenant : {$validated['status']}.",
+                'content' => "Votre commande {$order->order_number} est maintenant ".self::STATUS_LABELS[$validated['status']].'.',
             ]);
         }
 

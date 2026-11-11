@@ -26,7 +26,7 @@
         <div class="form-panel" style="margin-bottom:24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
             <div>
                 <h3 style="margin:0 0 4px;">Payer cette commande en ligne</h3>
-                <p style="margin:0; color:var(--muted); font-size:.88rem;">Orange Money, Moov Money ou carte bancaire — {{ number_format($order->total, 0, ',', ' ') }} FCFA</p>
+                <p style="margin:0; color:var(--muted); font-size:.88rem;">Paiement Mobile Money (Orange Money ou Moov Money) — {{ number_format($order->total, 0, ',', ' ') }} FCFA</p>
                 @if ($order->payment?->status === 'REFUSE')
                     <p style="margin:6px 0 0; color:var(--danger); font-size:.85rem; font-weight:700;">Le dernier paiement a échoué. Vous pouvez réessayer.</p>
                 @endif
@@ -45,38 +45,58 @@
 
     <!-- Timeline de livraison -->
     @php
-        $steps = ['EN_PREPARATION' => 'Préparation', 'EXPEDIEE' => 'Expédiée', 'EN_TRANSIT' => 'En transit', 'LIVREE' => 'Livrée'];
-        $currentStep = $order->delivery->status ?? 'EN_PREPARATION';
-        $stepKeys = array_keys($steps);
-        $currentIndex = array_search($currentStep, $stepKeys) ?: 0;
+        $steps = ['Commande reçue', 'Confirmée', 'Préparation', 'Expédiée', 'Livrée'];
+        $deliveryStatus = $order->delivery?->status;
+        $currentIndex = match ($deliveryStatus) {
+            'LIVREE' => 4,
+            'EXPEDIEE', 'EN_TRANSIT' => 3,
+            'RETARDEE', 'ECHEC' => match ($order->status) {
+                'EXPEDIEE' => 3,
+                'EN_PREPARATION' => 2,
+                'CONFIRMEE' => 1,
+                default => 0,
+            },
+            'EN_PREPARATION' => 2,
+            default => match ($order->status) {
+                'LIVREE' => 4,
+                'EXPEDIEE' => 3,
+                'EN_PREPARATION' => 2,
+                'CONFIRMEE' => 1,
+                default => 0,
+            },
+        };
     @endphp
-    <div class="form-panel" style="margin-bottom:24px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-            <h3 style="margin:0;">Suivi de livraison</h3>
-            @if ($order->delivery?->expected_delivery_at)
-                <span class="pill">Livraison estimée le {{ $order->delivery->expected_delivery_at->format('d/m/Y') }}</span>
+    @if ($order->status === 'ANNULEE')
+        <div class="alert alert-danger" style="margin-bottom:24px;">Cette commande a été annulée. Si vous avez déjà payé, contactez-nous pour obtenir de l’aide.</div>
+    @else
+        <div class="form-panel order-tracking-panel" style="margin-bottom:24px;">
+            <div class="order-tracking-head">
+                <h3 style="margin:0;">Suivi de la commande</h3>
+                @if ($order->delivery?->expected_delivery_at)
+                    <span class="pill">Arrivée estimée le {{ $order->delivery->expected_delivery_at->format('d/m/Y') }}</span>
+                @else
+                    <span class="pill muted">Date estimée à confirmer</span>
+                @endif
+            </div>
+            @if (in_array($deliveryStatus, ['RETARDEE', 'ECHEC'], true))
+                <p class="order-tracking-alert">{{ $deliveryStatus === 'RETARDEE' ? 'La livraison prend du retard. Nous vous tiendrons informé.' : 'Un problème est survenu pendant la livraison. Contactez-nous pour obtenir de l’aide.' }}</p>
+            @endif
+            <div class="order-tracking-steps">
+                @foreach ($steps as $index => $label)
+                    <div class="order-tracking-step {{ $index <= $currentIndex ? 'is-complete' : '' }} {{ $index === $currentIndex ? 'is-current' : '' }}">
+                        <span class="order-tracking-number">{{ $index + 1 }}</span>
+                        <span class="order-tracking-label">{{ $label }}</span>
+                    </div>
+                @endforeach
+            </div>
+            @if ($order->delivery?->tracking_number)
+                <p class="order-tracking-detail">N° de suivi : <strong>{{ $order->delivery->tracking_number }}</strong> @if ($order->delivery->carrier) · {{ $order->delivery->carrier }} @endif</p>
+            @endif
+            @if ($order->delivery?->tracking_comment)
+                <p class="order-tracking-detail">{{ $order->delivery->tracking_comment }}</p>
             @endif
         </div>
-        <div style="display:flex; align-items:center;">
-            @foreach ($steps as $key => $label)
-                <div style="flex:1; text-align:center; position:relative;">
-                    <div style="width:28px; height:28px; border-radius:50%; margin:0 auto 6px; display:flex; align-items:center; justify-content:center; font-size:.75rem; font-weight:800; color:#fff; background: {{ $loop->index <= $currentIndex ? 'var(--accent)' : '#d8d2c6' }};">
-                        {{ $loop->index + 1 }}
-                    </div>
-                    <span style="font-size:.78rem; color: {{ $loop->index <= $currentIndex ? 'var(--ink)' : 'var(--muted)' }}; font-weight:{{ $loop->index === $currentIndex ? '800' : '600' }};">{{ $label }}</span>
-                    @if (! $loop->last)
-                        <div style="position:absolute; top:14px; left:50%; width:100%; height:2px; background: {{ $loop->index < $currentIndex ? 'var(--accent)' : '#d8d2c6' }}; z-index:-1;"></div>
-                    @endif
-                </div>
-            @endforeach
-        </div>
-        @if ($order->delivery?->tracking_number)
-            <p style="margin:16px 0 0; font-size:.88rem; color:var(--muted);">N° de suivi : <strong>{{ $order->delivery->tracking_number }}</strong> @if($order->delivery->carrier) via {{ $order->delivery->carrier }} @endif</p>
-        @endif
-        @if ($order->delivery?->tracking_comment)
-            <p style="margin:6px 0 0; font-size:.85rem; color:var(--muted);">{{ $order->delivery->tracking_comment }}</p>
-        @endif
-    </div>
+    @endif
 
     <div class="panel">
         <table>
@@ -144,7 +164,19 @@
         </table>
     </div>
 
-    <style>.review-row { display: none; } .review-row.open { display: table-row; }</style>
+    <style>
+        .review-row { display: none; }
+        .review-row.open { display: table-row; }
+        .order-tracking-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+        .order-tracking-steps { display: grid; grid-template-columns: repeat(5, minmax(90px, 1fr)); gap: 8px; overflow-x: auto; padding: 4px 0 10px; }
+        .order-tracking-step { display: grid; justify-items: center; gap: 7px; text-align: center; color: var(--muted); }
+        .order-tracking-number { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: #d8d2c6; color: #fff; font-size: .8rem; font-weight: 800; }
+        .order-tracking-step.is-complete .order-tracking-number { background: var(--accent); }
+        .order-tracking-step.is-current .order-tracking-label { color: var(--ink); font-weight: 800; }
+        .order-tracking-label { font-size: .78rem; }
+        .order-tracking-alert { margin: 0 0 14px; color: var(--danger); font-size: .9rem; font-weight: 700; }
+        .order-tracking-detail { margin: 10px 0 0; color: var(--muted); font-size: .88rem; }
+    </style>
 
     <div style="display:flex; justify-content:flex-end; margin-top:20px;">
         <div class="form-panel" style="width:320px;">

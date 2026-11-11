@@ -126,7 +126,7 @@
 
                 <div class="field">
                     <label for="customer_phone">Numéro depuis lequel vous avez payé</label>
-                    <input type="text" id="customer_phone" name="customer_phone" value="{{ old('customer_phone') }}" placeholder="Ex. 70 12 34 56" inputmode="tel" autocomplete="tel" required>
+                    <input type="tel" id="customer_phone" name="customer_phone" value="{{ old('customer_phone', $order->shipping_address_snapshot['phone'] ?? auth()->user()->phone) }}" placeholder="Ex. 70 12 34 56" inputmode="tel" autocomplete="tel" required>
                     @error('customer_phone') <div class="error">{{ $message }}</div> @enderror
                 </div>
 

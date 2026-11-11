@@ -3,6 +3,16 @@
 @section('title', 'Mes commandes')
 
 @section('content')
+    @php
+        $statusLabels = [
+            'EN_ATTENTE' => 'En attente de confirmation',
+            'CONFIRMEE' => 'Confirmée',
+            'EN_PREPARATION' => 'En préparation',
+            'EXPEDIEE' => 'Expédiée',
+            'LIVREE' => 'Livrée',
+            'ANNULEE' => 'Annulée',
+        ];
+    @endphp
     <div class="page-head">
         <div>
             <h1 class="page-title">Mes commandes</h1>
@@ -28,7 +38,7 @@
                         <tr>
                             <td>{{ $order->order_number }}</td>
                             <td>{{ number_format($order->total, 0, ',', ' ') }} FCFA</td>
-                            <td><span class="pill muted">{{ $order->status }}</span></td>
+                            <td><span class="pill {{ $order->status === 'LIVREE' ? '' : 'muted' }}">{{ $statusLabels[$order->status] ?? $order->status }}</span></td>
                             <td>{{ $order->created_at->format('d/m/Y') }}</td>
                             <td>
                                 <a class="button small" href="{{ route('orders.show', $order) }}">Voir le détail</a>

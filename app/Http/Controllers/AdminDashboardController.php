@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Client;
 use App\Models\Message;
 use App\Models\Order;
+use App\Models\Payment;
 use App\Models\Product;
 use App\Models\Review;
 use App\Models\User;
@@ -20,6 +21,7 @@ class AdminDashboardController extends Controller
             'productCount' => Product::count(),
             'orderCount' => Order::count(),
             'pendingOrderCount' => Order::where('status', 'EN_ATTENTE')->count(),
+            'pendingPaymentCount' => Payment::where('status', 'EN_ATTENTE')->whereNotNull('submitted_at')->count(),
             'clientCount' => Client::count(),
             'unreadMessageCount' => Message::whereIn('receiver_id', $adminIds)->whereNull('read_at')->count(),
             'recentReviews' => Review::where('moderation_status', 'EN_ATTENTE')

@@ -51,6 +51,8 @@
                 <span class="pdp-price">{{ number_format($product->price, 0, ',', ' ') }} FCFA</span>
                 @if ($product->stock < 1)
                     <span class="pdp-stock out">Rupture de stock</span>
+                @else
+                    <span class="pdp-stock ok">Disponible · {{ $product->stock }} en stock</span>
                 @endif
             </div>
 
@@ -59,6 +61,7 @@
             <form method="POST" action="{{ route('cart.store', $product) }}" class="pdp-form">
                 @csrf
                 @include('partials.variant-picker', ['product' => $product])
+                @error('quantity')<div class="error">{{ $message }}</div>@enderror
 
                 <div class="variant-group">
                     <span class="variant-label">Quantité</span>
@@ -77,7 +80,7 @@
 
             <div class="pdp-trust">
                 <div class="pdp-trust-item">🚚 Livraison partout au Burkina Faso</div>
-                <div class="pdp-trust-item">🔒 Paiement sécurisé (Orange Money, Moov Money)</div>
+                <div class="pdp-trust-item">🔒 Paiement Orange Money ou Moov Money, vérifié par l’équipe</div>
                 <div class="pdp-trust-item">✋ Fabriqué à la main, Made in Burkina Faso</div>
             </div>
         </div>
@@ -140,7 +143,7 @@
                         <p class="feed-post-content">{{ $review->comment }}</p>
                     @endif
                     <div class="feed-post-footer">
-                        <span>👍 Avis vérifié</span>
+                        <span>👍 Avis client</span>
                     </div>
                 </article>
             @endforeach

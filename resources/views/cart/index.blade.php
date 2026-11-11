@@ -41,9 +41,10 @@
                                 <form method="POST" action="{{ route('cart.update', $item) }}" style="display:flex; gap:8px; align-items:center;">
                                     @csrf
                                     @method('PUT')
-                                    <input class="qty-input" type="number" name="quantity" min="1" value="{{ $item->quantity }}">
+                                    <input class="qty-input" type="number" name="quantity" min="1" max="{{ $item->product?->stock ?? 0 }}" value="{{ $item->quantity }}" aria-label="Quantité de {{ $item->product->name ?? 'ce produit' }}">
                                     <button type="submit" class="button small">Mettre à jour</button>
                                 </form>
+                                @error('quantity')<div class="error" style="margin-top:6px;">{{ $message }}</div>@enderror
                             </td>
                             <td>{{ number_format($item->quantity * $item->unit_price, 0, ',', ' ') }} FCFA</td>
                             <td>

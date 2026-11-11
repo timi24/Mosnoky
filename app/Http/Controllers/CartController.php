@@ -28,9 +28,13 @@ class CartController extends Controller
     public function store(Request $request, Product $product): RedirectResponse
     {
         $validated = $request->validate([
-            'quantity' => ['nullable', 'integer', 'min:1'],
+            'quantity' => ['nullable', 'integer', 'min:1', 'max:'.$product->stock],
             'size' => [$product->available_sizes ? 'required' : 'nullable', 'string'],
             'color' => [$product->available_colors ? 'required' : 'nullable', 'string'],
+        ], [
+            'quantity.integer' => 'La quantité doit être un nombre entier.',
+            'quantity.min' => 'La quantité doit être au moins égale à 1.',
+            'quantity.max' => 'La quantité demandée dépasse le stock disponible.',
         ]);
 
         $quantity = $validated['quantity'] ?? 1;
@@ -48,6 +52,12 @@ class CartController extends Controller
             ->where('size', $size)
             ->where('color', $color)
             ->first();
+
+        if ($item && $item->quantity + $quantity > $product->stock) {
+            return back()
+                ->withErrors(['quantity' => 'La quantité demandée dépasse le stock disponible.'])
+                ->withInput();
+        }
 
         if ($item) {
             $item->update(['quantity' => $item->quantity + $quantity]);
@@ -71,7 +81,11 @@ class CartController extends Controller
         $this->authorizeCartItem($request, $cartItem);
 
         $validated = $request->validate([
-            'quantity' => ['required', 'integer', 'min:1'],
+            'quantity' => ['required', 'integer', 'min:1', 'max:'.($cartItem->product?->stock ?? 0)],
+        ], [
+            'quantity.integer' => 'La quantité doit être un nombre entier.',
+            'quantity.min' => 'La quantité doit être au moins égale à 1.',
+            'quantity.max' => 'La quantité demandée dépasse le stock disponible.',
         ]);
 
         $cartItem->update(['quantity' => $validated['quantity']]);

@@ -11,7 +11,7 @@
         <a class="button" href="{{ route('admin.orders.index') }}">← Retour aux commandes</a>
     </div>
 
-    <div style="display:grid; grid-template-columns: 2fr 1fr; gap:20px; align-items:start;">
+    <div class="admin-order-grid">
         <div class="panel">
             <table>
                 <thead>
@@ -53,7 +53,7 @@
                     <div class="field">
                         <select name="status">
                             @foreach ($statuses as $status)
-                                <option value="{{ $status }}" {{ $order->status === $status ? 'selected' : '' }}>{{ $status }}</option>
+                                <option value="{{ $status }}" {{ $order->status === $status ? 'selected' : '' }}>{{ ucfirst($statusLabels[$status] ?? $status) }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -65,6 +65,14 @@
                 <h3 style="margin-top:0;">Client</h3>
                 <p style="margin:4px 0;">{{ $order->client->user->first_name ?? '' }} {{ $order->client->user->last_name ?? '' }}</p>
                 <p style="margin:4px 0; color:var(--muted);">{{ $order->client->user->email ?? '' }}</p>
+                @php($shippingAddress = $order->shipping_address_snapshot ?? [])
+                <div style="margin-top:12px; padding-top:12px; border-top:1px solid var(--line);">
+                    <strong>Adresse de livraison</strong>
+                    <p style="margin:6px 0;">{{ $shippingAddress['street'] ?? '—' }}<br>{{ $shippingAddress['city'] ?? '' }}{{ ! empty($shippingAddress['postal_code']) ? ', '.$shippingAddress['postal_code'] : '' }}<br>{{ $shippingAddress['country'] ?? '' }}</p>
+                    @if (! empty($shippingAddress['phone']))
+                        <a href="tel:{{ $shippingAddress['phone'] }}" style="color:var(--accent); font-weight:700;">{{ $shippingAddress['phone'] }}</a>
+                    @endif
+                </div>
                 @if (Route::has('admin.clients.show') && $order->client)
                     <a class="button small" style="margin-top:10px;" href="{{ route('admin.clients.show', $order->client) }}">Voir la fiche client</a>
                 @endif
@@ -78,4 +86,9 @@
             </div>
         </div>
     </div>
+
+    <style>
+        .admin-order-grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr); gap: 20px; align-items: start; }
+        @media (max-width: 760px) { .admin-order-grid { grid-template-columns: minmax(0, 1fr); } }
+    </style>
 @endsection

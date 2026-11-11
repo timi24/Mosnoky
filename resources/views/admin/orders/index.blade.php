@@ -14,7 +14,7 @@
         <select name="status" onchange="this.form.submit()" style="padding:9px 12px; border:1px solid var(--line); border-radius:8px;">
             <option value="">Tous les statuts</option>
             @foreach ($statuses as $status)
-                <option value="{{ $status }}" {{ $currentStatus === $status ? 'selected' : '' }}>{{ $status }}</option>
+                <option value="{{ $status }}" {{ $currentStatus === $status ? 'selected' : '' }}>{{ ucfirst($statusLabels[$status] ?? $status) }}</option>
             @endforeach
         </select>
         @if ($currentStatus)
@@ -45,7 +45,7 @@
                             <td>{{ number_format($order->total, 0, ',', ' ') }} FCFA</td>
                             <td>
                                 <span class="pill {{ in_array($order->status, ['LIVREE', 'CONFIRMEE']) ? '' : 'muted' }}">
-                                    {{ $order->status }}
+                                    {{ ucfirst($statusLabels[$order->status] ?? $order->status) }}
                                 </span>
                             </td>
                             <td>{{ $order->created_at->format('d/m/Y H:i') }}</td>
