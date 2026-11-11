@@ -68,7 +68,7 @@
                     <span>{{ number_format($subtotal, 0, ',', ' ') }} FCFA</span>
                 </p>
                 <div class="cart-next-actions">
-                    <a href="{{ route('home') }}" class="button cart-continue">Continuer mes achats</a>
+                    <a href="{{ route('client.dashboard') }}" class="button cart-continue">Continuer mes achats</a>
                     <a href="{{ route('orders.create') }}" class="button primary cart-checkout">Passer la commande</a>
                 </div>
             </div>
