@@ -6,6 +6,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>{{ config('app.name', 'Mosnoky') }} — Chaussures de luxe & maroquinerie</title>
         <meta name="description" content="Mosnoky, atelier spécialisé dans la fabrication artisanale de chaussures de luxe et d'articles de maroquinerie au Burkina Faso.">
+        @if ($heroImages->isNotEmpty())
+            <link rel="preload" as="image" href="{{ $heroImages->first()->image_url }}" fetchpriority="high">
+        @endif
         @fonts
         <style>
             :root { color-scheme: light; --ink: #221f1d; --muted: #857b72; --paper: #faf6f1; --card: #ffffff; --accent: #b1372f; --dark: #17140f; --line: #ece4d8; }
@@ -19,14 +22,6 @@
             .topbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 22px 0; }
             .brand { display: flex; align-items: center; gap: 10px; font-size: 1.15rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
             .brand-logo { height: 50px; width: auto; }
-            .nav-links { display: flex; align-items: center; gap: 22px; font-size: .92rem; font-weight: 600; }
-            .nav-links a:hover { color: var(--accent); }
-            .mobile-nav { display: none; position: relative; }
-            .mobile-nav summary { list-style: none; }
-            .mobile-nav summary::-webkit-details-marker { display: none; }
-            .mobile-nav-menu { position: absolute; z-index: 5; top: calc(100% + 10px); right: 0; width: min(280px, calc(100vw - 28px)); display: grid; gap: 4px; padding: 10px; border: 1px solid var(--line); border-radius: 14px; background: var(--card); box-shadow: 0 14px 36px rgba(34,31,29,.14); }
-            .mobile-nav-menu a { padding: 11px 12px; border-radius: 8px; font-weight: 600; }
-            .mobile-nav-menu a:hover, .mobile-nav-menu a:focus-visible { background: var(--paper); color: var(--accent); }
             .topbar-actions { display: flex; align-items: center; gap: 10px; }
             .button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--line); border-radius: 999px; padding: 11px 20px; font-size: .9rem; font-weight: 700; transition: .2s ease; cursor: pointer; background: transparent; }
             .button:hover { border-color: var(--ink); transform: translateY(-1px); }
@@ -36,7 +31,7 @@
             .hero { position: relative; margin-top: 6px; border-radius: 18px; overflow: hidden; min-height: 560px; display: flex; align-items: center; background: var(--dark); }
             .hero video, .hero .hero-fallback { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .55; }
             .hero-fallback { background: linear-gradient(135deg, #221f1d, #3a332c); }
-            .hero-slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1.2s ease; }
+            .hero-slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .5s ease; }
             .hero-slide.active { opacity: .55; }
             .hero-content { position: relative; z-index: 2; padding: 60px; color: #fff; max-width: 640px; }
             .hero-eyebrow { color: #f0b8ac; font-size: .8rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
@@ -72,14 +67,6 @@
             .hero-arrow:hover { background: rgba(255,255,255,.28); transform: translateY(-50%) scale(1.06); }
             .hero-arrow-prev { left: 16px; }
             .hero-arrow-next { right: 16px; }
-            .hero-dots { position: absolute; bottom: 20px; left: 0; right: 0; display: flex; justify-content: center; gap: 8px; z-index: 3; }
-            .hero-dot { position: relative; overflow: hidden; width: 8px; height: 8px; border-radius: 999px; border: none; background: rgba(255,255,255,.5); cursor: pointer; transition: width .3s ease, background .3s ease; padding: 0; }
-            .hero-dot.active { background: rgba(255,255,255,.45); width: 34px; }
-            /* La barre se remplit pendant les 5 secondes de la photo */
-            .hero-dot.active::after { content: ""; position: absolute; inset: 0; background: #fff; transform-origin: left; animation: slide-progress 5s linear forwards; }
-            .hero:hover .hero-dot.active::after { animation-play-state: paused; }
-            @keyframes slide-progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-
             /* Sections génériques */
             section.block { padding: 70px 0; }
             .eyebrow { color: var(--accent); font-size: .78rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
@@ -103,14 +90,9 @@
             .product-card { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--card); transition: .2s ease; }
             .product-card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,.06); }
             .product-card .thumb { position: relative; aspect-ratio: 4/3; background: #eee7dc; overflow: hidden; }
-            .product-slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.04); transition: opacity 1.2s ease; }
+            .product-slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.04); transition: opacity .5s ease; }
             .product-slide.active { opacity: 1; animation: kenburns 6s ease-in-out forwards; }
             @keyframes kenburns { from { transform: scale(1.08); } to { transform: scale(1); } }
-            .thumb-dots { position: absolute; bottom: 10px; left: 0; right: 0; display: flex; justify-content: center; gap: 6px; z-index: 2; }
-            .thumb-dot { position: relative; overflow: hidden; width: 6px; height: 6px; border-radius: 999px; border: none; background: rgba(255,255,255,.55); cursor: pointer; padding: 0; transition: width .3s ease, background .3s ease; }
-            .thumb-dot.active { background: rgba(255,255,255,.45); width: 22px; }
-            .thumb-dot.active::after { content: ""; position: absolute; inset: 0; background: #fff; transform-origin: left; animation: slide-progress 5s linear forwards; }
-            .product-card .thumb:hover .thumb-dot.active::after { animation-play-state: paused; }
             .thumb-arrow {
                 position: absolute;
                 top: 50%;
@@ -159,13 +141,12 @@
                 .hero-arrow, .thumb-arrow { opacity: 1; }
                 .hero-arrow { width: 40px; height: 40px; }
             }
-            .hero-slide, .product-slide { will-change: opacity, transform; }
             .hero, .product-card .thumb { touch-action: pan-y; }
             /* Respect des personnes qui désactivent les animations sur leur appareil */
             @media (prefers-reduced-motion: reduce) {
                 .product-slide.active { animation: none; transform: none; }
                 .hero-slide, .product-slide { transition-duration: .01s; }
-                .hero-dot.active::after, .thumb-dot.active::after { animation: none; transform: scaleX(1); }
+                .gallery-grid img { transition-duration: .01s; }
             }
 
             @media (max-width: 900px) {
@@ -177,8 +158,6 @@
                 .shell { width: min(100% - 28px, 600px); }
                 .topbar { gap: 10px; padding: 14px 0; }
                 .brand-logo { height: 46px; }
-                .nav-links { display: none; }
-                .mobile-nav { display: block; }
                 .topbar-actions { gap: 7px; }
                 .topbar-actions .button { padding: 9px 12px; font-size: .82rem; }
                 .hero { min-height: 460px; border-radius: 14px; }
@@ -189,8 +168,7 @@
                 .hero-arrow-next { right: 8px; }
             }
             @media (max-width: 420px) {
-                .topbar-actions .button:not(.primary) { display: none; }
-                .topbar-actions .button.primary { padding: 9px 11px; font-size: .78rem; }
+                .topbar-actions .button { padding: 9px 11px; font-size: .78rem; }
                 .hero-content { padding: 28px 22px; }
                 .hero-actions { gap: 8px; }
                 .hero-actions .button { padding: 10px 14px; font-size: .82rem; }
@@ -207,7 +185,7 @@
             .mission-item p { margin: 0; color: var(--muted); font-size: .94rem; line-height: 1.6; }
 
             .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-            .gallery-grid img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 12px; }
+            .gallery-grid img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 12px; transition: opacity .35s ease; }
 
             .testimonial-section { text-align: center; }
             .testimonial-quote { max-width: 760px; margin: 0 auto; font-family: Georgia, serif; font-style: italic; font-size: 1.3rem; line-height: 1.7; color: var(--ink); position: relative; padding: 0 30px; }
@@ -224,29 +202,11 @@
                 <a class="brand" href="{{ route('home') }}">
                     <img src="{{ asset('images/mosnoky-logo.jpg') }}" alt="Mosnoky" class="brand-logo">
                 </a>
-                <nav class="nav-links" aria-label="Navigation principale">
-                    <a href="#apropos">À propos</a>
-                    <a href="#services">Services</a>
-                    <a href="#galerie">Atelier</a>
-                    <a href="#produits">Produits</a>
-                    <a href="#contact">Contact</a>
-                </nav>
-                <details class="mobile-nav">
-                    <summary class="button" aria-label="Ouvrir le menu">Menu <span aria-hidden="true">☰</span></summary>
-                    <nav class="mobile-nav-menu" aria-label="Navigation mobile">
-                        <a href="#apropos">À propos</a>
-                        <a href="#services">Services</a>
-                        <a href="#galerie">Atelier</a>
-                        <a href="#produits">Produits</a>
-                        <a href="#contact">Contact</a>
-                    </nav>
-                </details>
                 @auth
                     <div class="topbar-actions"><a class="button primary" href="{{ route('client.dashboard') }}">Mon espace</a></div>
                 @else
                     <div class="topbar-actions">
-                        <a class="button" href="{{ route('login') }}">Connexion</a>
-                        <a class="button primary" href="{{ route('register') }}">Créer un compte</a>
+                        <a class="button primary" href="{{ route('login') }}">Se connecter</a>
                     </div>
                 @endauth
             </header>
@@ -254,18 +214,13 @@
             <!-- HERO -->
             <section class="hero">
                 @forelse ($heroImages as $index => $img)
-                    <img src="{{ $img->image_url }}" alt="Mosnoky" class="hero-slide @if ($index === 0) active @endif">
+                    <img @if ($index === 0) src="{{ $img->image_url }}" fetchpriority="high" @else data-src="{{ $img->image_url }}" @endif alt="Mosnoky" class="hero-slide @if ($index === 0) active @endif" decoding="async">
                 @empty
                     <div class="hero-fallback"></div>
                 @endforelse
                 @if ($heroImages->count() > 1)
                     <button type="button" class="hero-arrow hero-arrow-prev" aria-label="Photo précédente">‹</button>
                     <button type="button" class="hero-arrow hero-arrow-next" aria-label="Photo suivante">›</button>
-                    <div class="hero-dots">
-                        @foreach ($heroImages as $index => $img)
-                            <button type="button" class="hero-dot @if ($index === 0) active @endif" data-index="{{ $index }}" aria-label="Photo {{ $index + 1 }}"></button>
-                        @endforeach
-                    </div>
                 @endif
                 <div class="hero-content">
                     <div class="hero-eyebrow">Made in Burkina Faso</div>
@@ -383,15 +338,22 @@
             <section class="block" id="galerie">
                 <div class="eyebrow">Notre savoir-faire</div>
                 <h2>Directement de notre atelier</h2>
-                <div class="gallery-grid">
-                    <img src="{{ asset('images/products/oxford-noir.jpg') }}" alt="Chaussures Oxford noires">
-                    <img src="{{ asset('images/products/sac-m-dore.jpg') }}" alt="Sac à main cuir croco et M doré">
-                    <img src="{{ asset('images/products/mocassin-noir-vert.jpg') }}" alt="Mocassin noir doublure verte">
-                    <img src="{{ asset('images/products/sandale-gladiator-marron.jpg') }}" alt="Sandale gladiator marron">
-                    <img src="{{ asset('images/products/sandales-croisees-noir.jpg') }}" alt="Sandales croisées noires">
-                    <img src="{{ asset('images/products/sandale-tan-blanc.jpg') }}" alt="Sandale camel et blanc">
-                    <img src="{{ asset('images/products/mule-grise-noire.jpg') }}" alt="Mule grise et noire">
-                    <img src="{{ asset('images/products/espadrille-marron.jpg') }}" alt="Espadrille marron">
+                @php
+                    $galleryImages = [
+                        ['src' => asset('images/products/oxford-noir.jpg'), 'alt' => 'Chaussures Oxford noires'],
+                        ['src' => asset('images/products/sac-m-dore.jpg'), 'alt' => 'Sac à main cuir croco et M doré'],
+                        ['src' => asset('images/products/mocassin-noir-vert.jpg'), 'alt' => 'Mocassin noir doublure verte'],
+                        ['src' => asset('images/products/sandale-gladiator-marron.jpg'), 'alt' => 'Sandale gladiator marron'],
+                        ['src' => asset('images/products/sandales-croisees-noir.jpg'), 'alt' => 'Sandales croisées noires'],
+                        ['src' => asset('images/products/sandale-tan-blanc.jpg'), 'alt' => 'Sandale camel et blanc'],
+                        ['src' => asset('images/products/mule-grise-noire.jpg'), 'alt' => 'Mule grise et noire'],
+                        ['src' => asset('images/products/espadrille-marron.jpg'), 'alt' => 'Espadrille marron'],
+                    ];
+                @endphp
+                <div class="gallery-grid" data-gallery-slides='@json($galleryImages)'>
+                    @foreach ($galleryImages as $index => $image)
+                        <img src="{{ $image['src'] }}" alt="{{ $image['alt'] }}" data-gallery-index="{{ $index }}" loading="lazy" decoding="async">
+                    @endforeach
                 </div>
             </section>
 
@@ -420,16 +382,11 @@
                                 <div class="thumb">
                                     @if ($product->images->isNotEmpty())
                                         @foreach ($product->images as $i => $image)
-                                            <img src="{{ $image->image_url }}" alt="{{ $product->name }}" class="product-slide @if ($i === 0) active @endif">
+                                            <img @if ($i === 0) src="{{ $image->image_url }}" @else data-src="{{ $image->image_url }}" @endif alt="{{ $product->name }}" class="product-slide @if ($i === 0) active @endif" loading="lazy" decoding="async">
                                         @endforeach
                                         @if ($product->images->count() > 1)
                                             <button type="button" class="thumb-arrow thumb-arrow-prev" aria-label="Photo précédente">‹</button>
                                             <button type="button" class="thumb-arrow thumb-arrow-next" aria-label="Photo suivante">›</button>
-                                            <div class="thumb-dots">
-                                                @foreach ($product->images as $i => $image)
-                                                    <button type="button" class="thumb-dot @if ($i === 0) active @endif" data-index="{{ $i }}" aria-label="Photo {{ $i + 1 }}"></button>
-                                                @endforeach
-                                            </div>
                                         @endif
                                     @else
                                         <div style="display:flex; align-items:center; justify-content:center; height:100%; color:var(--muted); font-size:.85rem;">Photo à venir</div>
@@ -496,22 +453,48 @@
 
         let current = 0;
         let timer = null;
+        let isVisible = !('IntersectionObserver' in window);
+
+        function loadSlide(slide) {
+            if (slide.dataset.src) {
+                slide.src = slide.dataset.src;
+                delete slide.dataset.src;
+            }
+        }
+
+        function preloadNext() {
+            loadSlide(slides[(current + 1) % slides.length]);
+        }
 
         function show(index) {
             slides[current].classList.remove('active');
             dots[current] && dots[current].classList.remove('active');
             current = (index + slides.length) % slides.length;
+            loadSlide(slides[current]);
             slides[current].classList.add('active');
             dots[current] && dots[current].classList.add('active');
+            preloadNext();
         }
 
         function next() { show(current + 1); }
         function prev() { show(current - 1); }
 
-        function start() { stop(); timer = setInterval(next, 5000); }
-        function stop() { clearInterval(timer); }
+        function start() {
+            if (timer || document.hidden || !isVisible) return;
+            preloadNext();
+            timer = setInterval(next, 3000);
+        }
+        function stop() { clearInterval(timer); timer = null; }
         function restart() { stop(); start(); }
         start();
+
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver(function (entries) {
+                isVisible = entries[0].isIntersecting;
+                isVisible ? start() : stop();
+            }, { rootMargin: '100px' });
+            observer.observe(container);
+        }
 
         // Pause au survol de la souris seulement (sur téléphone, le "survol"
         // resterait bloqué après un toucher et arrêterait le défilement).
@@ -581,12 +564,59 @@
     // Diaporama du hero
     const hero = document.querySelector('.hero');
     if (hero) {
-        setupSlideshow(hero, '.hero-slide', '.hero-dot', '.hero-arrow-prev', '.hero-arrow-next');
+        setupSlideshow(hero, '.hero-slide', null, '.hero-arrow-prev', '.hero-arrow-next');
     }
 
     // Diaporama de chaque carte produit
     document.querySelectorAll('.product-card .thumb').forEach(function (thumb) {
-        setupSlideshow(thumb, '.product-slide', '.thumb-dot', '.thumb-arrow-prev', '.thumb-arrow-next');
+        setupSlideshow(thumb, '.product-slide', null, '.thumb-arrow-prev', '.thumb-arrow-next');
+    });
+
+    document.querySelectorAll('.gallery-grid').forEach(function (gallery) {
+        const images = gallery.querySelectorAll('[data-gallery-index]');
+        const slides = JSON.parse(gallery.dataset.gallerySlides || '[]');
+        let timer = null;
+        let isVisible = !('IntersectionObserver' in window);
+
+        if (images.length === 0 || slides.length <= 1) return;
+
+        function stop() {
+            window.clearInterval(timer);
+            timer = null;
+        }
+
+        function changeImages() {
+            images.forEach(function (image) {
+                const index = (Number(image.dataset.galleryIndex) + 1) % slides.length;
+                image.style.opacity = '0';
+
+                window.setTimeout(function () {
+                    image.src = slides[index].src;
+                    image.alt = slides[index].alt;
+                    image.dataset.galleryIndex = index;
+                    image.style.opacity = '1';
+                }, 250);
+            });
+        }
+
+        function start() {
+            if (timer || document.hidden || !isVisible) return;
+            timer = window.setInterval(changeImages, 3000);
+        }
+
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver(function (entries) {
+                isVisible = entries[0].isIntersecting;
+                isVisible ? start() : stop();
+            }, { rootMargin: '100px' });
+            observer.observe(gallery);
+        } else {
+            start();
+        }
+
+        document.addEventListener('visibilitychange', function () {
+            document.hidden ? stop() : start();
+        });
     });
 })();
 </script>
