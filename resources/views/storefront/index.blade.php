@@ -18,9 +18,16 @@
             /* Topbar */
             .topbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 22px 0; }
             .brand { display: flex; align-items: center; gap: 10px; font-size: 1.15rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
-            .brand-logo { height: 40px; width: auto; }
+            .brand-logo { height: 50px; width: auto; }
             .nav-links { display: flex; align-items: center; gap: 22px; font-size: .92rem; font-weight: 600; }
             .nav-links a:hover { color: var(--accent); }
+            .mobile-nav { display: none; position: relative; }
+            .mobile-nav summary { list-style: none; }
+            .mobile-nav summary::-webkit-details-marker { display: none; }
+            .mobile-nav-menu { position: absolute; z-index: 5; top: calc(100% + 10px); right: 0; width: min(280px, calc(100vw - 28px)); display: grid; gap: 4px; padding: 10px; border: 1px solid var(--line); border-radius: 14px; background: var(--card); box-shadow: 0 14px 36px rgba(34,31,29,.14); }
+            .mobile-nav-menu a { padding: 11px 12px; border-radius: 8px; font-weight: 600; }
+            .mobile-nav-menu a:hover, .mobile-nav-menu a:focus-visible { background: var(--paper); color: var(--accent); }
+            .topbar-actions { display: flex; align-items: center; gap: 10px; }
             .button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--line); border-radius: 999px; padding: 11px 20px; font-size: .9rem; font-weight: 700; transition: .2s ease; cursor: pointer; background: transparent; }
             .button:hover { border-color: var(--ink); transform: translateY(-1px); }
             .button.primary { border-color: var(--accent); background: var(--accent); color: white; }
@@ -168,8 +175,25 @@
             }
             @media (max-width: 760px) {
                 .shell { width: min(100% - 28px, 600px); }
+                .topbar { gap: 10px; padding: 14px 0; }
+                .brand-logo { height: 46px; }
                 .nav-links { display: none; }
-                .hero { min-height: 460px; }
+                .mobile-nav { display: block; }
+                .topbar-actions { gap: 7px; }
+                .topbar-actions .button { padding: 9px 12px; font-size: .82rem; }
+                .hero { min-height: 460px; border-radius: 14px; }
+                .hero-content { padding: 32px 26px; }
+                .hero h1 { font-size: clamp(2.25rem, 10vw, 3rem); }
+                .hero p { font-size: .98rem; }
+                .hero-arrow-prev { left: 8px; }
+                .hero-arrow-next { right: 8px; }
+            }
+            @media (max-width: 420px) {
+                .topbar-actions .button:not(.primary) { display: none; }
+                .topbar-actions .button.primary { padding: 9px 11px; font-size: .78rem; }
+                .hero-content { padding: 28px 22px; }
+                .hero-actions { gap: 8px; }
+                .hero-actions .button { padding: 10px 14px; font-size: .82rem; }
             }
 
             .why-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
@@ -200,17 +224,27 @@
                 <a class="brand" href="{{ route('home') }}">
                     <img src="{{ asset('images/mosnoky-logo.jpg') }}" alt="Mosnoky" class="brand-logo">
                 </a>
-                <nav class="nav-links">
+                <nav class="nav-links" aria-label="Navigation principale">
                     <a href="#apropos">À propos</a>
                     <a href="#services">Services</a>
                     <a href="#galerie">Atelier</a>
                     <a href="#produits">Produits</a>
                     <a href="#contact">Contact</a>
                 </nav>
+                <details class="mobile-nav">
+                    <summary class="button" aria-label="Ouvrir le menu">Menu <span aria-hidden="true">☰</span></summary>
+                    <nav class="mobile-nav-menu" aria-label="Navigation mobile">
+                        <a href="#apropos">À propos</a>
+                        <a href="#services">Services</a>
+                        <a href="#galerie">Atelier</a>
+                        <a href="#produits">Produits</a>
+                        <a href="#contact">Contact</a>
+                    </nav>
+                </details>
                 @auth
-                    <a class="button primary" href="{{ route('client.dashboard') }}">Mon espace</a>
+                    <div class="topbar-actions"><a class="button primary" href="{{ route('client.dashboard') }}">Mon espace</a></div>
                 @else
-                    <div style="display:flex; gap:10px;">
+                    <div class="topbar-actions">
                         <a class="button" href="{{ route('login') }}">Connexion</a>
                         <a class="button primary" href="{{ route('register') }}">Créer un compte</a>
                     </div>

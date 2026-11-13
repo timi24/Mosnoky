@@ -4,8 +4,9 @@
     <meta charset="utf-8">
     <style>
         body { font-family: DejaVu Sans, sans-serif; color: #221f1d; font-size: 12px; }
-        .header { width: 100%; margin-bottom: 24px; }
+        .header { width: 100%; margin-bottom: 24px; border-bottom: 2px solid #e6ddd0; padding-bottom: 14px; }
         .header td { vertical-align: top; }
+        .brand-logo { width: 145px; height: auto; margin-bottom: 6px; }
         .brand { font-size: 20px; font-weight: bold; color: #b1372f; }
         .muted { color: #857b72; }
         .title { font-size: 16px; font-weight: bold; margin: 16px 0 4px; }
@@ -31,6 +32,7 @@
     <table class="header">
         <tr>
             <td>
+                <img class="brand-logo" src="{{ public_path('images/mosnoky-logo.jpg') }}" alt="Logo Mosnoky">
                 <div class="brand">MOSNOKY</div>
                 <div class="muted">Chaussures de luxe & maroquinerie · Pouytenga, Burkina Faso</div>
             </td>
