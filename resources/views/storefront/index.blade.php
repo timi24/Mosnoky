@@ -206,7 +206,8 @@
                     <div class="topbar-actions"><a class="button primary" href="{{ route('client.dashboard') }}">Mon espace</a></div>
                 @else
                     <div class="topbar-actions">
-                        <a class="button primary" href="{{ route('login') }}">Se connecter</a>
+                        <a class="button" href="{{ route('login') }}">Se connecter</a>
+                        <a class="button primary" href="{{ route('register') }}">Créer un compte</a>
                     </div>
                 @endauth
             </header>
