@@ -30,8 +30,15 @@ test('team administrators can visit the admin dashboard', function () {
     $this->actingAs($user)
         ->get(route('admin.products.create'))
         ->assertOk()
+        ->assertSee('id="pay-alarm-bar"', false)
         ->assertSee('data-preview-target="create-product-image-preview"', false)
         ->assertSee('Un aperçu vous aidera à vérifier votre sélection', false);
+
+    $this->actingAs($user)
+        ->get(route('admin.payments.index'))
+        ->assertOk()
+        ->assertSee('id="pay-alarm-bar"', false)
+        ->assertSee('Alarme de paiement');
 });
 
 test('team members cannot visit the admin dashboard', function () {

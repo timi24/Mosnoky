@@ -54,7 +54,6 @@
 <script>
 (function () {
     const ALERT_URL = @json(route('admin.payments.alert'));
-    const KEY = 'mosnoky_pay_seen';
     const POLL_MS = 8000;
 
     const bar = document.getElementById('pay-alarm-bar');
@@ -70,10 +69,9 @@
     let alarmTimer = null;
     let titleTimer = null;
     let currentSignature = '';
+    let lastPendingCount = 0;
+    let mutedForPage = false;
     const baseTitle = document.title;
-
-    function getSeen() { try { return localStorage.getItem(KEY) || ''; } catch (e) { return ''; } }
-    function setSeen(v) { try { localStorage.setItem(KEY, v); } catch (e) {} }
 
     // --- Son -------------------------------------------------------------
     // Les navigateurs interdisent le son tant que la personne n'a pas cliqué
@@ -162,8 +160,9 @@
     }
 
     stopBtn.addEventListener('click', function () {
-        setSeen(currentSignature);
+        mutedForPage = true;
         stopAlarm();
+        refreshState();
     });
 
     // --- Interrogation du serveur ---------------------------------------
@@ -176,18 +175,39 @@
             });
             if (!r.ok) { return; }
             const d = await r.json();
-            updatePendingCount(d.pending);
+            const pendingCount = Math.max(0, Number(d.pending) || 0);
+            updatePendingCount(pendingCount);
 
-            if (!d.pending) { stopAlarm(); return; }
+            if (pendingCount === 0) {
+                stopAlarm();
+                mutedForPage = false;
+                lastPendingCount = 0;
+                refreshState();
 
-            currentSignature = d.signature || '';
-            if (currentSignature === getSeen()) { return; }
-            startAlarm();
+                return;
+            }
+
+            const nextSignature = d.signature || '';
+
+            if (mutedForPage && (nextSignature !== currentSignature || pendingCount > lastPendingCount)) {
+                mutedForPage = false;
+            }
+
+            currentSignature = nextSignature;
+            lastPendingCount = pendingCount;
+
+            if (!mutedForPage) { startAlarm(); }
         } catch (e) { /* réseau coupé : on réessaie au prochain tour */ }
     }
 
     // --- Bouton d'état ---------------------------------------------------
     function refreshState() {
+        if (mutedForPage) {
+            stateEl.textContent = 'Son coupé sur cette page';
+
+            return;
+        }
+
         stateEl.textContent = soundReady() ? 'Son activé · toucher pour tester' : 'Touchez pour activer le son';
     }
     pill.addEventListener('click', function () {
