@@ -356,23 +356,6 @@
                     <li>Des créations personnalisées adaptées aux envies de nos clients.</li>
                 </ul>
                 <p class="craft-copy">De la conception aux finitions, nous accordons une attention particulière aux détails afin de proposer des produits qui reflètent notre engagement envers la qualité, le confort et l'élégance.</p>
-                @php
-                    $galleryImages = [
-                        ['src' => asset('images/products/oxford-noir.jpg'), 'alt' => 'Chaussures Oxford noires'],
-                        ['src' => asset('images/products/sac-m-dore.jpg'), 'alt' => 'Sac à main cuir croco et M doré'],
-                        ['src' => asset('images/products/mocassin-noir-vert.jpg'), 'alt' => 'Mocassin noir doublure verte'],
-                        ['src' => asset('images/products/sandale-gladiator-marron.jpg'), 'alt' => 'Sandale gladiator marron'],
-                        ['src' => asset('images/products/sandales-croisees-noir.jpg'), 'alt' => 'Sandales croisées noires'],
-                        ['src' => asset('images/products/sandale-tan-blanc.jpg'), 'alt' => 'Sandale camel et blanc'],
-                        ['src' => asset('images/products/mule-grise-noire.jpg'), 'alt' => 'Mule grise et noire'],
-                        ['src' => asset('images/products/espadrille-marron.jpg'), 'alt' => 'Espadrille marron'],
-                    ];
-                @endphp
-                <div class="gallery-grid">
-                    @foreach ($galleryImages as $index => $image)
-                        <img src="{{ $image['src'] }}" alt="{{ $image['alt'] }}" loading="lazy" decoding="async">
-                    @endforeach
-                </div>
             </section>
 
             <!-- TÉMOIGNAGE -->
