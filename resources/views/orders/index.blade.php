@@ -30,7 +30,7 @@
                         <th>Total</th>
                         <th>Statut</th>
                         <th>Date</th>
-                        <th></th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -41,7 +41,16 @@
                             <td><span class="pill {{ $order->status === 'LIVREE' ? '' : 'muted' }}">{{ $statusLabels[$order->status] ?? $order->status }}</span></td>
                             <td>{{ $order->created_at->format('d/m/Y') }}</td>
                             <td>
-                                <a class="button small" href="{{ route('orders.show', $order) }}">Voir le détail</a>
+                                <div class="row-actions">
+                                    <a class="button small" href="{{ route('orders.show', $order) }}">Voir le détail</a>
+                                    @if ($order->status === 'EN_ATTENTE' && ! $order->payment?->submitted_at && $order->payment?->status !== 'ACCEPTE')
+                                        <form method="POST" action="{{ route('orders.cancel', $order) }}" onsubmit="return confirm('Voulez-vous vraiment annuler cette commande ?');">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="button small danger">Annuler</button>
+                                        </form>
+                                    @endif
+                                </div>
                             </td>
                         </tr>
                     @endforeach

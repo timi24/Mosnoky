@@ -9,7 +9,7 @@
             <p class="page-subtitle">Passée le {{ $order->created_at->format('d/m/Y à H:i') }}</p>
         </div>
         <div style="display:flex; gap:8px;">
-            @if ($order->status === 'EN_ATTENTE' && ! $order->payment?->submitted_at)
+            @if ($order->status === 'EN_ATTENTE' && ! $order->payment?->submitted_at && $order->payment?->status !== 'ACCEPTE')
                 <form method="POST" action="{{ route('orders.cancel', $order) }}" onsubmit="return confirm('Annuler cette commande ?');">
                     @csrf
                     @method('PATCH')
@@ -27,7 +27,7 @@
             <div>
                 <span class="order-payment-eyebrow">Paiement déclaré</span>
                 <h3>Vérification en cours</h3>
-                <p>Votre déclaration a bien été reçue. L’équipe vérifie le transfert et vous informera dès qu’il sera confirmé.</p>
+                <p>Votre déclaration a bien été reçue. L’équipe vérifie le transfert et vous informera dès qu’il sera confirmé. Pour demander une annulation pendant cette vérification, contactez la boutique.</p>
             </div>
             <a class="button" href="{{ route('payments.manual.show', $order) }}">Voir le suivi</a>
         </div>

@@ -24,6 +24,7 @@ class OrderController extends Controller
         $client = Client::firstOrCreate(['user_id' => $request->user()->id]);
 
         $orders = $client->orders()
+            ->with('payment')
             ->orderByDesc('created_at')
             ->paginate(10);
 
