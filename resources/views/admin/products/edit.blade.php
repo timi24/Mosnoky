@@ -82,12 +82,12 @@
                 <div class="field" style="margin-bottom:10px;">
                     <label for="photo_color">Couleur de ces photos (optionnel)</label>
                     <select id="photo_color" name="photo_color">
-                        <option value="">— Aucune couleur spécifique —</option>
+                        <option value="">— Détection automatique si configurée —</option>
                         @foreach ($product->available_colors as $color)
                             <option value="{{ $color }}">{{ $color }}</option>
                         @endforeach
                     </select>
-                    <div class="hint">Les photos que vous ajoutez maintenant seront associées à cette couleur. Pour une autre couleur, téléversez-les séparément.</div>
+                    <div class="hint">Choisissez une couleur pour l’appliquer à toutes les photos. Sinon, l’IA détectera la couleur de chaque photo si la clé OpenAI est configurée. Pour associer plusieurs couleurs, téléversez les photos séparément.</div>
                 </div>
             @endif
 

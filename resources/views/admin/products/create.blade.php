@@ -88,7 +88,7 @@
             <div class="field">
                 <label for="available_colors">Couleurs disponibles</label>
                 <input type="text" id="available_colors" name="available_colors" value="{{ old('available_colors') }}" placeholder="Ex : Noir, Marron, Camel">
-                <div class="hint">Séparez chaque couleur par une virgule.</div>
+                <div class="hint">Séparez chaque couleur par une virgule. Cette liste aide aussi à associer automatiquement les photos à la bonne couleur si la détection IA est configurée.</div>
             </div>
 
             <div class="field">

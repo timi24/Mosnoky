@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\Client;
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Services\ProductImageColorIdentifier;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -35,7 +36,7 @@ class ProductController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, ProductImageColorIdentifier $colorIdentifier): RedirectResponse
     {
         $validated = $this->validateProduct($request);
 
@@ -52,7 +53,7 @@ class ProductController extends Controller
             'available_colors' => $this->parseListInput($validated['available_colors'] ?? null),
         ]);
 
-        $this->storeUploadedImages($request, $product);
+        $this->storeUploadedImages($request, $product, $colorIdentifier);
 
         if ($product->status === 'ACTIF') {
             $this->notifyClientsOfNewProduct($product);
@@ -73,7 +74,7 @@ class ProductController extends Controller
         ]);
     }
 
-    public function update(Request $request, Product $product): RedirectResponse
+    public function update(Request $request, Product $product, ProductImageColorIdentifier $colorIdentifier): RedirectResponse
     {
         $wasActive = $product->status === 'ACTIF';
 
@@ -89,7 +90,7 @@ class ProductController extends Controller
 
         $product->update($fields);
 
-        $this->storeUploadedImages($request, $product);
+        $this->storeUploadedImages($request, $product, $colorIdentifier);
 
         // Si le produit vient tout juste de passer à ACTIF (n'était pas actif avant), on notifie les clients
         if (! $wasActive && $product->status === 'ACTIF') {
@@ -169,7 +170,7 @@ class ProductController extends Controller
         }
     }
 
-    private function storeUploadedImages(Request $request, Product $product): void
+    private function storeUploadedImages(Request $request, Product $product, ProductImageColorIdentifier $colorIdentifier): void
     {
         if (! $request->hasFile('images')) {
             return;
@@ -177,9 +178,11 @@ class ProductController extends Controller
 
         $hasExistingImages = $product->images()->exists();
         $photoColor = $request->input('photo_color') ?: null;
+        $availableColors = $product->available_colors ?? [];
 
         foreach ($request->file('images') as $index => $file) {
             $path = $file->store('products', 'public');
+            $imageColor = $photoColor ?? $colorIdentifier->identify($file, $availableColors);
 
             $product->images()->create([
                 // IMPORTANT : on précise bien le disque "public" (celui qui bascule
@@ -187,7 +190,7 @@ class ProductController extends Controller
                 // utilise le disque par défaut et génère une adresse fausse.
                 'image_url' => Storage::disk('public')->url($path),
                 'alternative_text' => $product->name,
-                'color' => $photoColor,
+                'color' => $imageColor,
                 'is_primary' => ! $hasExistingImages && $index === 0,
             ]);
         }
@@ -229,7 +232,7 @@ class ProductController extends Controller
             'status' => ['nullable', 'in:ACTIF,INACTIF,EPUISE'],
             'available_sizes' => ['nullable', 'string', 'max:500'],
             'available_colors' => ['nullable', 'string', 'max:500'],
-            'images' => ['nullable', 'array'],
+            'images' => ['nullable', 'array', 'max:10'],
             'images.*' => ['image', 'max:4096'],
         ]);
     }
