@@ -6,7 +6,9 @@ use Illuminate\Support\Facades\DB;
 test('the storefront is available to visitors', function () {
     $this->get(route('home'))
         ->assertOk()
-        ->assertSee('Nos produits');
+        ->assertSee('Nos produits')
+        ->assertDontSee('hero-arrow-prev')
+        ->assertDontSee('hero-arrow-next');
 });
 
 test('guests are redirected to login when they want to buy a product', function () {

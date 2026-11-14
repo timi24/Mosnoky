@@ -40,33 +40,6 @@
             .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
             .button.on-dark { border-color: rgba(255,255,255,.4); color: #fff; }
             .button.on-dark:hover { border-color: #fff; }
-            /* Flèches style "verre dépoli" */
-            .hero-arrow {
-                position: absolute;
-                top: 50%;
-                transform: translateY(-50%);
-                width: 48px;
-                height: 48px;
-                border: 1px solid rgba(255,255,255,.35);
-                border-radius: 50%;
-                background: rgba(255,255,255,.14);
-                -webkit-backdrop-filter: blur(10px);
-                backdrop-filter: blur(10px);
-                color: #fff;
-                font-size: 1.5rem;
-                line-height: 1;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                z-index: 3;
-                opacity: 0;
-                transition: opacity .25s ease, background .2s ease, transform .2s ease;
-            }
-            .hero:hover .hero-arrow, .hero-arrow:focus-visible { opacity: 1; }
-            .hero-arrow:hover { background: rgba(255,255,255,.28); transform: translateY(-50%) scale(1.06); }
-            .hero-arrow-prev { left: 16px; }
-            .hero-arrow-next { right: 16px; }
             /* Sections génériques */
             section.block { padding: 70px 0; }
             .eyebrow { color: var(--accent); font-size: .78rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
@@ -138,8 +111,7 @@
 
             /* Sur téléphone/tablette il n'y a pas de survol : les flèches restent visibles */
             @media (hover: none) {
-                .hero-arrow, .thumb-arrow { opacity: 1; }
-                .hero-arrow { width: 40px; height: 40px; }
+                .thumb-arrow { opacity: 1; }
             }
             .hero, .product-card .thumb { touch-action: pan-y; }
             /* Respect des personnes qui désactivent les animations sur leur appareil */
@@ -163,8 +135,6 @@
                 .hero-content { padding: 32px 26px; }
                 .hero h1 { font-size: clamp(2.25rem, 10vw, 3rem); }
                 .hero p { font-size: .98rem; }
-                .hero-arrow-prev { left: 8px; }
-                .hero-arrow-next { right: 8px; }
             }
             @media (max-width: 420px) {
                 .topbar-actions .button { padding: 9px 11px; font-size: .78rem; }
@@ -224,10 +194,6 @@
                 @empty
                     <div class="hero-fallback"></div>
                 @endforelse
-                @if ($heroImages->count() > 1)
-                    <button type="button" class="hero-arrow hero-arrow-prev" aria-label="Photo précédente">‹</button>
-                    <button type="button" class="hero-arrow hero-arrow-next" aria-label="Photo suivante">›</button>
-                @endif
                 <div class="hero-content">
                     <div class="hero-eyebrow">Made in Burkina Faso</div>
                     <h1>Votre style notre savoir faire.</h1>
@@ -563,7 +529,7 @@
     // Diaporama du hero
     const hero = document.querySelector('.hero');
     if (hero) {
-        setupSlideshow(hero, '.hero-slide', null, '.hero-arrow-prev', '.hero-arrow-next');
+        setupSlideshow(hero, '.hero-slide', null, null, null);
     }
 
     // Diaporama de chaque carte produit

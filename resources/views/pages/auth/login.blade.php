@@ -17,8 +17,6 @@
             <x-team-invitation-alert :invitation="$teamInvitation" :action="__('Se connecter')" />
         @endif
 
-        <x-passkey-verify />
-
         <form method="POST" action="{{ route('login.store') }}" class="flex flex-col gap-6">
             @csrf
 

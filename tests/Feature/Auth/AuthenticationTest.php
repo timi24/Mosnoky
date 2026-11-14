@@ -8,7 +8,8 @@ use Laravel\Passkeys\Contracts\PasskeyLoginResponse;
 test('login screen can be rendered', function () {
     $response = $this->get(route('login'));
 
-    $response->assertOk();
+    $response->assertOk()
+        ->assertDontSee('Sign in with a passkey');
 });
 
 test('users can authenticate using the login screen', function () {
@@ -21,12 +22,12 @@ test('users can authenticate using the login screen', function () {
 
     $response
         ->assertSessionHasNoErrors()
-        ->assertRedirect(route('dashboard', absolute: false));
+        ->assertRedirect(route('client.dashboard', absolute: false));
 
     $this->assertAuthenticated();
 });
 
-test('passkey login response redirects to the current team dashboard', function () {
+test('passkey login response redirects to the client dashboard', function () {
     $user = User::factory()->create();
 
     $request = Request::create(route('login', absolute: false), 'GET', server: [
@@ -37,7 +38,7 @@ test('passkey login response redirects to the current team dashboard', function 
 
     $jsonResponse = app(PasskeyLoginResponse::class)->toResponse($request);
 
-    expect($jsonResponse->getData()->redirect)->toBe(route('dashboard', ['current_team' => $user->personalTeam()->slug]));
+    expect($jsonResponse->getData()->redirect)->toBe(route('client.dashboard'));
 });
 
 test('users can not authenticate with invalid password', function () {
