@@ -40,7 +40,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property-read Collection<int, Membership> $teamMemberships
  * @property-read Collection<int, Team> $teams
  */
-#[Fillable(['name', 'email', 'password', 'current_team_id', 'role'])]
+#[Fillable(['name', 'email', 'password', 'current_team_id'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token', 'verification_code'])]
 class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
 {
@@ -103,7 +103,7 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
         $code = (string) random_int(100000, 999999);
 
         $this->forceFill([
-            'verification_code' => $code,
+            'verification_code' => hash_hmac('sha256', $code, config('app.key')),
             'verification_code_expires_at' => now()->addMinutes(15),
         ])->save();
 
@@ -150,13 +150,13 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     {
         try {
             $response = Http::withHeaders([
-                'api-key' => env('BREVO_API_KEY'),
+                'api-key' => config('services.brevo.api_key'),
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
             ])->post('https://api.brevo.com/v3/smtp/email', [
                 'sender' => [
-                    'name' => env('MAIL_FROM_NAME', 'Mosnoky'),
-                    'email' => env('MAIL_FROM_ADDRESS'),
+                    'name' => config('services.brevo.sender_name'),
+                    'email' => config('services.brevo.sender_email'),
                 ],
                 'to' => [
                     ['email' => $this->email, 'name' => $this->name],

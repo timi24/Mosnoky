@@ -91,7 +91,7 @@
             .product-card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,.06); }
             .product-card .thumb { position: relative; aspect-ratio: 4/3; background: #eee7dc; overflow: hidden; }
             .product-slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.04); transition: opacity .5s ease; }
-            .product-slide.active { opacity: 1; animation: kenburns 6s ease-in-out forwards; }
+            .product-slide.active { opacity: 1; animation: none; transform: none; }
             @keyframes kenburns { from { transform: scale(1.08); } to { transform: scale(1); } }
             .thumb-arrow {
                 position: absolute;
@@ -144,7 +144,6 @@
             .hero, .product-card .thumb { touch-action: pan-y; }
             /* Respect des personnes qui désactivent les animations sur leur appareil */
             @media (prefers-reduced-motion: reduce) {
-                .product-slide.active { animation: none; transform: none; }
                 .hero-slide, .product-slide { transition-duration: .01s; }
                 .gallery-grid img { transition-duration: .01s; }
             }
@@ -383,7 +382,7 @@
                                 <div class="thumb">
                                     @if ($product->images->isNotEmpty())
                                         @foreach ($product->images as $i => $image)
-                                            <img @if ($i === 0) src="{{ $image->image_url }}" @else data-src="{{ $image->image_url }}" @endif alt="{{ $product->name }}" class="product-slide @if ($i === 0) active @endif" loading="lazy" decoding="async">
+                                            <img @if ($i === 0) src="{{ $image->image_url }}" fetchpriority="low" @else data-src="{{ $image->image_url }}" @endif alt="{{ $product->name }}" class="product-slide @if ($i === 0) active @endif" @if ($i === 0) loading="eager" decoding="async" @else loading="lazy" decoding="async" @endif>
                                         @endforeach
                                         @if ($product->images->count() > 1)
                                             <button type="button" class="thumb-arrow thumb-arrow-prev" aria-label="Photo précédente">‹</button>
@@ -482,7 +481,6 @@
 
         function start() {
             if (timer || document.hidden || !isVisible) return;
-            preloadNext();
             timer = setInterval(next, 3000);
         }
         function stop() { clearInterval(timer); timer = null; }

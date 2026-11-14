@@ -13,6 +13,37 @@ test('email verification screen can be rendered', function () {
     $response->assertOk();
 });
 
+test('email can be verified with its hashed code', function () {
+    $user = User::factory()->unverified()->create([
+        'verification_code' => hash_hmac('sha256', '123456', config('app.key')),
+        'verification_code_expires_at' => now()->addMinutes(15),
+    ]);
+
+    Event::fake([Verified::class]);
+
+    $this->actingAs($user)
+        ->post(route('verification.verify.code'), ['code' => '123456'])
+        ->assertRedirect(route('dashboard', absolute: false));
+
+    expect($user->fresh()->hasVerifiedEmail())->toBeTrue()
+        ->and($user->fresh()->verification_code)->toBeNull();
+
+    Event::assertDispatched(Verified::class);
+});
+
+test('email verification attempts are rate limited', function () {
+    $user = User::factory()->unverified()->create();
+    $this->actingAs($user);
+
+    foreach (range(1, 5) as $attempt) {
+        $this->post(route('verification.verify.code'), ['code' => '000000'])
+            ->assertRedirect();
+    }
+
+    $this->post(route('verification.verify.code'), ['code' => '000000'])
+        ->assertTooManyRequests();
+});
+
 test('email can be verified', function () {
     $user = User::factory()->unverified()->create();
     $team = $user->personalTeam();

@@ -11,7 +11,7 @@ class VerifyEmailCodeController
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'code' => ['required', 'string', 'size:6'],
+            'code' => ['required', 'digits:6'],
         ]);
 
         $user = $request->user();
@@ -20,8 +20,10 @@ class VerifyEmailCodeController
             return redirect()->intended(route('dashboard'));
         }
 
+        $codeHash = hash_hmac('sha256', $validated['code'], config('app.key'));
         $codeMatches = $user->verification_code !== null
-            && hash_equals($user->verification_code, $validated['code']);
+            && (hash_equals($user->verification_code, $codeHash)
+                || hash_equals($user->verification_code, $validated['code']));
 
         $notExpired = $user->verification_code_expires_at !== null
             && now()->lessThan($user->verification_code_expires_at);

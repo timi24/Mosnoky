@@ -99,6 +99,12 @@ class FortifyServiceProvider extends ServiceProvider
                 ($credentialId ?: $request->session()->getId()).'|'.$request->ip(),
             );
         });
+
+        RateLimiter::for('verify-email-code', function (Request $request) {
+            return Limit::perMinute(5)->by(
+                $request->user()?->getAuthIdentifier().'|'.$request->ip(),
+            );
+        });
     }
 
     /**

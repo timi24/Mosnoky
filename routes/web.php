@@ -24,7 +24,7 @@ Route::get('/auth/{provider}/callback', [SocialiteController::class, 'callback']
 
 // Page de vérification du compte par code à 6 chiffres reçu par email.
 Route::post('/email/verify/code', [VerifyEmailCodeController::class, 'store'])
-    ->middleware('auth')
+    ->middleware(['auth', 'throttle:verify-email-code'])
     ->name('verification.verify.code');
 
 require __DIR__.'/admin.php';

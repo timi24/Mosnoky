@@ -1,15 +1,10 @@
 <x-layouts::auth :title="__('Créer un compte')">
     <div class="mosnoky-register">
         <aside class="mosnoky-register__intro">
-            <div class="mosnoky-register__eyebrow">{{ __('Bienvenue chez Mosnoky') }}</div>
-            <img src="{{ asset('images/mosnoky-logo.jpg') }}" alt="Mosnoky" class="mosnoky-register__logo">
-            <h1>{{ __('Votre sélection commence ici.') }}</h1>
-            <p>{{ __('Créez votre compte pour retrouver vos commandes, suivre vos achats et profiter d’une expérience pensée pour vous.') }}</p>
-            <div class="mosnoky-register__proofs">
-                <div><strong>01</strong><span>{{ __('Une boutique claire et soignée') }}</span></div>
-                <div><strong>02</strong><span>{{ __('Des produits choisis avec attention') }}</span></div>
-                <div><strong>03</strong><span>{{ __('Un espace client simple à utiliser') }}</span></div>
-            </div>
+            <a href="{{ route('home') }}" aria-label="{{ __('Retour à la boutique') }}">
+                <img src="{{ asset('images/mosnoky-logo.jpg') }}" alt="Mosnoky" class="mosnoky-register__logo">
+            </a>
+            <p>{{ __('Rejoignez Mosnoky et retrouvez facilement vos commandes et vos achats.') }}</p>
         </aside>
 
         <div class="mosnoky-register__form flex flex-col gap-6">
@@ -124,21 +119,17 @@
     </div>
 
     <style>
-        .mosnoky-register { --mosnoky-red: #b52d39; --mosnoky-ink: #3e3e3e; --mosnoky-paper: #fffdfb; display: grid; grid-template-columns: minmax(250px, .85fr) minmax(340px, 1fr); gap: 56px; width: min(920px, 100%); margin-inline: auto; padding: 38px; border: 1px solid #eadfda; border-radius: 26px; background: var(--mosnoky-paper); box-shadow: 0 28px 80px rgba(62, 62, 62, .13); }
-        .mosnoky-register__intro { display: flex; flex-direction: column; gap: 20px; padding: 12px 34px 12px 4px; border-right: 1px solid #eadfda; }
-        .mosnoky-register__eyebrow { color: var(--mosnoky-red); font-size: .7rem; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; }
-        .mosnoky-register__logo { width: min(100%, 250px); height: auto; margin: 5px 0 10px; }
-        .mosnoky-register__intro h1 { margin: 0; color: var(--mosnoky-ink); font-family: Georgia, serif; font-size: clamp(2.2rem, 4vw, 3.4rem); font-weight: 400; line-height: .98; letter-spacing: 0; }
-        .mosnoky-register__intro p { margin: 0; color: #74716f; font-size: .95rem; line-height: 1.65; }
-        .mosnoky-register__proofs { display: flex; flex-direction: column; gap: 14px; margin-top: auto; padding-top: 20px; }
-        .mosnoky-register__proofs div { display: flex; align-items: center; gap: 12px; color: var(--mosnoky-ink); font-size: .82rem; }
-        .mosnoky-register__proofs strong { color: var(--mosnoky-red); font-size: .7rem; letter-spacing: .08em; }
+        .mosnoky-register { --mosnoky-red: #b52d39; --mosnoky-paper: #fffdfb; display: grid; grid-template-columns: minmax(220px, .8fr) minmax(300px, 1fr); gap: 48px; align-items: center; width: min(820px, 100%); margin-inline: auto; padding: 34px; border: 1px solid #eadfda; border-radius: 24px; background: var(--mosnoky-paper); box-shadow: 0 24px 70px rgba(62, 62, 62, .12); }
+        .mosnoky-register__intro { display: flex; flex-direction: column; gap: 18px; align-items: center; padding: 12px 20px 12px 0; border-right: 1px solid #eadfda; text-align: center; }
+        .mosnoky-register__intro a { display: block; width: 100%; }
+        .mosnoky-register__logo { display: block; width: min(100%, 260px); height: auto; margin: 0 auto; }
+        .mosnoky-register__intro p { max-width: 220px; margin: 0; color: #74716f; font-size: .9rem; line-height: 1.6; }
         .mosnoky-register__form { min-width: 0; }
         .mosnoky-register__form :where(input:focus) { border-color: var(--mosnoky-red); box-shadow: 0 0 0 3px rgba(181, 45, 57, .12); }
         .mosnoky-register__form :where(button[type="submit"]) { background: var(--mosnoky-red); }
         .mosnoky-register__form :where(button[type="submit"]:hover) { background: #96232e; }
         .mosnoky-register__form :where(a) { color: var(--mosnoky-red); }
         .mosnoky-register__mobile-logo { display: none; }
-        @media (max-width: 760px) { .mosnoky-register { grid-template-columns: 1fr; gap: 28px; padding: 24px 20px; border-radius: 18px; } .mosnoky-register__intro { display: none; } .mosnoky-register__mobile-logo { display: block; text-align: center; } .mosnoky-register__mobile-logo img { width: 190px; height: auto; } }
+        @media (max-width: 760px) { .mosnoky-register { grid-template-columns: 1fr; gap: 28px; padding: 24px 20px; border-radius: 18px; } .mosnoky-register__intro { padding: 0 0 24px; border-right: 0; border-bottom: 1px solid #eadfda; } .mosnoky-register__logo { width: 210px; } .mosnoky-register__mobile-logo { display: none; } }
     </style>
 </x-layouts::auth>

@@ -7,47 +7,24 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // 1. Rendre order_id nullable directement en PostgreSQL
-        DB::statement('
-            ALTER TABLE reviews
-            ALTER COLUMN order_id DROP NOT NULL
-        ');
+        if (DB::connection()->getDriverName() === 'sqlite') {
+            return;
+        }
 
-        // 2. Supprimer l''ancienne contrainte UNIQUE si elle existe
-        DB::statement('
-            ALTER TABLE reviews
-            DROP CONSTRAINT IF EXISTS uq_client_product_order
-        ');
-
-        // 3. Supprimer l''ancien index s''il existe encore
-        DB::statement('
-            DROP INDEX IF EXISTS uq_client_product_order
-        ');
-
-        // 4. Créer la nouvelle contrainte UNIQUE
-        DB::statement('
-            ALTER TABLE reviews
-            ADD CONSTRAINT uq_client_product
-            UNIQUE (client_id, product_id)
-        ');
+        DB::statement('ALTER TABLE reviews ALTER COLUMN order_id DROP NOT NULL');
+        DB::statement('ALTER TABLE reviews DROP CONSTRAINT IF EXISTS uq_client_product_order');
+        DB::statement('DROP INDEX IF EXISTS uq_client_product_order');
+        DB::statement('ALTER TABLE reviews ADD CONSTRAINT uq_client_product UNIQUE (client_id, product_id)');
     }
 
     public function down(): void
     {
-        DB::statement('
-            ALTER TABLE reviews
-            DROP CONSTRAINT IF EXISTS uq_client_product
-        ');
+        if (DB::connection()->getDriverName() === 'sqlite') {
+            return;
+        }
 
-        DB::statement('
-            ALTER TABLE reviews
-            ALTER COLUMN order_id SET NOT NULL
-        ');
-
-        DB::statement('
-            ALTER TABLE reviews
-            ADD CONSTRAINT uq_client_product_order
-            UNIQUE (client_id, product_id, order_id)
-        ');
+        DB::statement('ALTER TABLE reviews DROP CONSTRAINT IF EXISTS uq_client_product');
+        DB::statement('ALTER TABLE reviews ALTER COLUMN order_id SET NOT NULL');
+        DB::statement('ALTER TABLE reviews ADD CONSTRAINT uq_client_product_order UNIQUE (client_id, product_id, order_id)');
     }
 };
