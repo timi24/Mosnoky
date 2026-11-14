@@ -9,16 +9,26 @@ test('authenticated users can visit the client dashboard', function () {
     $this->actingAs($user)
         ->get(route('client.dashboard'))
         ->assertOk()
-        ->assertSee('Client dashboard');
+        ->assertSee('Espace client privilégié');
 });
 
 test('team administrators can visit the admin dashboard', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->create(['role' => 'ADMINISTRATEUR']);
 
     $this->actingAs($user)
         ->get(route('admin.dashboard'))
         ->assertOk()
-        ->assertSee('Administration');
+        ->assertSee('Administration')
+        ->assertSee('À traiter')
+        ->assertSee('Produits en stock bas')
+        ->assertSee('Avis à modérer')
+        ->assertSee('Accès rapides');
+
+    $this->actingAs($user)
+        ->get(route('admin.products.create'))
+        ->assertOk()
+        ->assertSee('data-preview-target="create-product-image-preview"', false)
+        ->assertSee('Un aperçu vous aidera à vérifier votre sélection', false);
 });
 
 test('team members cannot visit the admin dashboard', function () {

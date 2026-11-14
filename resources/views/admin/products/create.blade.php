@@ -93,8 +93,9 @@
 
             <div class="field">
                 <label for="images">Photos du produit</label>
-                <input type="file" id="images" name="images[]" accept="image/*" multiple>
-                <div class="hint">Vous pouvez sélectionner plusieurs photos (JPG, PNG). La première sera utilisée comme photo principale. Vous pourrez en ajouter d'autres après création.</div>
+                <input type="file" id="images" name="images[]" accept="image/*" multiple data-preview-target="create-product-image-preview">
+                <div class="hint">Sélectionnez jusqu’à 10 photos. La première sera la photo principale. Un aperçu vous aidera à vérifier votre sélection avant la création.</div>
+                <div id="create-product-image-preview" class="admin-image-preview" aria-live="polite" hidden></div>
                 @error('images.*')
                     <div class="error">{{ $message }}</div>
                 @enderror

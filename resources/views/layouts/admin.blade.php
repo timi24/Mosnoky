@@ -54,8 +54,16 @@
             .field textarea { min-height: 100px; resize: vertical; }
             .field .hint { margin-top: 5px; font-size: .78rem; color: var(--muted); }
             .field .error { margin-top: 5px; font-size: .8rem; color: var(--danger); font-weight: 600; }
+            .field input[type="file"] { display: block; width: 100%; padding: 10px; border: 1px dashed #cfc4b5; border-radius: 8px; background: #fbfaf7; font: inherit; font-size: .84rem; }
+            .admin-image-preview { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-top: 12px; }
+            .admin-image-preview[hidden] { display: none; }
+            .admin-image-preview-count { grid-column: 1 / -1; margin: 0; color: var(--muted); font-size: .8rem; font-weight: 700; }
+            .admin-image-preview figure { min-width: 0; margin: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+            .admin-image-preview img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; background: #f3efe8; }
+            .admin-image-preview figcaption { overflow: hidden; padding: 6px; color: var(--muted); font-size: .7rem; text-overflow: ellipsis; white-space: nowrap; }
+            .admin-product-image-color-label { display: block; margin-bottom: 4px; color: var(--muted); font-size: .72rem; font-weight: 700; }
             .checkbox-field { display: flex; align-items: center; gap: 8px; }
-            .form-actions { display: flex; gap: 10px; margin-top: 24px; }
+            .form-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
             footer { border-top: 1px solid var(--line); padding: 24px 0 40px; color: var(--muted); font-size: .85rem; }
             @media (max-width: 760px) { .shell { width: min(100% - 28px, 600px); } .nav-links { display: none; } table { display: block; overflow-x: auto; } }
 
@@ -68,6 +76,11 @@
             @media (max-width: 760px) {
                 .mobile-toggle { display: block; }
                 #desktop-user-dropdown { display: none; }
+            }
+            @media (max-width: 520px) {
+                .form-panel { padding: 18px 14px; }
+                .form-actions > * { flex: 1 1 140px; min-height: 44px; }
+                .admin-image-preview { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
             }
             /* Filet de sécurité : aucune icône SVG de pagination ne peut devenir géante */
             nav[role="navigation"] svg { width: 18px !important; height: 18px !important; max-width: 18px; flex: none; }
@@ -203,5 +216,60 @@
         </div>
 
         @include('admin.payments._alarm')
+        <script>
+            (() => {
+                const previewUrls = new WeakMap();
+
+                document.addEventListener('change', (event) => {
+                    const input = event.target;
+
+                    if (!(input instanceof HTMLInputElement) || !input.matches('[data-preview-target]')) {
+                        return;
+                    }
+
+                    const preview = document.getElementById(input.dataset.previewTarget);
+
+                    if (!preview) {
+                        return;
+                    }
+
+                    (previewUrls.get(preview) || []).forEach((url) => URL.revokeObjectURL(url));
+                    preview.replaceChildren();
+
+                    const files = Array.from(input.files || []).filter((file) => file.type.startsWith('image/'));
+
+                    if (files.length === 0) {
+                        preview.hidden = true;
+                        return;
+                    }
+
+                    preview.hidden = false;
+
+                    const count = document.createElement('p');
+                    count.className = 'admin-image-preview-count';
+                    count.textContent = files.length === 1 ? '1 photo sélectionnée' : `${files.length} photos sélectionnées`;
+                    preview.append(count);
+
+                    const urls = [];
+
+                    files.forEach((file) => {
+                        const figure = document.createElement('figure');
+                        const image = document.createElement('img');
+                        const caption = document.createElement('figcaption');
+                        const url = URL.createObjectURL(file);
+
+                        urls.push(url);
+                        image.src = url;
+                        image.alt = `Aperçu de ${file.name}`;
+                        image.decoding = 'async';
+                        caption.textContent = file.name;
+                        figure.append(image, caption);
+                        preview.append(figure);
+                    });
+
+                    previewUrls.set(preview, urls);
+                });
+            })();
+        </script>
     </body>
 </html>

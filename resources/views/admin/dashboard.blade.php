@@ -3,82 +3,77 @@
 @section('title', 'Tableau de bord')
 
 @section('content')
-    <section style="padding: 10px 0 24px;">
-        <div style="color:var(--brand-red); font-size:.78rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase;">Administration</div>
-        <h1 style="margin:10px 0 6px; font-family:Georgia, serif; font-size:clamp(2rem, 4vw, 3rem); font-weight:400;">Bienvenue, {{ auth()->user()->first_name ?? auth()->user()->name }}.</h1>
-        <p style="max-width:620px; color:var(--muted); font-size:1rem; line-height:1.6;">Gérez votre catalogue, suivez les commandes et surveillez l'activité de la boutique en un coup d'œil.</p>
+    <section class="admin-dashboard-intro">
+        <div class="admin-dashboard-eyebrow">Administration</div>
+        <h1>Bonjour, {{ auth()->user()->first_name ?? auth()->user()->name }}.</h1>
+        <p>Voici les points qui demandent votre attention.</p>
     </section>
 
-    <section style="padding:12px 0 8px;">
-        <div class="admin-dashboard-stats">
-            <a class="admin-dashboard-stat panel" href="{{ route('admin.products.index') }}">
-                <div style="font-size:.78rem; font-weight:800; text-transform:uppercase; color:var(--muted);">Produits</div>
-                <div style="margin-top:6px; font-size:2rem; font-weight:800;">{{ $productCount ?? 0 }}</div>
-                <div style="margin-top:4px; font-size:.8rem; color:var(--muted);">au catalogue</div>
+    <section aria-labelledby="admin-dashboard-alerts-title" class="admin-dashboard-section">
+        <div class="admin-dashboard-section-head">
+            <div>
+                <h2 id="admin-dashboard-alerts-title">À traiter</h2>
+                <p>Les tâches urgentes de la boutique</p>
+            </div>
+        </div>
+
+        <div class="admin-dashboard-alerts">
+            <a class="admin-dashboard-alert {{ $pendingOrderCount > 0 ? 'has-pending' : '' }}" href="{{ route('admin.orders.index') }}">
+                <span class="admin-dashboard-alert-label">Commandes en attente</span>
+                <strong>{{ $pendingOrderCount }}</strong>
+                <span class="admin-dashboard-alert-action">Voir les commandes <span aria-hidden="true">→</span></span>
             </a>
-            <a class="admin-dashboard-stat panel" href="{{ route('admin.orders.index') }}">
-                <div style="font-size:.78rem; font-weight:800; text-transform:uppercase; color:var(--muted);">Commandes</div>
-                <div style="margin-top:6px; font-size:2rem; font-weight:800;">{{ $orderCount ?? 0 }}</div>
-                <div style="margin-top:4px; font-size:.8rem; color:var(--muted);">{{ $pendingOrderCount ?? 0 }} en attente</div>
+            <a class="admin-dashboard-alert {{ $pendingPaymentCount > 0 ? 'has-pending' : '' }}" href="{{ route('admin.payments.index') }}">
+                <span class="admin-dashboard-alert-label">Paiements à vérifier</span>
+                <strong>{{ $pendingPaymentCount }}</strong>
+                <span class="admin-dashboard-alert-action">Vérifier les paiements <span aria-hidden="true">→</span></span>
             </a>
-            <a class="admin-dashboard-stat panel" href="{{ route('admin.clients.index') }}">
-                <div style="font-size:.78rem; font-weight:800; text-transform:uppercase; color:var(--muted);">Clients</div>
-                <div style="margin-top:6px; font-size:2rem; font-weight:800;">{{ $clientCount ?? 0 }}</div>
-                <div style="margin-top:4px; font-size:.8rem; color:var(--muted);">comptes actifs</div>
+            <a class="admin-dashboard-alert {{ $unreadMessageCount > 0 ? 'has-pending' : '' }}" href="{{ route('admin.messages.index') }}">
+                <span class="admin-dashboard-alert-label">Messages non lus</span>
+                <strong>{{ $unreadMessageCount }}</strong>
+                <span class="admin-dashboard-alert-action">Ouvrir les messages <span aria-hidden="true">→</span></span>
             </a>
-            <a class="admin-dashboard-stat panel" href="{{ route('admin.messages.index') }}">
-                <div style="font-size:.78rem; font-weight:800; text-transform:uppercase; color:var(--muted);">Messages non lus</div>
-                <div style="margin-top:6px; font-size:2rem; font-weight:800;">{{ $unreadMessageCount ?? 0 }}</div>
-                <div style="margin-top:4px; font-size:.8rem; color:var(--muted);">à traiter</div>
+            <a class="admin-dashboard-alert {{ $lowStockCount > 0 ? 'has-pending' : '' }}" href="{{ route('admin.products.index') }}">
+                <span class="admin-dashboard-alert-label">Produits en stock bas</span>
+                <strong>{{ $lowStockCount }}</strong>
+                <span class="admin-dashboard-alert-action">Voir le catalogue <span aria-hidden="true">→</span></span>
             </a>
-            <a class="admin-dashboard-stat panel" href="{{ route('admin.payments.index') }}">
-                <div style="font-size:.78rem; font-weight:800; text-transform:uppercase; color:var(--muted);">Paiements à vérifier</div>
-                <div style="margin-top:6px; font-size:2rem; font-weight:800;">{{ $pendingPaymentCount ?? 0 }}</div>
-                <div style="margin-top:4px; font-size:.8rem; color:var(--muted);">déclarations clients</div>
+            <a class="admin-dashboard-alert {{ $pendingReviewCount > 0 ? 'has-pending' : '' }}" href="{{ route('admin.reviews.index') }}">
+                <span class="admin-dashboard-alert-label">Avis à modérer</span>
+                <strong>{{ $pendingReviewCount }}</strong>
+                <span class="admin-dashboard-alert-action">Modérer les avis <span aria-hidden="true">→</span></span>
             </a>
         </div>
     </section>
 
-    <section style="padding:36px 0 20px; border-top:1px solid var(--line); margin-top:24px;">
-        <div class="admin-dashboard-actions">
-            <a class="panel" style="padding:22px; display:block;" href="{{ route('admin.products.index') }}">
-                <h3 style="margin:0 0 6px;">Produits</h3>
-                <p style="margin:0; color:var(--muted); font-size:.9rem;">Ajouter, modifier ou retirer des produits.</p>
-            </a>
-            <a class="panel" style="padding:22px; display:block;" href="{{ route('admin.orders.index') }}">
-                <h3 style="margin:0 0 6px;">Commandes</h3>
-                <p style="margin:0; color:var(--muted); font-size:.9rem;">Suivre et mettre à jour le statut des commandes.</p>
-            </a>
-            <a class="panel" style="padding:22px; display:block;" href="{{ route('admin.deliveries.index') }}">
-                <h3 style="margin:0 0 6px;">Livraisons</h3>
-                <p style="margin:0; color:var(--muted); font-size:.9rem;">Suivre les expéditions et statuts de livraison.</p>
-            </a>
-            <a class="panel" style="padding:22px; display:block;" href="{{ route('admin.reviews.index') }}">
-                <h3 style="margin:0 0 6px;">Avis clients</h3>
-                <p style="margin:0; color:var(--muted); font-size:.9rem;">Modérer les avis laissés sur les produits.</p>
-            </a>
-            <a class="panel" style="padding:22px; display:block;" href="{{ route('admin.messages.index') }}">
-                <h3 style="margin:0 0 6px;">Messages</h3>
-                <p style="margin:0; color:var(--muted); font-size:.9rem;">Discuter directement avec vos clients.</p>
-            </a>
-            <a class="panel" style="padding:22px; display:block;" href="{{ route('admin.clients.index') }}">
-                <h3 style="margin:0 0 6px;">Clients</h3>
-                <p style="margin:0; color:var(--muted); font-size:.9rem;">Consulter les comptes et l'activité des clients.</p>
-            </a>
+    <section aria-labelledby="admin-dashboard-shortcuts-title" class="admin-dashboard-section admin-dashboard-shortcuts-section">
+        <div class="admin-dashboard-section-head">
+            <div>
+                <h2 id="admin-dashboard-shortcuts-title">Accès rapides</h2>
+                <p>Les autres outils d’administration</p>
+            </div>
+        </div>
+
+        <div class="admin-dashboard-shortcuts">
+            <a href="{{ route('admin.products.create') }}"><span aria-hidden="true">＋</span><span><strong>Ajouter un produit</strong><small>Créer une nouvelle fiche au catalogue</small></span></a>
+            <a href="{{ route('admin.deliveries.index') }}"><span aria-hidden="true">↗</span><span><strong>Gérer les livraisons</strong><small>Suivre les commandes à expédier</small></span></a>
+            <a href="{{ route('admin.business-report.form') }}"><span aria-hidden="true">▤</span><span><strong>Rapport mensuel</strong><small>Consulter les résultats de la boutique</small></span></a>
         </div>
     </section>
 
-    <!-- Derniers avis à modérer -->
-    <section style="padding:12px 0 40px; border-top:1px solid var(--line); margin-top:12px;">
-        <div class="page-head" style="margin-top:24px;">
-            <h2 style="margin:0; font-family:Georgia, serif; font-size:1.6rem; font-weight:400;">Avis en attente de modération</h2>
-            <a class="button small" href="{{ route('admin.reviews.index') }}">Voir tous les avis</a>
+    <section aria-labelledby="admin-dashboard-reviews-title" class="admin-dashboard-section admin-dashboard-reviews-section">
+        <div class="admin-dashboard-section-head">
+            <div>
+                <h2 id="admin-dashboard-reviews-title">Avis à modérer</h2>
+                <p>Les cinq derniers avis en attente</p>
+            </div>
+            <a class="button small" href="{{ route('admin.reviews.index') }}">Tous les avis</a>
         </div>
 
         @if ($recentReviews->isEmpty())
             <div class="empty">Aucun avis en attente pour le moment.</div>
         @else
-            <div class="panel">
+            <div class="panel admin-dashboard-review-panel">
                 <table>
                     <thead>
                         <tr>
@@ -86,7 +81,7 @@
                             <th>Produit</th>
                             <th>Note</th>
                             <th>Commentaire</th>
-                            <th></th>
+                            <th aria-label="Action"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -112,10 +107,41 @@
     </section>
 
     <style>
-        .admin-dashboard-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; }
-        .admin-dashboard-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
-        .admin-dashboard-stat { display: block; padding: 20px; color: inherit; text-decoration: none; transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
-        .admin-dashboard-stat:hover { transform: translateY(-2px); border-color: var(--brand-red, #b1372f); box-shadow: 0 10px 24px rgba(0, 0, 0, .06); }
-        @media (prefers-reduced-motion: reduce) { .admin-dashboard-stat { transition: none; } }
+        .admin-dashboard-intro { padding: 10px 0 24px; }
+        .admin-dashboard-eyebrow { color: var(--brand-red); font-size: .78rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+        .admin-dashboard-intro h1 { margin: 10px 0 6px; font-family: Georgia, serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 400; }
+        .admin-dashboard-intro p, .admin-dashboard-section-head p { margin: 0; color: var(--muted); line-height: 1.6; }
+        .admin-dashboard-section { padding: 24px 0; border-top: 1px solid var(--line); }
+        .admin-dashboard-section-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+        .admin-dashboard-section-head h2 { margin: 0 0 3px; font-family: Georgia, serif; font-size: 1.55rem; font-weight: 400; }
+        .admin-dashboard-section-head p { font-size: .88rem; }
+        .admin-dashboard-alerts { display: grid; grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)); gap: 12px; }
+        .admin-dashboard-alert { display: flex; min-height: 152px; flex-direction: column; align-items: flex-start; padding: 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); transition: border-color .2s ease, transform .2s ease; }
+        .admin-dashboard-alert:hover { transform: translateY(-2px); border-color: var(--brand-red); }
+        .admin-dashboard-alert.has-pending { border-left: 4px solid var(--brand-red); }
+        .admin-dashboard-alert-label { color: var(--muted); font-size: .78rem; font-weight: 700; }
+        .admin-dashboard-alert strong { margin: 8px 0; font-size: 2rem; line-height: 1; }
+        .admin-dashboard-alert-action { margin-top: auto; color: var(--brand-red); font-size: .8rem; font-weight: 700; }
+        .admin-dashboard-shortcuts { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+        .admin-dashboard-shortcuts a { display: flex; align-items: center; gap: 12px; min-height: 76px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+        .admin-dashboard-shortcuts a:hover { border-color: var(--brand-red); }
+        .admin-dashboard-shortcuts a > span:first-child { display: grid; width: 38px; height: 38px; flex: none; place-items: center; border-radius: 10px; background: #f7e9e6; color: var(--brand-red); font-size: 1.3rem; }
+        .admin-dashboard-shortcuts strong, .admin-dashboard-shortcuts small { display: block; }
+        .admin-dashboard-shortcuts strong { font-size: .9rem; }
+        .admin-dashboard-shortcuts small { margin-top: 3px; color: var(--muted); font-size: .76rem; }
+        .admin-dashboard-reviews-section { padding-bottom: 40px; }
+        @media (max-width: 520px) {
+            .admin-dashboard-intro { padding-top: 2px; }
+            .admin-dashboard-alerts { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+            .admin-dashboard-alert { min-height: 136px; padding: 13px; }
+            .admin-dashboard-alert-label { font-size: .72rem; }
+            .admin-dashboard-alert strong { font-size: 1.8rem; }
+            .admin-dashboard-alert-action { font-size: .72rem; }
+            .admin-dashboard-shortcuts { grid-template-columns: 1fr; }
+            .admin-dashboard-section-head { align-items: flex-start; }
+            .admin-dashboard-review-panel { overflow-x: auto; }
+            .admin-dashboard-review-panel table { min-width: 680px; }
+        }
+        @media (prefers-reduced-motion: reduce) { .admin-dashboard-alert { transition: none; } }
     </style>
 @endsection

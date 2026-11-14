@@ -37,12 +37,14 @@
                                 <form method="POST" action="{{ route('admin.products.images.update-color', [$product, $image]) }}">
                                     @csrf
                                     @method('PATCH')
-                                    <select name="color" onchange="this.form.submit()" style="width:100%; padding:6px 8px; border:1px solid var(--line); border-radius:6px; font-size:.78rem;">
+                                    <label for="image-color-{{ $image->id }}" class="admin-product-image-color-label">Couleur associée</label>
+                                    <select id="image-color-{{ $image->id }}" name="color" style="width:100%; padding:8px; border:1px solid var(--line); border-radius:6px; font-size:.82rem;">
                                         <option value="">— Couleur —</option>
                                         @foreach ($product->available_colors as $color)
                                             <option value="{{ $color }}" {{ $image->color === $color ? 'selected' : '' }}>{{ $color }}</option>
                                         @endforeach
                                     </select>
+                                    <button type="submit" class="button small" style="width:100%;">Enregistrer la couleur</button>
                                 </form>
                             @endif
 
@@ -72,7 +74,9 @@
 
             <div class="field" style="margin-bottom:10px;">
                 <label for="images">Ajouter des photos</label>
-                <input type="file" id="images" name="images[]" accept="image/*" multiple>
+                <input type="file" id="images" name="images[]" accept="image/*" multiple data-preview-target="edit-product-image-preview">
+                <div class="hint">Sélectionnez jusqu’à 10 photos. Vérifiez l’aperçu avant de téléverser.</div>
+                <div id="edit-product-image-preview" class="admin-image-preview" aria-live="polite" hidden></div>
                 @error('images.*')
                     <div class="error">{{ $message }}</div>
                 @enderror
@@ -87,7 +91,7 @@
                             <option value="{{ $color }}">{{ $color }}</option>
                         @endforeach
                     </select>
-                    <div class="hint">Choisissez une couleur pour l’appliquer à toutes les photos. Sinon, l’IA détectera la couleur de chaque photo si la clé OpenAI est configurée. Pour associer plusieurs couleurs, téléversez les photos séparément.</div>
+                    <div class="hint">La couleur choisie sera appliquée à toutes les photos sélectionnées. Laissez « Détection automatique » pour faire analyser chaque photo. Pour ajouter plusieurs couleurs, téléversez-les par groupes séparés.</div>
                 </div>
             @endif
 

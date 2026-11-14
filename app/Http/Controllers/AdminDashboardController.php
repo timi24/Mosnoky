@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Client;
 use App\Models\Message;
 use App\Models\Order;
 use App\Models\Payment;
@@ -18,12 +17,11 @@ class AdminDashboardController extends Controller
         $adminIds = User::query()->whereRaw('UPPER(TRIM(role)) = ?', ['ADMINISTRATEUR'])->pluck('id');
 
         return view('admin.dashboard', [
-            'productCount' => Product::count(),
-            'orderCount' => Order::count(),
             'pendingOrderCount' => Order::where('status', 'EN_ATTENTE')->count(),
             'pendingPaymentCount' => Payment::where('status', 'EN_ATTENTE')->whereNotNull('submitted_at')->count(),
-            'clientCount' => Client::count(),
             'unreadMessageCount' => Message::whereIn('receiver_id', $adminIds)->whereNull('read_at')->count(),
+            'lowStockCount' => Product::where('status', 'ACTIF')->whereColumn('stock', '<=', 'alert_threshold')->count(),
+            'pendingReviewCount' => Review::where('moderation_status', 'EN_ATTENTE')->count(),
             'recentReviews' => Review::where('moderation_status', 'EN_ATTENTE')
                 ->with(['client.user', 'product'])
                 ->latest()
