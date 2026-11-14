@@ -63,6 +63,7 @@
                         <input type="radio" name="color" id="color-{{ $uid }}-{{ $i }}" value="{{ $color }}" aria-label="{{ $color }}" {{ $i === 0 ? 'checked' : '' }} required>
                         <label for="color-{{ $uid }}-{{ $i }}" title="{{ $color }}" aria-label="{{ $color }}">
                             <span class="swatch" style="background:{{ $hex }};"></span>
+                            <span class="swatch-name">{{ $color }}</span>
                         </label>
                     @endforeach
                 </div>
@@ -73,10 +74,10 @@
 
 <style>
     .variant-options { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .color-options { gap: 12px; }
+    .color-options { gap: 8px 10px; }
     .color-options input[type="radio"] { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
-    .color-options label { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border: 2px solid transparent; border-radius: 50%; cursor: pointer; }
+    .color-options label { display: inline-flex; align-items: center; gap: 7px; min-height: 34px; padding: 2px 8px 2px 2px; border: 1px solid transparent; border-radius: 18px; cursor: pointer; color: var(--ink, #292522); font-size: .84rem; }
     .color-options .swatch { display: block; width: 22px; height: 22px; border: 1px solid rgba(34, 31, 29, .24); border-radius: 50%; }
-    .color-options input[type="radio"]:checked + label { border-color: var(--accent, #b1372f); }
+    .color-options input[type="radio"]:checked + label { border-color: var(--accent, #b1372f); background: #fff; }
     .color-options input[type="radio"]:focus-visible + label { outline: 2px solid var(--accent, #b1372f); outline-offset: 3px; }
 </style>

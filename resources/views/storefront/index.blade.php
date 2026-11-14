@@ -348,7 +348,7 @@
                                 <div class="thumb">
                                     @if ($product->images->isNotEmpty())
                                         @foreach ($product->images as $i => $image)
-                                            <img @if ($i === 0) src="{{ $image->image_url }}" fetchpriority="low" @else data-src="{{ $image->image_url }}" @endif alt="{{ $product->name }}" class="product-slide @if ($i === 0) active @endif" @if ($i === 0) loading="eager" decoding="async" @else loading="lazy" decoding="async" @endif>
+                                            <img @if ($i === 0) src="{{ $image->image_url }}" fetchpriority="low" @else data-src="{{ $image->image_url }}" @endif alt="{{ $product->name }}" class="product-slide @if ($i === 0) active @endif" loading="lazy" decoding="async">
                                         @endforeach
                                         @if ($product->images->count() > 1)
                                             <button type="button" class="thumb-arrow thumb-arrow-prev" aria-label="Photo précédente">‹</button>

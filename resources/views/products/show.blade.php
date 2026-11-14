@@ -9,7 +9,7 @@
             <div class="pdp-main-image">
                 @php $primaryImage = $product->images->firstWhere('is_primary', true) ?? $product->images->first(); @endphp
                 @if ($primaryImage)
-                    <img id="main-product-image" src="{{ $primaryImage->image_url }}" alt="{{ $product->name }}">
+                    <img id="main-product-image" src="{{ $primaryImage->image_url }}" alt="{{ $product->name }}" fetchpriority="high" decoding="async">
                 @else
                     <span class="pdp-no-image">Image bientôt disponible</span>
                 @endif
@@ -23,7 +23,7 @@
                                 data-image="{{ $image->image_url }}"
                                 data-color="{{ $image->color ? strtolower($image->color) : '' }}"
                                 onclick="pdpSetMainImage(this)">
-                            <img src="{{ $image->image_url }}" alt="{{ $image->alternative_text }}">
+                            <img src="{{ $image->image_url }}" alt="{{ $image->alternative_text }}" loading="lazy" decoding="async">
                         </button>
                     @endforeach
                 </div>

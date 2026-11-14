@@ -67,7 +67,7 @@
                         <div class="shop-card-image">
                             @if ($product->images->isNotEmpty())
                                 @foreach ($product->images as $i => $image)
-                                    <img src="{{ $image->image_url }}" alt="{{ $image->alternative_text ?: $product->name }}" class="product-slide @if ($i === 0) active @endif">
+                                    <img src="{{ $image->image_url }}" alt="{{ $image->alternative_text ?: $product->name }}" class="product-slide @if ($i === 0) active @endif" loading="lazy" decoding="async">
                                 @endforeach
                                 @if ($product->images->count() > 1)
                                     <button type="button" class="thumb-arrow thumb-arrow-prev" aria-label="Photo précédente">‹</button>

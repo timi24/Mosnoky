@@ -10,6 +10,7 @@ use App\Models\Client;
 use App\Models\Product;
 use App\Models\ProductImage;
 use App\Services\ProductImageColorIdentifier;
+use App\Services\ProductImageOptimizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -36,7 +37,7 @@ class ProductController extends Controller
         ]);
     }
 
-    public function store(Request $request, ProductImageColorIdentifier $colorIdentifier): RedirectResponse
+    public function store(Request $request, ProductImageColorIdentifier $colorIdentifier, ProductImageOptimizer $imageOptimizer): RedirectResponse
     {
         $validated = $this->validateProduct($request);
 
@@ -53,7 +54,7 @@ class ProductController extends Controller
             'available_colors' => $this->parseListInput($validated['available_colors'] ?? null),
         ]);
 
-        $this->storeUploadedImages($request, $product, $colorIdentifier);
+        $this->storeUploadedImages($request, $product, $colorIdentifier, $imageOptimizer);
 
         if ($product->status === 'ACTIF') {
             $this->notifyClientsOfNewProduct($product);
@@ -74,7 +75,7 @@ class ProductController extends Controller
         ]);
     }
 
-    public function update(Request $request, Product $product, ProductImageColorIdentifier $colorIdentifier): RedirectResponse
+    public function update(Request $request, Product $product, ProductImageColorIdentifier $colorIdentifier, ProductImageOptimizer $imageOptimizer): RedirectResponse
     {
         $wasActive = $product->status === 'ACTIF';
 
@@ -90,7 +91,7 @@ class ProductController extends Controller
 
         $product->update($fields);
 
-        $this->storeUploadedImages($request, $product, $colorIdentifier);
+        $this->storeUploadedImages($request, $product, $colorIdentifier, $imageOptimizer);
 
         // Si le produit vient tout juste de passer à ACTIF (n'était pas actif avant), on notifie les clients
         if (! $wasActive && $product->status === 'ACTIF') {
@@ -170,7 +171,7 @@ class ProductController extends Controller
         }
     }
 
-    private function storeUploadedImages(Request $request, Product $product, ProductImageColorIdentifier $colorIdentifier): void
+    private function storeUploadedImages(Request $request, Product $product, ProductImageColorIdentifier $colorIdentifier, ProductImageOptimizer $imageOptimizer): void
     {
         if (! $request->hasFile('images')) {
             return;
@@ -181,7 +182,7 @@ class ProductController extends Controller
         $availableColors = $product->available_colors ?? [];
 
         foreach ($request->file('images') as $index => $file) {
-            $path = $file->store('products', 'public');
+            $path = $imageOptimizer->store($file);
             $imageColor = $photoColor ?? $colorIdentifier->identify($file, $availableColors);
 
             $product->images()->create([

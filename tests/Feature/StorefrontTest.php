@@ -22,6 +22,7 @@ test('product colors are rendered as accessible color swatches', function () {
     expect($html)
         ->toContain('aria-label="Rose"')
         ->toContain('aria-label="Noir"')
+        ->toContain('<span class="swatch-name">Rose</span>')
         ->toContain('aria-label="Bleu foncé"')
         ->toContain('aria-label="Bleue pétrole"')
         ->toContain('background:#d98ba3;')
