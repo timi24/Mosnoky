@@ -11,6 +11,32 @@
         'marron clair' => '#a87955', 'marron foncé' => '#50301f', 'champagne' => '#e8d6b0',
         'kaki' => '#7a7a4a', 'tan' => '#c19a6b',
     ];
+    $colorHex = static function (string $color) use ($colorMap): string {
+        $lowercaseColor = mb_strtolower(trim($color));
+        $asciiColor = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $lowercaseColor);
+        $normalizedColor = str_replace(["'", '’'], '', $asciiColor === false ? $lowercaseColor : $asciiColor);
+
+        if (str_contains($normalizedColor, 'bleu') || str_contains($normalizedColor, 'bleue') || str_contains($normalizedColor, 'blue')) {
+            return match (true) {
+                str_contains($normalizedColor, 'ciel'), str_contains($normalizedColor, 'sky') => '#78b8e8',
+                str_contains($normalizedColor, 'marine'), str_contains($normalizedColor, 'nuit'), str_contains($normalizedColor, 'navy'), str_contains($normalizedColor, 'fonce') => '#17345c',
+                str_contains($normalizedColor, 'petrole'), str_contains($normalizedColor, 'turquoise'), str_contains($normalizedColor, 'canard') => '#168f9a',
+                str_contains($normalizedColor, 'roi'), str_contains($normalizedColor, 'royal') => '#4169e1',
+                default => '#2c4a7c',
+            };
+        }
+
+        foreach ($colorMap as $name => $hex) {
+            $normalizedName = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $name);
+            $normalizedName = $normalizedName === false ? false : str_replace(["'", '’'], '', $normalizedName);
+
+            if ($normalizedName !== false && $normalizedColor === $normalizedName) {
+                return $hex;
+            }
+        }
+
+        return '#cccccc';
+    };
     $uid = $product->id.'-'.uniqid();
 @endphp
 
@@ -33,7 +59,7 @@
                 <span class="variant-label">Couleur</span>
                 <div class="variant-options color-options">
                     @foreach ($product->available_colors as $i => $color)
-                        @php $hex = $colorMap[strtolower($color)] ?? '#cccccc'; @endphp
+                        @php $hex = $colorHex($color); @endphp
                         <input type="radio" name="color" id="color-{{ $uid }}-{{ $i }}" value="{{ $color }}" aria-label="{{ $color }}" {{ $i === 0 ? 'checked' : '' }} required>
                         <label for="color-{{ $uid }}-{{ $i }}" title="{{ $color }}" aria-label="{{ $color }}">
                             <span class="swatch" style="background:{{ $hex }};"></span>

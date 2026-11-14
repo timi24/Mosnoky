@@ -14,7 +14,7 @@ test('the storefront is available to visitors', function () {
 
 test('product colors are rendered as accessible color swatches', function () {
     $product = new Product([
-        'available_colors' => ['Rose', 'Noir'],
+        'available_colors' => ['Rose', 'Noir', 'Bleu foncé', 'Bleue pétrole'],
     ]);
 
     $html = view('partials.variant-picker', ['product' => $product])->render();
@@ -22,8 +22,12 @@ test('product colors are rendered as accessible color swatches', function () {
     expect($html)
         ->toContain('aria-label="Rose"')
         ->toContain('aria-label="Noir"')
+        ->toContain('aria-label="Bleu foncé"')
+        ->toContain('aria-label="Bleue pétrole"')
         ->toContain('background:#d98ba3;')
-        ->toContain('background:#1a1a1a;');
+        ->toContain('background:#1a1a1a;')
+        ->toContain('background:#17345c;')
+        ->toContain('background:#168f9a;');
 });
 
 test('guests are redirected to login when they want to buy a product', function () {
