@@ -19,6 +19,7 @@
             .nav-links a:hover { color: var(--brand-red); }
             .nav-links a.active { color: var(--brand-red); font-weight: 800; }
             .badge { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; padding: 0 5px; margin-left: 4px; border-radius: 999px; background: var(--brand-red); color: #fff; font-size: .7rem; font-weight: 800; }
+            .badge[hidden] { display: none !important; }
             .button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--line); border-radius: 999px; padding: 10px 18px; font-size: .88rem; font-weight: 700; transition: .2s ease; cursor: pointer; background: transparent; }
             .button:hover { border-color: var(--ink); transform: translateY(-1px); }
             .button.primary { border-color: var(--ink); background: var(--ink); color: white; }
@@ -106,9 +107,7 @@
                     <a href="{{ route('admin.deliveries.index') }}" class="{{ request()->routeIs('admin.deliveries.*') ? 'active' : '' }}">Livraisons</a>
                     <a href="{{ route('admin.payments.index') }}" class="{{ request()->routeIs('admin.payments.*') ? 'active' : '' }}">
                         Paiements
-                        @if (($adminPendingPaymentCount ?? 0) > 0)
-                            <span class="badge">{{ $adminPendingPaymentCount }}</span>
-                        @endif
+                        <span class="badge" data-admin-payment-count hidden>0</span>
                     </a>
                     <a href="{{ route('admin.reviews.index') }}" class="{{ request()->routeIs('admin.reviews.*') ? 'active' : '' }}">Avis</a>
                     <a href="{{ route('admin.reports.index') }}" class="{{ request()->routeIs('admin.reports.*') ? 'active' : '' }}">Signalements</a>
@@ -165,9 +164,7 @@
                 <a href="{{ route('admin.deliveries.index') }}" class="{{ request()->routeIs('admin.deliveries.*') ? 'active' : '' }}">Livraisons</a>
                 <a href="{{ route('admin.payments.index') }}" class="{{ request()->routeIs('admin.payments.*') ? 'active' : '' }}">
                     Paiements
-                    @if (($adminPendingPaymentCount ?? 0) > 0)
-                        <span class="badge">{{ $adminPendingPaymentCount }}</span>
-                    @endif
+                    <span class="badge" data-admin-payment-count hidden>0</span>
                 </a>
                 <a href="{{ route('admin.reviews.index') }}" class="{{ request()->routeIs('admin.reviews.*') ? 'active' : '' }}">Avis</a>
                 <a href="{{ route('admin.reports.index') }}" class="{{ request()->routeIs('admin.reports.*') ? 'active' : '' }}">Signalements</a>

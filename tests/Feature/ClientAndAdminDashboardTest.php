@@ -22,7 +22,10 @@ test('team administrators can visit the admin dashboard', function () {
         ->assertSee('À traiter')
         ->assertSee('Produits en stock bas')
         ->assertSee('Avis à modérer')
-        ->assertSee('Accès rapides');
+        ->assertSee('Accès rapides')
+        ->assertSee('id="pay-alarm-bar"', false)
+        ->assertSee('id="pay-alarm-pill"', false)
+        ->assertSee('data-admin-payment-count', false);
 
     $this->actingAs($user)
         ->get(route('admin.products.create'))

@@ -23,7 +23,7 @@
                 <strong>{{ $pendingOrderCount }}</strong>
                 <span class="admin-dashboard-alert-action">Voir les commandes <span aria-hidden="true">→</span></span>
             </a>
-            <a class="admin-dashboard-alert {{ $pendingPaymentCount > 0 ? 'has-pending' : '' }}" href="{{ route('admin.payments.index') }}">
+            <a class="admin-dashboard-alert admin-dashboard-payment-alert {{ $pendingPaymentCount > 0 ? 'is-active' : '' }}" href="{{ route('admin.payments.index') }}">
                 <span class="admin-dashboard-alert-label">Paiements à vérifier</span>
                 <strong>{{ $pendingPaymentCount }}</strong>
                 <span class="admin-dashboard-alert-action">Vérifier les paiements <span aria-hidden="true">→</span></span>
@@ -119,6 +119,9 @@
         .admin-dashboard-alert { display: flex; min-height: 152px; flex-direction: column; align-items: flex-start; padding: 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); transition: border-color .2s ease, transform .2s ease; }
         .admin-dashboard-alert:hover { transform: translateY(-2px); border-color: var(--brand-red); }
         .admin-dashboard-alert.has-pending { border-left: 4px solid var(--brand-red); }
+        .admin-dashboard-payment-alert.is-active { border-color: #9d211f; background: #9d211f; color: #fff; }
+        .admin-dashboard-payment-alert.is-active .admin-dashboard-alert-label, .admin-dashboard-payment-alert.is-active .admin-dashboard-alert-action { color: #fff; }
+        .admin-dashboard-payment-alert.is-active .admin-dashboard-alert-action { text-decoration: underline; text-underline-offset: 3px; }
         .admin-dashboard-alert-label { color: var(--muted); font-size: .78rem; font-weight: 700; }
         .admin-dashboard-alert strong { margin: 8px 0; font-size: 2rem; line-height: 1; }
         .admin-dashboard-alert-action { margin-top: auto; color: var(--brand-red); font-size: .8rem; font-weight: 700; }
