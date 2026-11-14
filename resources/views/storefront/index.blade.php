@@ -461,10 +461,11 @@
             observer.observe(container);
         }
 
-        // Pause au survol de la souris seulement (sur téléphone, le "survol"
-        // resterait bloqué après un toucher et arrêterait le défilement).
-        container.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') stop(); });
-        container.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') start(); });
+        // Le hero continue de défiler même lorsque la souris reste dessus.
+        if (!container.matches('.hero')) {
+            container.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') stop(); });
+            container.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') start(); });
+        }
 
         // On économise la batterie quand l'onglet n'est pas visible
         document.addEventListener('visibilitychange', function () {
