@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
@@ -9,6 +10,20 @@ test('the storefront is available to visitors', function () {
         ->assertSee('Nos produits')
         ->assertDontSee('hero-arrow-prev')
         ->assertDontSee('hero-arrow-next');
+});
+
+test('product colors are rendered as accessible color swatches', function () {
+    $product = new Product([
+        'available_colors' => ['Rose', 'Noir'],
+    ]);
+
+    $html = view('partials.variant-picker', ['product' => $product])->render();
+
+    expect($html)
+        ->toContain('aria-label="Rose"')
+        ->toContain('aria-label="Noir"')
+        ->toContain('background:#d98ba3;')
+        ->toContain('background:#1a1a1a;');
 });
 
 test('guests are redirected to login when they want to buy a product', function () {
