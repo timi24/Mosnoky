@@ -6,7 +6,7 @@
         body { font-family: DejaVu Sans, sans-serif; color: #221f1d; font-size: 12px; }
         .header { width: 100%; margin-bottom: 30px; }
         .header td { vertical-align: top; }
-        .brand { font-size: 22px; font-weight: bold; color: #b1372f; }
+        .brand-logo { width: 105px; height: auto; }
         .muted { color: #857b72; }
         .title { font-size: 18px; font-weight: bold; margin: 20px 0 4px; }
         table.items { width: 100%; border-collapse: collapse; margin-top: 16px; }
@@ -25,8 +25,16 @@
     <table class="header">
         <tr>
             <td>
-                <div class="brand">MOSNOKY</div>
-                <div class="muted">Chaussures de luxe & maroquinerie<br>Pouytenga, Burkina Faso<br>+226 74 91 91 33 · Mosnoky@gmail.com</div>
+                <table style="border-collapse:collapse;">
+                    <tr>
+                        <td style="padding:0 12px 0 0; vertical-align:middle;">
+                            <img class="brand-logo" src="{{ public_path('images/mosnoky-logo.jpg') }}" alt="Logo Mosnoky">
+                        </td>
+                        <td style="vertical-align:middle;">
+                            <div class="muted">Chaussures de luxe & maroquinerie<br>Pouytenga, Burkina Faso<br>+226 74 91 91 33 · Mosnoky@gmail.com</div>
+                        </td>
+                    </tr>
+                </table>
             </td>
             <td style="text-align:right;">
                 <div class="title">REÇU DE PAIEMENT</div>

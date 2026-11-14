@@ -4,8 +4,8 @@
         <meta name="google-site-verification" content="I7rp9O-NEDvrppuhalUy4LkpvlV41xe8mXRJFURNt04" />
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{{ config('app.name', 'Mosnoky') }} — Chaussures de luxe & maroquinerie</title>
-        <meta name="description" content="Mosnoky, atelier spécialisé dans la fabrication artisanale de chaussures de luxe et d'articles de maroquinerie au Burkina Faso.">
+        <title>{{ config('app.name', 'MOSNOKY') }} — Chaussures & maroquinerie artisanales</title>
+        <meta name="description" content="MOSNOKY, marque burkinabè de chaussures et d'articles de maroquinerie, inspirée par le savoir-faire artisanal de Pouytenga.">
         @if ($heroImages->isNotEmpty())
             <link rel="preload" as="image" href="{{ $heroImages->first()->image_url }}" fetchpriority="high">
         @endif
@@ -241,9 +241,9 @@
                 <div class="about-grid">
                     <div>
                         <div class="eyebrow">À propos de nous</div>
-                        <h2>Élégance, authenticité et savoir-faire artisanal</h2>
-                        <p>Chez Mosnoky, nous célébrons l'élégance et l'authenticité à travers nos créations. Spécialisés dans la fabrication artisanale de chaussures de luxe et d'articles de maroquinerie, nous allions savoir-faire traditionnel et design moderne.</p>
-                        <p>Chaque pièce que nous créons est pensée pour refléter la personnalité de celui qui la porte, avec style, confort et durabilité.</p>
+                        <h2>MOSNOKY, l'élégance inspirée du savoir-faire burkinabè</h2>
+                        <p>Bienvenue chez MOSNOKY, une marque burkinabè spécialisée dans la conception, la fabrication et la commercialisation de chaussures et d'articles de maroquinerie.</p>
+                        <p>Née d'une passion pour la création et le travail du cuir, MOSNOKY propose des produits qui associent élégance, qualité, confort et originalité. Basée à Pouytenga, au Burkina Faso, notre entreprise met en valeur le savoir-faire artisanal local à travers des créations pensées pour celles et ceux qui apprécient le style, le raffinement et le souci du détail.</p>
                         <div class="about-badges">
                             <span class="about-badge">🇧🇫 Made in Burkina Faso</span>
                             <span class="about-badge">✋ Fait main</span>
@@ -259,22 +259,22 @@
             <!-- SERVICES -->
             <section class="block" id="services">
                 <div class="eyebrow">Nos services</div>
-                <h2>Ce que nous proposons</h2>
+                        <h2>Des créations pour chaque style</h2>
                 <div class="services-grid">
                     <div class="service-card">
                         <div class="num">1</div>
-                        <h3>Création sur mesure</h3>
-                        <p>Des modèles uniques adaptés à votre style et à vos besoins, pour les pieds larges ou les tailles rares.</p>
+                        <h3>Chaussures et sandales</h3>
+                        <p>Des créations pour hommes et femmes, conçues pour allier confort, élégance et qualité.</p>
                     </div>
                     <div class="service-card">
                         <div class="num">2</div>
-                        <h3>Maroquinerie</h3>
-                        <p>Sacs, ceintures, porte-monnaie et accessoires en cuir, élégants et durables.</p>
+                        <h3>Maroquinerie et accessoires</h3>
+                        <p>Sacs à main, ceintures, sacoches et autres articles en cuir soigneusement réalisés.</p>
                     </div>
                     <div class="service-card">
                         <div class="num">3</div>
-                        <h3>Vente en Gros et Detaille</h3>
-                        <p>Nous redonnons vie à vos chaussures et articles en cuir avec .</p>
+                        <h3>Créations personnalisées</h3>
+                        <p>Des articles adaptés aux envies de nos clients, avec une attention particulière portée aux détails.</p>
                     </div>
                 </div>
             </section>
@@ -287,29 +287,29 @@
                     <div class="why-item">
                         <div class="why-num">1</div>
                         <div>
-                            <h3>Savoir-faire artisanal unique</h3>
-                            <p>Chaque chaussure est conçue à la main par des artisans passionnés, garantissant une finition impeccable et une qualité exceptionnelle.</p>
+                        <h3>Un travail minutieux</h3>
+                        <p>De la conception aux finitions, chaque création bénéficie d'un travail attentif et d'une recherche constante de qualité.</p>
                         </div>
                     </div>
                     <div class="why-item">
                         <div class="why-num">2</div>
                         <div>
-                            <h3>Produits Made in Burkina Faso 🇧🇫</h3>
-                            <p>Nous valorisons le savoir-faire local et fabriquons nos modèles avec des matériaux soigneusement sélectionnés.</p>
+                        <h3>Le savoir-faire burkinabè 🇧🇫</h3>
+                        <p>Basés à Pouytenga, nous mettons en valeur le savoir-faire artisanal local à travers des créations uniques et authentiques.</p>
                         </div>
                     </div>
                     <div class="why-item">
                         <div class="why-num">3</div>
                         <div>
-                            <h3>Confort et élégance réunis</h3>
-                            <p>Nos créations ne sont pas seulement belles, elles sont pensées pour offrir un confort optimal au quotidien ou lors d'occasions spéciales.</p>
+                        <h3>Confort et élégance réunis</h3>
+                        <p>Nous croyons qu'une belle création doit aussi offrir confort, durabilité et satisfaction au quotidien.</p>
                         </div>
                     </div>
                     <div class="why-item">
                         <div class="why-num">4</div>
                         <div>
-                            <h3>Personnalisation et exclusivité</h3>
-                            <p>Avec Mosnoky, chaque client peut avoir une paire qui correspond à son style, rendant chaque modèle unique comme celui qui le porte.</p>
+                        <h3>À l'écoute de vos envies</h3>
+                        <p>Nous sommes attentifs aux besoins de nos clients et proposons des créations personnalisées, originales et élégantes.</p>
                         </div>
                     </div>
                 </div>
@@ -317,20 +317,20 @@
 
             <!-- NOTRE MISSION -->
             <section class="block" id="mission" style="background:var(--card); border-radius:18px; padding:60px;">
-                <div class="eyebrow">Notre mission</div>
-                <h2>Ce que nous voulons accomplir</h2>
+                <div class="eyebrow">Notre engagement</div>
+                <h2>La qualité, dans chaque détail</h2>
                 <div class="mission-grid">
                     <div class="mission-item">
                         <div class="why-num">1</div>
-                        <p>Offrir des chaussures et accessoires de qualité, alliant élégance, confort et durabilité.</p>
+                        <p>Privilégier des matières soigneusement sélectionnées et soigner les finitions de chaque produit.</p>
                     </div>
                     <div class="mission-item">
                         <div class="why-num">2</div>
-                        <p>Valoriser le savoir-faire artisanal burkinabè à travers des créations uniques et authentiques.</p>
+                        <p>Proposer des créations originales et élégantes qui valorisent le savoir-faire artisanal burkinabè.</p>
                     </div>
                     <div class="mission-item">
                         <div class="why-num">3</div>
-                        <p>Répondre aux besoins de nos clients en leur proposant des produits qui reflètent leur style et leur identité.</p>
+                        <p>Être à l'écoute de vos attentes et améliorer continuellement la qualité de nos réalisations.</p>
                     </div>
                 </div>
             </section>
@@ -338,7 +338,7 @@
             <!-- GALERIE ATELIER -->
             <section class="block" id="galerie">
                 <div class="eyebrow">Notre savoir-faire</div>
-                <h2>Directement de notre atelier</h2>
+                <h2>Des créations pensées et fabriquées avec soin</h2>
                 @php
                     $galleryImages = [
                         ['src' => asset('images/products/oxford-noir.jpg'), 'alt' => 'Chaussures Oxford noires'],
