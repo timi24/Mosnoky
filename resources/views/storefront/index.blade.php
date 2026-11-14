@@ -185,7 +185,12 @@
             .mission-item p { margin: 0; color: var(--muted); font-size: .94rem; line-height: 1.6; }
 
             .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-            .gallery-grid img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 12px; transition: opacity .35s ease; }
+            .gallery-grid img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 12px; }
+            .craft-copy { max-width: 900px; margin: 0 0 26px; color: var(--muted); font-size: 1rem; line-height: 1.8; }
+            .craft-copy p { margin: 0 0 12px; }
+            .craft-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 24px; margin: 0 0 28px; padding: 0; list-style: none; }
+            .craft-list li { position: relative; padding-left: 22px; color: var(--muted); line-height: 1.6; }
+            .craft-list li::before { content: '•'; position: absolute; left: 4px; color: var(--accent); font-weight: 800; }
 
             .testimonial-section { text-align: center; }
             .testimonial-quote { max-width: 760px; margin: 0 auto; font-family: Georgia, serif; font-style: italic; font-size: 1.3rem; line-height: 1.7; color: var(--ink); position: relative; padding: 0 30px; }
@@ -193,6 +198,7 @@
             @media (max-width: 900px) {
                 .why-grid, .mission-grid { grid-template-columns: 1fr; }
                 .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+                .craft-list { grid-template-columns: 1fr; }
             }
         </style>
     </head>
@@ -339,6 +345,17 @@
             <section class="block" id="galerie">
                 <div class="eyebrow">Notre savoir-faire</div>
                 <h2>Des créations pensées et fabriquées avec soin</h2>
+                <div class="craft-copy">
+                    <p>Chez MOSNOKY, chaque création est le résultat d'un travail minutieux, d'une sélection attentive des matières et d'une recherche constante de qualité.</p>
+                    <p>Nous concevons et fabriquons différentes créations, notamment :</p>
+                </div>
+                <ul class="craft-list">
+                    <li>Des chaussures et sandales pour hommes et femmes.</li>
+                    <li>Des sacs à main et accessoires de maroquinerie.</li>
+                    <li>Des ceintures, sacoches et autres articles en cuir.</li>
+                    <li>Des créations personnalisées adaptées aux envies de nos clients.</li>
+                </ul>
+                <p class="craft-copy">De la conception aux finitions, nous accordons une attention particulière aux détails afin de proposer des produits qui reflètent notre engagement envers la qualité, le confort et l'élégance.</p>
                 @php
                     $galleryImages = [
                         ['src' => asset('images/products/oxford-noir.jpg'), 'alt' => 'Chaussures Oxford noires'],
@@ -351,9 +368,9 @@
                         ['src' => asset('images/products/espadrille-marron.jpg'), 'alt' => 'Espadrille marron'],
                     ];
                 @endphp
-                <div class="gallery-grid" data-gallery-slides='@json($galleryImages)'>
+                <div class="gallery-grid">
                     @foreach ($galleryImages as $index => $image)
-                        <img src="{{ $image['src'] }}" alt="{{ $image['alt'] }}" data-gallery-index="{{ $index }}" loading="lazy" decoding="async">
+                        <img src="{{ $image['src'] }}" alt="{{ $image['alt'] }}" loading="lazy" decoding="async">
                     @endforeach
                 </div>
             </section>
@@ -573,52 +590,6 @@
         setupSlideshow(thumb, '.product-slide', null, '.thumb-arrow-prev', '.thumb-arrow-next');
     });
 
-    document.querySelectorAll('.gallery-grid').forEach(function (gallery) {
-        const images = gallery.querySelectorAll('[data-gallery-index]');
-        const slides = JSON.parse(gallery.dataset.gallerySlides || '[]');
-        let timer = null;
-        let isVisible = !('IntersectionObserver' in window);
-
-        if (images.length === 0 || slides.length <= 1) return;
-
-        function stop() {
-            window.clearInterval(timer);
-            timer = null;
-        }
-
-        function changeImages() {
-            images.forEach(function (image) {
-                const index = (Number(image.dataset.galleryIndex) + 1) % slides.length;
-                image.style.opacity = '0';
-
-                window.setTimeout(function () {
-                    image.src = slides[index].src;
-                    image.alt = slides[index].alt;
-                    image.dataset.galleryIndex = index;
-                    image.style.opacity = '1';
-                }, 250);
-            });
-        }
-
-        function start() {
-            if (timer || document.hidden || !isVisible) return;
-            timer = window.setInterval(changeImages, 3000);
-        }
-
-        if ('IntersectionObserver' in window) {
-            const observer = new IntersectionObserver(function (entries) {
-                isVisible = entries[0].isIntersecting;
-                isVisible ? start() : stop();
-            }, { rootMargin: '100px' });
-            observer.observe(gallery);
-        } else {
-            start();
-        }
-
-        document.addEventListener('visibilitychange', function () {
-            document.hidden ? stop() : start();
-        });
-    });
 })();
 </script>
     </body>
